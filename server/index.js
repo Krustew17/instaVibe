@@ -20,4 +20,4 @@ mongoose
     )
     .catch((err) => console.log(`error: ${err.message}`));
 
-app.use("/users", userRoutes);
+app.use("/users", userRoutes); // test
