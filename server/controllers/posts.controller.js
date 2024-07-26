@@ -1,11 +1,23 @@
 import Post from "../models/Post.js";
 import cloudinary from "../configs/cloudinary.js";
+import postValidation from "../utils/postValidation.js";
+import Comment from "../models/Comment.js";
 
 // GET ALL POSTS
 export const getAllPosts = async (req, res) => {
     try {
         // Retrieve all posts and sort them by createdAt in descending order
-        const posts = await Post.find().sort({ createdAt: -1 });
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "comments",
+                select: "comment user createdAt",
+                populate: {
+                    path: "user",
+                    select: "username",
+                },
+            })
+            .populate({ path: "createdBy", select: "username" });
 
         // If posts don't exist return 404 error
         if (!posts) return res.status(404).json({ message: "Posts not found" });
@@ -76,17 +88,7 @@ export const updatePost = async (req, res) => {
         const postId = req.params.id;
         const user = req.user;
 
-        // Check if user exists
-        if (!user) return res.status(400).json({ message: "bad request" });
-
-        // Check if post exists
-        const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ message: "Post not found" });
-
-        // Check if user is the creator of the post
-        if (post.createdBy.toString() !== user._id.toString()) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
+        await postValidation(postId, user, res);
 
         // Update the post
         const updatedPost = await Post.findByIdAndUpdate(
@@ -110,33 +112,93 @@ export const deletePost = async (req, res) => {
         const postId = req.params.id;
         const user = req.user;
 
-        // Check if user exists
-        if (!user) return res.status(400).json({ message: "bad request" });
+        const post = await postValidation(postId, user, res);
 
-        // Check if post exists
-        const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ message: "Post not found" });
-
-        // Check if user is the creator of the post
-        if (post.createdBy.toString() !== user._id.toString()) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-
+        // Retrieve the image cloudinary public id
         const cloudinaryPublicId = post.picturePath
             .split("/")
             .pop()
             .split(".")
             .shift();
-        console.log(cloudinaryPublicId);
 
         // Delete image from cloudinary
         await cloudinary.uploader.destroy(cloudinaryPublicId);
 
         // Delete the post
-        await Post.findByIdAndDelete(postId);
+        await Post.findOneAndDelete(postId);
 
         // Send the response
         res.status(200).json({ message: "Post deleted successfully" });
+    } catch (error) {
+        // Handle any errors
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Like a post
+export const likePost = async (req, res) => {
+    try {
+        // deconstruct the req.body
+        const postId = req.params.id;
+        const user = req.user;
+
+        const post = await postValidation(postId, user, res);
+
+        // Check if user has already liked the post
+        if (post.likes.get(user._id)) {
+            post.likes.delete(user._id);
+            await post.save();
+            return res
+                .status(200)
+                .json({ message: "Post unliked successfully" });
+        }
+
+        // Add the user to the likes array
+        post.likes.set(user._id, true);
+        await post.save();
+
+        // Send the response
+        res.status(200).json({ message: "Post liked successfully" });
+    } catch (error) {
+        // Handle any errors
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// COMMENT POST
+export const commentPost = async (req, res) => {
+    try {
+        // deconstruct the req.body
+        const { comment } = req.body;
+
+        const postId = req.params.id;
+        const user = req.user;
+
+        // check if user exists
+        if (!user) return res.status(400).json({ message: "bad request" });
+
+        const post = await postValidation(postId, user, res);
+
+        // Check if comment is empty
+        if (!comment) {
+            return res.status(400).json({ message: "Comment cannot be empty" });
+        }
+
+        // Create new comment object
+
+        const newComment = new Comment({
+            user,
+            comment,
+        });
+        await newComment.save();
+        post.comments.push(newComment);
+        console.log(post.comments);
+
+        // Update the post
+        await post.save();
+
+        // Send the response
+        return res.status(201).json({ message: "Comment added successfully" });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });

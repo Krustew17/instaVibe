@@ -4,7 +4,7 @@ import User from "../models/User.js";
 export const getUsers = async (req, res) => {
     try {
         // Retrieve all users
-        const users = await User.find();
+        const users = await User.find().select("username");
 
         // If users don't exist return 404 error
         if (!users) return res.status(404).json({ message: "Users not found" });
