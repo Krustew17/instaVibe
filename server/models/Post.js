@@ -32,6 +32,12 @@ const PostSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+PostSchema.virtual("likesCount").get(function () {
+    return this.likes.size;
+});
+
+PostSchema.set("toJSON", { virtuals: true });
+PostSchema.set("toObject", { virtuals: true });
 
 const Post = mongoose.model("Post", PostSchema);
 export default Post;
