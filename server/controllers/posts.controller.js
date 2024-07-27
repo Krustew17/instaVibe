@@ -154,6 +154,7 @@ export const likePost = async (req, res) => {
         if (!user) return res.status(400).json({ message: "bad request" });
 
         // Check if post exists
+        const post = await Post.findById(postId);
         if (!post) return res.status(400).json({ message: "post not found" });
 
         // Check if user has already liked the post
@@ -201,6 +202,7 @@ export const commentPost = async (req, res) => {
         const newComment = new Comment({
             user,
             comment,
+            post,
         });
         await newComment.save();
         post.comments.push(newComment);
@@ -211,6 +213,40 @@ export const commentPost = async (req, res) => {
 
         // Send the response
         return res.status(201).json({ message: "Comment added successfully" });
+    } catch (error) {
+        // Handle any errors
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// DELETE COMMENT
+
+export const deleteComment = async (req, res) => {
+    try {
+        // deconstruct the req.body
+        const commentId = req.params.commentId;
+        const postId = req.params.postId;
+
+        const user = req.user;
+
+        const post = await validation(postId, user, res);
+        if (!post) return res.status(400).json({ message: "post not found" });
+
+        const comment = await Comment.findById(commentId);
+        if (!comment)
+            return res.status(400).json({ message: "comment not found" });
+
+        if (!comment.user.equals(user._id)) {
+            return res.status(400).json({ message: "Something went wrong" });
+        }
+
+        // Delete the comment
+        await Comment.findByIdAndDelete(commentId);
+
+        // Send the response
+        return res
+            .status(200)
+            .json({ message: "Comment deleted successfully" });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });
