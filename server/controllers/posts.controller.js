@@ -2,6 +2,7 @@ import Post from "../models/Post.js";
 import cloudinary from "../configs/cloudinary.js";
 import validation from "../utils/postValidation.js";
 import Comment from "../models/Comment.js";
+import generatePublicId from "../utils/generatePublicId";
 
 // GET ALL POSTS
 export const getAllPosts = async (req, res) => {
@@ -44,11 +45,14 @@ export const createPost = async (req, res) => {
 
         let imageUrl = "";
 
+        const public_id = generatePublicId();
+
         // check if the request has a file
         if (req.file) {
             const result = await cloudinary.uploader.upload(
                 // Upload image to cloudinary
                 req.file.path,
+                { public_id },
                 (error, result) => {
                     if (error) {
                         // Check for errors
