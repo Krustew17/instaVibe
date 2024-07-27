@@ -25,7 +25,7 @@ export default function Test() {
     async function handleSubmission(e) {
         e.preventDefault();
         const token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTM3NDhmNGQ1MGRjNjg2ZjlmMTdmNSIsImlhdCI6MTcyMjAwOTUyNSwiZXhwIjoxNzIyMDEzMTI1fQ.stBUe3L-ynH6x-_8rxchF-75R2BZLAO00vTg7eAxrbA";
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjA4MjA3MiwiZXhwIjoxNzIyMDg1NjcyfQ.fwTJJZS4JhzadQ4XXQL6oVgFyZWo_yOk3JzQQNmnRQI";
 
         const formData = new FormData();
         formData.append("image", data.image);
