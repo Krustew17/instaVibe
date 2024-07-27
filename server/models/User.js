@@ -30,13 +30,13 @@ const UserSchema = new mongoose.Schema(
                 ref: "User",
             },
         ],
-        followings: [
+        following: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
         ],
-        desc: {
+        description: {
             type: String,
             max: 100,
             default: "",
@@ -49,8 +49,8 @@ UserSchema.virtual("followersCount").get(function () {
     return this.followers ? this.followers.length : 0;
 });
 
-UserSchema.virtual("followingsCount").get(function () {
-    return this.followings ? this.followings.length : 0;
+UserSchema.virtual("followedCount").get(function () {
+    return this.following ? this.following.length : 0;
 });
 
 UserSchema.set("toJSON", { virtuals: true });
