@@ -1,6 +1,6 @@
 import Post from "../models/Post.js";
 import cloudinary from "../configs/cloudinary.js";
-import postValidation from "../utils/postValidation.js";
+import validation from "../utils/postValidation.js";
 import Comment from "../models/Comment.js";
 
 // GET ALL POSTS
@@ -88,7 +88,7 @@ export const updatePost = async (req, res) => {
         const postId = req.params.id;
         const user = req.user;
 
-        await postValidation(postId, user, res);
+        await validation(postId, user, res);
 
         // Update the post
         const updatedPost = await Post.findByIdAndUpdate(
@@ -112,7 +112,9 @@ export const deletePost = async (req, res) => {
         const postId = req.params.id;
         const user = req.user;
 
-        const post = await postValidation(postId, user, res);
+        const post = await validation(postId, user, res);
+
+        if (!post) return res.status(400).json({ message: "post not found" });
 
         // Retrieve the image cloudinary public id
         const cloudinaryPublicId = post.picturePath
@@ -122,16 +124,18 @@ export const deletePost = async (req, res) => {
             .shift();
 
         // Delete image from cloudinary
-        await cloudinary.uploader.destroy(cloudinaryPublicId);
+        await cloudinary.uploader.destroy([cloudinaryPublicId], {
+            resource_type: "image",
+        });
 
         // Delete the post
         await Post.findOneAndDelete(postId);
 
         // Send the response
-        res.status(200).json({ message: "Post deleted successfully" });
+        return res.status(200).json({ message: "Post deleted successfully" });
     } catch (error) {
         // Handle any errors
-        res.status(400).json({ message: error.message });
+        return res.status(400).json({ message: error.message });
     }
 };
 
@@ -142,7 +146,11 @@ export const likePost = async (req, res) => {
         const postId = req.params.id;
         const user = req.user;
 
-        const post = await postValidation(postId, user, res);
+        // Check if user exists
+        if (!user) return res.status(400).json({ message: "bad request" });
+
+        // Check if post exists
+        if (!post) return res.status(400).json({ message: "post not found" });
 
         // Check if user has already liked the post
         if (post.likes.get(user._id)) {
@@ -177,7 +185,7 @@ export const commentPost = async (req, res) => {
         // check if user exists
         if (!user) return res.status(400).json({ message: "bad request" });
 
-        const post = await postValidation(postId, user, res);
+        const post = await validation(postId, user, res);
 
         // Check if comment is empty
         if (!comment) {
