@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, Router } from "react-router-dom";
 import Nav from "./components/nav";
-import Hero from "./components/hero";
+import Main from "./components/main";
 import RightSideBar from "./components/rightSideBar";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
             <Nav />
             <main className="flex-1">
                 <Routes>
-                    <Route path="/" element={<Hero />} />
+                    <Route path="/" element={<Main />} />
                     <Route path="/search" element={<div>he</div>} />
                     <Route path="/chat" element={<div>he</div>} />
                     <Route path="/notifications" element={<div>he</div>} />
