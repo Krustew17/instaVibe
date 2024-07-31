@@ -24,9 +24,21 @@ export default function Main() {
         fetchGifs();
     };
 
+    const closeGifModal = () => {
+        setShowGifModal(false);
+        setQuery("");
+        setGifs([]);
+    };
+
     const fetchGifs = async () => {
         setLoading(true);
         setError(null);
+
+        if (!query) {
+            setError("Please enter a search query");
+            setLoading(false);
+            return;
+        }
 
         const apiKey = import.meta.env.VITE_TENOR_API;
         const url = `https://tenor.googleapis.com/v2/search?key=${apiKey}&q=${query}&limit=1000`;
@@ -135,7 +147,7 @@ export default function Main() {
                             <img
                                 src={uploadedImage}
                                 alt="Uploaded"
-                                className="w-full max-h-40 object-cover rounded-md" // Limit the image size
+                                className="w-full max-h-40 object-cover rounded-md"
                             />
                             <button
                                 onClick={removeUploadedImage}
@@ -220,7 +232,7 @@ export default function Main() {
                             ))}
                         </div>
                         <button
-                            onClick={() => setShowGifModal(false)}
+                            onClick={closeGifModal}
                             className="mt-4 bg-red-500 text-white px-4 py-2 rounded-full"
                         >
                             Close
