@@ -21,9 +21,24 @@ export const CommentSchema = new mongoose.Schema(
             type: Date,
             default: new Date(),
         },
+        replies: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "Reply",
+            default: [],
+        },
+        likes: {
+            type: Map,
+            of: Boolean,
+        },
     },
     { timestamps: true }
 );
+CommentSchema.virtual("likesCount").get(function () {
+    return this.likes ? this.likes.size : 0;
+});
+
+CommentSchema.set("toJSON", { virtuals: true });
+CommentSchema.set("toObject", { virtuals: true });
 
 const Comment = mongoose.model("Comment", CommentSchema);
 export default Comment;
