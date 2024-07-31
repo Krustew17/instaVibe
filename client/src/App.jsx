@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, Router } from "react-router-dom";
 import Nav from "./components/nav";
-import Main from "./components/main";
+import Main from "./components/posts";
 import RightSideBar from "./components/rightSideBar";
 
 function App() {
