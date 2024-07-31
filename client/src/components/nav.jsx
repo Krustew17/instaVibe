@@ -33,7 +33,7 @@ export default function Nav() {
                 <h1 className="text-2xl mt-6 font-Pacifico mb-10 absolute md:relative">
                     <span className="hidden lg:block">instaVibe</span>
                     <img
-                        src="../public/instaVibe.png"
+                        src="/instaVibe.png"
                         className="lg:hidden hidden md:block dark:text-white md:h-6 md:w-6 dark:invert"
                     />
                 </h1>

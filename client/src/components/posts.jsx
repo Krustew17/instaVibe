@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { FaImage, FaSearch, FaTimes } from "react-icons/fa";
+import { MdGif, MdGifBox } from "react-icons/md";
 import { Link, useSearchParams } from "react-router-dom";
 
 export default function Main() {
@@ -11,7 +12,8 @@ export default function Main() {
     const [showGifModal, setShowGifModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [selectedGif, setSelectedGif] = useState(null); // State for storing selected GIF URL
+    const [selectedGif, setSelectedGif] = useState(null);
+    const [uploadedImage, setUploadedImage] = useState(null); // State for storing uploaded image
     const fileInputRef = useRef(null);
 
     const handleInputChange = (e) => {
@@ -26,8 +28,8 @@ export default function Main() {
         setLoading(true);
         setError(null);
 
-        const apiKey = "AIzaSyAqcfREir_kk_Y5BcaNXd34THhyU-2BDpA"; // Ensure this is your actual API key
-        const url = `https://tenor.googleapis.com/v2/search?key=${apiKey}&q=${query}&limit=10`;
+        const apiKey = import.meta.env.VITE_TENOR_API;
+        const url = `https://tenor.googleapis.com/v2/search?key=${apiKey}&q=${query}&limit=1000`;
 
         try {
             const response = await fetch(url);
@@ -52,7 +54,14 @@ export default function Main() {
     };
 
     const handleFileChange = (e) => {
-        // Handle file upload logic
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setUploadedImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleIconClick = () => {
@@ -60,12 +69,16 @@ export default function Main() {
     };
 
     const selectGif = (gifUrl) => {
-        setSelectedGif(gifUrl); // Store the selected GIF URL
+        setSelectedGif(gifUrl);
         setShowGifModal(false);
     };
 
     const removeSelectedGif = () => {
-        setSelectedGif(null); // Clear the selected GIF URL
+        setSelectedGif(null);
+    };
+
+    const removeUploadedImage = () => {
+        setUploadedImage(null); // Clear the uploaded image
     };
 
     return (
@@ -92,7 +105,7 @@ export default function Main() {
             </div>
             <div className="p-5 flex w-full border-b-2 border-slate-200 dark:border-slate-900">
                 <img
-                    src="../public/default_avatar.jpg"
+                    src="/default_avatar.jpg"
                     className="max-h-12 max-w-12 rounded-full"
                 />
                 <div className="ml-5 flex-1 flex-col w-full max-h-full">
@@ -106,12 +119,28 @@ export default function Main() {
                             <img
                                 src={selectedGif}
                                 alt="Selected GIF"
-                                className="w-full max-h-40 object-cover rounded-md" // Limit the GIF size
+                                className="w-full object-cover rounded-md"
                             />
                             <button
                                 onClick={removeSelectedGif}
                                 className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
                                 aria-label="Remove GIF"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+                    )}
+                    {uploadedImage && (
+                        <div className="relative mt-2">
+                            <img
+                                src={uploadedImage}
+                                alt="Uploaded"
+                                className="w-full max-h-40 object-cover rounded-md" // Limit the image size
+                            />
+                            <button
+                                onClick={removeUploadedImage}
+                                className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                                aria-label="Remove Image"
                             >
                                 <FaTimes />
                             </button>
@@ -134,13 +163,14 @@ export default function Main() {
                             >
                                 <FaImage className="text-xl" />
                             </button>
+
+                            <button
+                                onClick={() => setShowGifModal(true)}
+                                className="text-blue-500 text-3xl"
+                            >
+                                <MdGifBox />
+                            </button>
                         </div>
-                        <button
-                            onClick={() => setShowGifModal(true)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-full"
-                        >
-                            Add GIF
-                        </button>
                         <button className="bg-blue-500 px-6 rounded-full text-sm font-bold text-white">
                             Post
                         </button>
@@ -150,33 +180,33 @@ export default function Main() {
 
             {showGifModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-3xl w-full h-[80vh] md:h-[50vh] overflow-auto">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-3xl w-full h-[80vh] md:h-[60vh] overflow-auto">
                         {" "}
                         <h2 className="text-lg font-semibold mb-4 text-center">
                             Select a GIF
                         </h2>
-                        <div className="flex items-center mb-4">
+                        <div className="flex items-center mb-4 border rounded-xl ">
+                            <button
+                                onClick={handleSearchClick}
+                                className="text-white p-2 rounded-xl mr-1"
+                            >
+                                <FaSearch />
+                            </button>
                             <input
                                 type="text"
                                 value={query}
                                 onChange={handleInputChange}
                                 placeholder="Search for GIFs"
-                                className="border p-2 rounded-l-md flex-grow"
+                                className="rounded-l-md flex-grow bg-transparent focus:outline-none"
                             />
-                            <button
-                                onClick={handleSearchClick}
-                                className="bg-blue-500 text-white p-2 rounded-r-md"
-                            >
-                                <FaSearch />
-                            </button>
                         </div>
                         {loading && <p>Loading...</p>}
                         {error && <p className="text-red-500">{error}</p>}
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3">
                             {gifs.map((gif) => (
                                 <div
                                     key={gif.id}
-                                    className="p-2 cursor-pointer"
+                                    className="cursor-pointer"
                                     onClick={() =>
                                         selectGif(gif.media_formats.gif.url)
                                     }
