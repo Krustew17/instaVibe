@@ -137,6 +137,7 @@ export default function Nav() {
                         size={30}
                         moonColor="#000000"
                         sunColor="#f5f5f5"
+                        className="select-none"
                     />
                 </div>
             </div>

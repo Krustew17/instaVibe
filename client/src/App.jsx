@@ -1,8 +1,9 @@
 import React from "react";
 import { Routes, Route, Router } from "react-router-dom";
 import Nav from "./components/nav";
-import Main from "./components/posts";
+import Main from "./components/home";
 import RightSideBar from "./components/rightSideBar";
+import PostDetails from "./components/postDetails";
 
 function App() {
     return (
@@ -11,6 +12,10 @@ function App() {
             <main className="flex-1">
                 <Routes>
                     <Route path="/" element={<Main />} />
+                    <Route
+                        path="/:username/post/:id"
+                        element={<PostDetails />}
+                    />
                     <Route path="/search" element={<div>he</div>} />
                     <Route path="/chat" element={<div>he</div>} />
                     <Route path="/notifications" element={<div>he</div>} />

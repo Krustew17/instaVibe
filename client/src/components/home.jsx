@@ -1,12 +1,14 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaImage, FaSearch, FaTimes } from "react-icons/fa";
-import { MdGif, MdGifBox } from "react-icons/md";
+import { MdGifBox } from "react-icons/md";
 import { Link, useSearchParams } from "react-router-dom";
+import Post from "./post";
 
 export default function Main() {
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get("tab") || "for_you";
 
+    const [posts, setPosts] = useState([]);
     const [query, setQuery] = useState("");
     const [gifs, setGifs] = useState([]);
     const [showGifModal, setShowGifModal] = useState(false);
@@ -90,7 +92,18 @@ export default function Main() {
     };
 
     const removeUploadedImage = () => {
-        setUploadedImage(null); // Clear the uploaded image
+        setUploadedImage(null);
+    };
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    const fetchPosts = async () => {
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const res = await fetch(`${host}/posts/all`);
+        const data = await res.json();
+        setPosts(data);
+        return data;
     };
 
     return (
@@ -226,7 +239,7 @@ export default function Main() {
                                     <img
                                         src={gif.media_formats.gif.url}
                                         alt={gif.content_description}
-                                        className="w-full"
+                                        className="w-full h-full"
                                     />
                                 </div>
                             ))}
@@ -240,6 +253,7 @@ export default function Main() {
                     </div>
                 </div>
             )}
+            {posts && posts.map((post) => <Post key={post._id} {...post} />)}
         </div>
     );
 }
