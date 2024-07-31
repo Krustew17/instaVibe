@@ -3,6 +3,7 @@ import cloudinary from "../configs/cloudinary.js";
 import validation from "../utils/postValidation.js";
 import Comment from "../models/Comment.js";
 import generatePublicId from "../utils/generatePublicId";
+import Reply from "../models/Reply.js";
 
 // GET ALL POSTS
 export const getAllPosts = async (req, res) => {
@@ -18,13 +19,48 @@ export const getAllPosts = async (req, res) => {
                     select: "username",
                 },
             })
-            .populate({ path: "createdBy", select: "username" });
+            .populate({ path: "createdBy", select: "username profilePicture" });
 
         // If posts don't exist return 404 error
         if (!posts) return res.status(404).json({ message: "Posts not found" });
 
         // Send the response
         res.status(200).json(posts);
+    } catch (error) {
+        // Handle any errors
+        res.status(404).json({ message: error.message });
+    }
+};
+
+// GET POST DETAILS
+export const getPostDetails = async (req, res) => {
+    try {
+        // Retrieve the post
+        const post = await Post.findById(req.params.id)
+            .populate({
+                path: "comments",
+                select: "comment user createdAt replies",
+                populate: [
+                    {
+                        path: "user",
+                        select: "username profilePicture",
+                    },
+                    {
+                        path: "replies",
+                        select: "comment user createdAt",
+                        populate: {
+                            path: "user",
+                            select: "username profilePicture",
+                        },
+                    },
+                ],
+            })
+            .populate({ path: "createdBy", select: "username profilePicture" });
+        // If post doesn't exist return 404 error
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // Send the response
+        res.status(200).json(post);
     } catch (error) {
         // Handle any errors
         res.status(404).json({ message: error.message });
@@ -247,6 +283,43 @@ export const deleteComment = async (req, res) => {
         return res
             .status(200)
             .json({ message: "Comment deleted successfully" });
+    } catch (error) {
+        // Handle any errors
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// REPLY TO COMMENT
+
+export const replyComment = async (req, res) => {
+    try {
+        // deconstruct the req.body
+        const { reply } = req.body;
+        const commentId = req.params.commentId;
+        const postId = req.params.postId;
+        const user = req.user;
+        const post = await validation(postId, user, res);
+        if (!post) return res.status(400).json({ message: "post not found" });
+        const comment = await Comment.findById(commentId);
+        if (!comment)
+            return res.status(400).json({ message: "comment not found" });
+        if (!comment.user.equals(user._id)) {
+            return res.status(400).json({ message: "Something went wrong" });
+        }
+
+        const newReply = new Reply({
+            user,
+            reply,
+            comment,
+        });
+
+        await newReply.save();
+
+        comment.replies.push(newReply);
+
+        await comment.save();
+        // Send the response
+        return res.status(201).json({ message: "Reply added successfully" });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });

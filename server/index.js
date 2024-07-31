@@ -30,6 +30,11 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/* ROUTES */
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postsRoutes);
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
@@ -46,8 +51,3 @@ mongoose
         app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
     )
     .catch((err) => console.log(`error: ${err.message}`));
-
-/* ROUTES */
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/posts", postsRoutes);
