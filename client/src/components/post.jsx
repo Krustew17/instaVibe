@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { FaRegComment, FaHeart, FaShare } from "react-icons/fa";
-import { CiHeart } from "react-icons/ci";
+import { FaRegComment, FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
+import convertDate from "../utils/convertDate";
+import likePost from "../utils/likePost";
 
 const Post = ({
     id,
@@ -17,33 +18,47 @@ const Post = ({
     const [isLiked, setIsLiked] = useState(!!likes[createdBy._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
 
-    // CONVERT CREATEDAT
-    const date = new Date(createdAt);
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    const formattedDate = date.toLocaleDateString("en-US", options);
+    // CONVERT CREATEDATE
+    const formattedDate = convertDate(createdAt);
 
-    const likePost = async (e) => {
+    // const likePost = async (e) => {
+    //     e.preventDefault();
+    //     const host = import.meta.env.VITE_SERVER_HOST;
+
+    //     const res = await fetch(`${host}/posts/${id}/like`, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjQ0MDA5OSwiZXhwIjoxNzIyNDQzNjk5fQ.wnC8sQxTiHXFFigIe7xzH8YVIIHJGHwZxtENDNbnnpg`,
+    //         },
+    //     });
+    //     const data = await res.json();
+
+    //     if (!res.ok) {
+    //         console.error("Error liking post:", data.message);
+    //     }
+
+    //     setIsLiked(!isLiked);
+    //     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+    //     console.log(likesCount);
+
+    //     return data;
+    // };
+
+    const handleLikePost = async (e) => {
         e.preventDefault();
-        const host = import.meta.env.VITE_SERVER_HOST;
+        const {
+            success,
+            isLiked: newIsLiked,
+            likesCountChange,
+        } = await likePost(e, id, isLiked);
 
-        const res = await fetch(`${host}/posts/${id}/like`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjQ0MDA5OSwiZXhwIjoxNzIyNDQzNjk5fQ.wnC8sQxTiHXFFigIe7xzH8YVIIHJGHwZxtENDNbnnpg`,
-            },
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-            console.error("Error liking post:", data.message);
+        if (success) {
+            setIsLiked(newIsLiked);
+            setLikesCount(
+                (prevLikesCount) => prevLikesCount + likesCountChange
+            );
         }
-
-        setIsLiked(!isLiked);
-        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-        console.log(likesCount);
-
-        return data;
     };
 
     return (
@@ -71,15 +86,15 @@ const Post = ({
                         <img
                             src={picturePath}
                             alt="Post media"
-                            className="mt-2 rounded-lg max-w-full"
+                            className="mt-2 rounded-lg max-w-full border border-slate-200 dark:border-slate-800"
                         />
                     )}
                 </div>
                 <div className="flex gap-6 mt-4 text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-1">
                         <div
-                            className="hover:text-red-500 gap-1 flex transition-all duration-200"
-                            onClick={likePost}
+                            className="hover:text-red-500 gap-1 flex"
+                            onClick={handleLikePost}
                         >
                             {isLiked ? (
                                 <IoHeartSharp className="text-2xl text-red-500" />
@@ -91,7 +106,7 @@ const Post = ({
                     </div>
                     <div className="flex hover:text-blue-400">
                         <div className="flex items-center space-x-1">
-                            <FaRegComment />
+                            <FaRegComment className="text-lg" />
                             <span>{comments.length}</span>
                         </div>
                     </div>
