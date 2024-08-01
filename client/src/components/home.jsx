@@ -186,7 +186,7 @@ export default function Main() {
                                 className="p-2 rounded-full text-blue-500"
                                 aria-label="Upload File"
                             >
-                                <FaImage className="text-xl" />
+                                <FaImage className="text-2xl" />
                             </button>
 
                             <button
