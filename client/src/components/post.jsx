@@ -21,30 +21,6 @@ const Post = ({
     // CONVERT CREATEDATE
     const formattedDate = convertDate(createdAt);
 
-    // const likePost = async (e) => {
-    //     e.preventDefault();
-    //     const host = import.meta.env.VITE_SERVER_HOST;
-
-    //     const res = await fetch(`${host}/posts/${id}/like`, {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjQ0MDA5OSwiZXhwIjoxNzIyNDQzNjk5fQ.wnC8sQxTiHXFFigIe7xzH8YVIIHJGHwZxtENDNbnnpg`,
-    //         },
-    //     });
-    //     const data = await res.json();
-
-    //     if (!res.ok) {
-    //         console.error("Error liking post:", data.message);
-    //     }
-
-    //     setIsLiked(!isLiked);
-    //     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    //     console.log(likesCount);
-
-    //     return data;
-    // };
-
     const handleLikePost = async (e) => {
         e.preventDefault();
         const {
@@ -86,7 +62,7 @@ const Post = ({
                         <img
                             src={picturePath}
                             alt="Post media"
-                            className="mt-2 rounded-lg max-w-full border border-slate-200 dark:border-slate-800"
+                            className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
                         />
                     )}
                 </div>
