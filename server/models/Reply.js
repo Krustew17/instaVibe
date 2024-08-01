@@ -18,7 +18,6 @@ export const ReplySchema = new mongoose.Schema({
     likes: {
         type: Map,
         of: Boolean,
-        default: {},
     },
     createdAt: {
         type: Date,

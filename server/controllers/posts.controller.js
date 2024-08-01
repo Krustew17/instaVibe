@@ -4,6 +4,7 @@ import validation from "../utils/postValidation.js";
 import Comment from "../models/Comment.js";
 import generatePublicId from "../utils/generatePublicId";
 import Reply from "../models/Reply.js";
+import mongoose from "mongoose";
 
 // GET ALL POSTS
 export const getAllPosts = async (req, res) => {
@@ -39,7 +40,7 @@ export const getPostDetails = async (req, res) => {
         const post = await Post.findById(req.params.id)
             .populate({
                 path: "comments",
-                select: "comment user createdAt replies",
+                select: "comment user createdAt replies likes",
                 populate: [
                     {
                         path: "user",
@@ -239,10 +240,15 @@ export const commentPost = async (req, res) => {
             user,
             comment,
             post,
+            likes: {},
+            comments: [],
         });
+
+        // Save the new comment
         await newComment.save();
+
+        // Add the comment to the post
         post.comments.push(newComment);
-        console.log(post.comments);
 
         // Update the post
         await post.save();
@@ -298,28 +304,77 @@ export const replyComment = async (req, res) => {
         const commentId = req.params.commentId;
         const postId = req.params.postId;
         const user = req.user;
+
+        // validate the post
         const post = await validation(postId, user, res);
         if (!post) return res.status(400).json({ message: "post not found" });
-        const comment = await Comment.findById(commentId);
-        if (!comment)
-            return res.status(400).json({ message: "comment not found" });
-        if (!comment.user.equals(user._id)) {
-            return res.status(400).json({ message: "Something went wrong" });
+
+        // validate the comment
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ message: "Comment not found" });
         }
 
+        const comment = await Comment.findById(commentId);
+        if (!comment)
+            return res.status(400).json({ message: "Comment not found" });
+
+        // create new reply
         const newReply = new Reply({
             user,
             reply,
             comment,
         });
 
+        // save the reply
         await newReply.save();
 
+        // add the reply to the comment
         comment.replies.push(newReply);
 
+        // save the comment
         await comment.save();
+
         // Send the response
         return res.status(201).json({ message: "Reply added successfully" });
+    } catch (error) {
+        // Handle any errors
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// LIKE COMMENT
+export const likeComment = async (req, res) => {
+    try {
+        // deconstruct the req.body
+        const commentId = req.params.commentId;
+        const user = req.user;
+
+        // validate the comment
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ message: "Comment not found" });
+        }
+
+        const comment = await Comment.findById(commentId);
+        if (!comment)
+            return res.status(400).json({ message: "Comment not found" });
+
+        // Check if user has already liked the comment
+        if (comment.likes.get(user._id)) {
+            comment.likes.delete(user._id);
+            await comment.save();
+            return res
+                .status(200)
+                .json({ message: "Comment unliked successfully" });
+        }
+
+        // Like the comment
+        comment.likes.set(user._id, true);
+
+        // Save the comment
+        await comment.save();
+
+        // Send the response
+        res.status(200).json({ message: "Comment liked successfully" });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });

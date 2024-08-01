@@ -8,6 +8,7 @@ import {
     deleteComment,
     getPostDetails,
     replyComment,
+    likeComment,
 } from "../controllers/posts.controller.js";
 import { upload } from "../configs/multer.js";
 import express from "express";
@@ -26,6 +27,7 @@ router.post(
     deleteComment
 );
 router.post("/:postId/comment/:commentId/reply", authMiddleware, replyComment);
+router.post("/comment/:commentId/like", authMiddleware, likeComment);
 router.put("/:id/update", authMiddleware, updatePost);
 router.delete("/:id/delete", authMiddleware, deletePost);
 

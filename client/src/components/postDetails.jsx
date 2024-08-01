@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import makeRequest from "../utils/makeRequest";
 import convertDate from "../utils/convertDate";
 import likePost from "../utils/likePost";
+import Comment from "./Comment";
 
 export default function PostDetails() {
     const [post, setPost] = useState({
@@ -109,39 +110,10 @@ export default function PostDetails() {
                 </div>
             </div>
             <div className="mt-2 md:mt-4">
-                {post.comments.map((comment, index) => (
-                    <div
-                        key={index}
-                        className="flex p-4 border-t border-gray-200 dark:border-gray-700"
-                    >
-                        <img
-                            src={
-                                comment.user.picturePath ||
-                                "/default_avatar.jpg"
-                            }
-                            alt={`${comment.user.username}'s profile`}
-                            className="w-10 h-10 rounded-full mr-4"
-                        />
-                        <div className="flex-1">
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <span className="font-bold">
-                                        @{comment.user.username}
-                                    </span>
-                                    <span className="text-gray-500 dark:text-gray-400 ml-2">
-                                        {comment.timestamp}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="mt-2">
-                                <p>{comment.comment}</p>
-                            </div>
-                            <div className="mt-2">
-                                <IoHeartOutline className="text-2xl" />
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                {post.comments &&
+                    post.comments.map((comment, index) => (
+                        <Comment key={index} {...comment} />
+                    ))}
             </div>
         </div>
     );
