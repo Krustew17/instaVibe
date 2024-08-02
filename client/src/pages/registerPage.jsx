@@ -1,21 +1,52 @@
 import React, { useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
+import makeRequest from "../utils/makeRequest";
 
 const RegisterPage = () => {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [data, setData] = useState({});
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setData({ ...data, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            alert("Passwords do not match!");
-            return;
+        setLoading(true);
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/auth/register`;
+        const headers = {
+            "Content-Type": "application/json",
+        };
+        const body = JSON.stringify({
+            username: data.username,
+            email: data.email,
+            password: data.password,
+            confirmPassword: data.confirmPassword,
+        });
+        try {
+            const response = await fetch(fetchUrl, {
+                method: "POST",
+                headers,
+                body,
+            });
+
+            const data = await response.json();
+            if (response.status !== 201) {
+                setLoading(false);
+                setError(data.message);
+                return;
+            }
+
+            setError("");
+            window.location.replace("/login");
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
         }
-        // Handle form submission
-        console.log("Username:", username);
-        console.log("Email:", email);
-        console.log("Password:", password);
     };
 
     return (
@@ -25,6 +56,11 @@ const RegisterPage = () => {
                     Create your account
                 </h2>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="text-red-500 text-lg text-center font-bold">
+                            {error}
+                        </div>
+                    )}
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
                             <label htmlFor="username" className="sr-only">
@@ -36,8 +72,8 @@ const RegisterPage = () => {
                                 type="text"
                                 autoComplete="username"
                                 required
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                // value={username}
+                                onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 bg-transparent  rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Username"
                             />
@@ -52,8 +88,8 @@ const RegisterPage = () => {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                // value={email}
+                                onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 bg-transparent focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Email address"
                             />
@@ -68,29 +104,26 @@ const RegisterPage = () => {
                                 type="password"
                                 autoComplete="new-password"
                                 required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                // value={password}
+                                onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 bg-transparent focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Password"
                             />
                         </div>
                         <div>
                             <label
-                                htmlFor="confirm-password"
+                                htmlFor="confirmPassword"
                                 className="sr-only"
                             >
                                 Confirm Password
                             </label>
                             <input
-                                id="confirm-password"
-                                name="confirm-password"
+                                id="confirmPassword"
+                                name="confirmPassword"
                                 type="password"
                                 autoComplete="new-password"
                                 required
-                                value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
+                                onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 bg-transparent rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Confirm Password"
                             />
@@ -117,7 +150,11 @@ const RegisterPage = () => {
                                     />
                                 </svg>
                             </span>
-                            Sign up
+                            {loading ? (
+                                <ClipLoader size={15} color={"#ffffff"} />
+                            ) : (
+                                "Sign Up"
+                            )}
                         </button>
                     </div>
                 </form>

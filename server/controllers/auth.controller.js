@@ -7,6 +7,7 @@ export const register = async (req, res) => {
     try {
         // deconstruct the req.body
         const { username, email, password, confirmPassword } = req.body;
+        console.log(req.body);
 
         // Check if username is taken
         const user = await User.findOne({ username });
@@ -34,6 +35,7 @@ export const register = async (req, res) => {
 
         // Check if passwords match
         if (password !== confirmPassword) {
+            console.log(password, confirmPassword);
             return res.status(400).json({ message: "Passwords don't match" });
         }
 
@@ -68,15 +70,15 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         // deconstruct the req.body
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
         // Check for empty fields
-        if (!username || !password) {
+        if (!email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         // Check if username is taken
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
