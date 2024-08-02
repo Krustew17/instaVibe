@@ -25,7 +25,6 @@ export default function Main() {
 
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value);
-        console.log(description);
     };
 
     const handleSearchClick = () => {
@@ -172,6 +171,7 @@ export default function Main() {
             setDescription("");
             fetchPosts();
             fileInputRef.current.value = "";
+            console.log("cleared inputs");
         } catch (error) {
             setError(error.message);
         } finally {
@@ -214,6 +214,7 @@ export default function Main() {
                         type="textarea"
                         placeholder="What's on your mind?"
                         name="description"
+                        value={description}
                         onChange={handleDescriptionChange}
                         className="w-full overflow-hidden resize-none border-b-2 border-slate-200 dark:border-slate-900 focus:outline-none bg-transparent"
                     />
@@ -346,8 +347,11 @@ export default function Main() {
             {posts &&
                 posts.map((post) => {
                     return (
-                        <Link to={`/${post.username}/post/${post._id}`}>
-                            <Post key={post._id} {...post} />{" "}
+                        <Link
+                            to={`${post.createdBy.username}/post/${post.id}`}
+                            key={post._id}
+                        >
+                            <Post {...post} />
                         </Link>
                     );
                 })}
