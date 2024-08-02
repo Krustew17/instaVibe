@@ -71,8 +71,9 @@ export const getPostDetails = async (req, res) => {
 // CREATE POST
 export const createPost = async (req, res) => {
     try {
+        console.log(req.body);
         // deconstruct the req.body
-        const { description } = req.body;
+        const { gifUrl, description } = req.body;
 
         // Get the request user and save into variable
         const user = req.user;
@@ -99,6 +100,14 @@ export const createPost = async (req, res) => {
                 }
             );
         }
+        // check if the request has a gif
+        if (gifUrl) {
+            imageUrl = gifUrl;
+        }
+
+        // Validate the post
+        if (!imageUrl)
+            return res.status(400).json({ message: "image/gif required!" });
 
         // Create the new post object
         const newPost = new Post({
@@ -108,6 +117,7 @@ export const createPost = async (req, res) => {
             picturePath: imageUrl,
             likes: {},
             comments: [],
+            createdAt: new Date(),
         });
 
         // Save the new post

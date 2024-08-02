@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.get("/all", getAllPosts);
 router.get("/:username/:id", getPostDetails);
-router.post("/create", authMiddleware, upload.single("image"), createPost);
+router.post("/upload", authMiddleware, upload.single("image"), createPost);
 router.post("/:id/like", authMiddleware, likePost);
 router.post("/:id/comment", authMiddleware, commentPost);
 router.post(

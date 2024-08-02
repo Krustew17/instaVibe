@@ -7,7 +7,7 @@ import likePost from "../utils/likePost";
 
 const Post = ({
     id,
-    createdBy,
+    createdBy: { username, profilePicture, _id },
     description,
     picturePath,
     createdAt,
@@ -15,7 +15,7 @@ const Post = ({
     likesCount: initialLikesCount,
     comments,
 }) => {
-    const [isLiked, setIsLiked] = useState(!!likes[createdBy._id]);
+    const [isLiked, setIsLiked] = useState(!!likes[_id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
 
     // CONVERT CREATEDATE
@@ -40,24 +40,24 @@ const Post = ({
     return (
         <Link
             className="flex p-4 border-b border-gray-200 dark:border-gray-700"
-            to={`${createdBy.username}/post/${id}`}
+            to={`${username}/post/${id}`}
         >
             <img
-                src={createdBy.profilePicture}
-                alt={`${createdBy.username}'s profile`}
+                src={profilePicture}
+                alt={`${username}'s profile`}
                 className="w-12 h-12 rounded-full mr-4"
             />
             <div className="flex-1">
                 <div className="flex justify-between items-center">
                     <div className="flex gap-3">
-                        <span className="font-bold">@{createdBy.username}</span>
+                        <span className="font-bold">@{username}</span>
                         <span className="text-gray-400 dark:text-gray-600 ">
                             {formattedDate}
                         </span>
                     </div>
                 </div>
                 <div className="mt-2">
-                    <p className="text-xl">{description}</p>
+                    <p className="text-xl overflow-hidden">{description}</p>
                     {picturePath && (
                         <img
                             src={picturePath}
@@ -69,7 +69,7 @@ const Post = ({
                 <div className="flex gap-6 mt-4 text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-1">
                         <div
-                            className="hover:text-red-500 gap-1 flex"
+                            className="hover:text-red-500 p-1 hover:bg-gray-800 rounded gap-1 flex"
                             onClick={handleLikePost}
                         >
                             {isLiked ? (
