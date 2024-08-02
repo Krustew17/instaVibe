@@ -33,6 +33,6 @@ export const authMiddleware = async (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-        return res.status(400).json({ message: "Something went wrong" });
+        return res.status(400).json({ message: "Unauthorized" });
     }
 };

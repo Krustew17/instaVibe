@@ -1,13 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FaImage, FaSearch, FaTimes } from "react-icons/fa";
 import { MdGifBox } from "react-icons/md";
 import { Link, useSearchParams } from "react-router-dom";
 import Post from "./post";
+import makeRequest from "../utils/makeRequest";
+import ClipLoader from "react-spinners/ClipLoader";
+import Debounce from "../utils/debouce";
 
 export default function Main() {
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get("tab") || "for_you";
-
     const [posts, setPosts] = useState([]);
     const [query, setQuery] = useState("");
     const [gifs, setGifs] = useState([]);
@@ -15,11 +17,16 @@ export default function Main() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedGif, setSelectedGif] = useState(null);
-    const [uploadedImage, setUploadedImage] = useState(null); // State for storing uploaded image
+    const [uploadedImage, setUploadedImage] = useState(null);
+    const [image, setImage] = useState(null);
     const fileInputRef = useRef(null);
+    const [description, setDescription] = useState("");
 
-    const handleInputChange = (e) => {
-        setQuery(e.target.value);
+    const DEBOUNCE_DELAY = 1000;
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+        console.log(description);
     };
 
     const handleSearchClick = () => {
@@ -32,7 +39,7 @@ export default function Main() {
         setGifs([]);
     };
 
-    const fetchGifs = async () => {
+    const fetchGifs = useCallback(async () => {
         setLoading(true);
         setError(null);
 
@@ -43,7 +50,8 @@ export default function Main() {
         }
 
         const apiKey = import.meta.env.VITE_TENOR_API;
-        const url = `https://tenor.googleapis.com/v2/search?key=${apiKey}&q=${query}&limit=1000`;
+
+        const url = `https://tenor.googleapis.com/v2/search?key=${apiKey}&q=${query}&limit=100&media_filter=gif`;
 
         try {
             const response = await fetch(url);
@@ -65,10 +73,22 @@ export default function Main() {
         } finally {
             setLoading(false);
         }
+    }, [query]);
+
+    const debouncedFetchGifs = useCallback(
+        Debounce(fetchGifs, DEBOUNCE_DELAY),
+        [fetchGifs]
+    );
+
+    const handleInputChange = (e) => {
+        setQuery(e.target.value);
+        debouncedFetchGifs();
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        setImage(file);
+        setError("");
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
@@ -84,6 +104,8 @@ export default function Main() {
 
     const selectGif = (gifUrl) => {
         setSelectedGif(gifUrl);
+        setQuery("");
+        setGifs([]);
         setShowGifModal(false);
     };
 
@@ -100,10 +122,68 @@ export default function Main() {
 
     const fetchPosts = async () => {
         const host = import.meta.env.VITE_SERVER_HOST;
-        const res = await fetch(`${host}/posts/all`);
-        const data = await res.json();
+        const data = await makeRequest(`${host}/posts/all`);
         setPosts(data);
         return data;
+    };
+
+    const handleSubmit = async (e) => {
+        try {
+            e.preventDefault();
+            setLoading(true);
+
+            const formData = new FormData();
+            if (uploadedImage) {
+                formData.append("image", image);
+            }
+            formData.append("description", description);
+
+            const host = import.meta.env.VITE_SERVER_HOST;
+            let request;
+
+            // const token = localStorage.getItem("token");
+            const token =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjU5MDQ4MywiZXhwIjoxNzIyNjc2ODgzfQ.86THG-crd7Ec148o8GEbh-jsEVuFjFcq94G_X5euWM8";
+
+            if (uploadedImage) {
+                request = await fetch(`${host}/posts/upload`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: "Bearer " + token,
+                    },
+                    body: formData,
+                });
+            } else {
+                request = await fetch(`${host}/posts/upload`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: "Bearer " + token,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        gifUrl: selectedGif,
+                        description: description,
+                    }),
+                });
+            }
+            const data = await request.json();
+
+            if (!request.ok) {
+                throw new Error(data.message);
+            }
+
+            setUploadedImage(null);
+            setImage(null);
+            setSelectedGif(null);
+            setError("");
+            setDescription("");
+            fetchPosts();
+            fileInputRef.current.value = "";
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -128,7 +208,10 @@ export default function Main() {
                     Following
                 </Link>
             </div>
-            <div className="p-5 flex w-full border-b-2 border-slate-200 dark:border-slate-900">
+            <form
+                className="p-5 flex w-full border-b-2 border-slate-200 dark:border-slate-900"
+                onSubmit={handleSubmit}
+            >
                 <img
                     src="/default_avatar.jpg"
                     className="max-h-12 max-w-12 rounded-full"
@@ -137,6 +220,8 @@ export default function Main() {
                     <textarea
                         type="textarea"
                         placeholder="What's on your mind?"
+                        name="description"
+                        onChange={handleDescriptionChange}
                         className="w-full overflow-hidden resize-none border-b-2 border-slate-200 dark:border-slate-900 focus:outline-none bg-transparent"
                     />
                     {selectedGif && (
@@ -160,12 +245,13 @@ export default function Main() {
                             <img
                                 src={uploadedImage}
                                 alt="Uploaded"
-                                className="w-full max-h-40 object-cover rounded-md"
+                                className="w-full object-cover rounded-md"
                             />
                             <button
                                 onClick={removeUploadedImage}
                                 className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
                                 aria-label="Remove Image"
+                                type="button"
                             >
                                 <FaTimes />
                             </button>
@@ -185,6 +271,7 @@ export default function Main() {
                                 onClick={handleIconClick}
                                 className="p-2 rounded-full text-blue-500"
                                 aria-label="Upload File"
+                                type="button"
                             >
                                 <FaImage className="text-2xl" />
                             </button>
@@ -192,20 +279,30 @@ export default function Main() {
                             <button
                                 onClick={() => setShowGifModal(true)}
                                 className="text-blue-500 text-3xl"
+                                type="button"
                             >
                                 <MdGifBox />
                             </button>
                         </div>
-                        <button className="bg-blue-500 px-6 rounded-full text-sm font-bold text-white">
-                            Post
+                        <div className="text-red-500">{error}</div>
+                        <button
+                            className="bg-blue-500 px-6 rounded-full text-sm font-bold text-white"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <ClipLoader size={15} color={"#ffffff"} />
+                            ) : (
+                                "Post"
+                            )}
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
 
             {showGifModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-3xl w-full h-[80vh] md:h-[60vh] overflow-auto">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-3xl w-full h-[70vh] md:h-[80vh] overflow-auto">
                         {" "}
                         <h2 className="text-lg font-semibold mb-4 text-center">
                             Select a GIF
@@ -213,7 +310,7 @@ export default function Main() {
                         <div className="flex items-center mb-4 border rounded-xl ">
                             <button
                                 onClick={handleSearchClick}
-                                className="text-white p-2 rounded-xl mr-1"
+                                className="dark:text-white p-2 rounded-xl mr-1"
                             >
                                 <FaSearch />
                             </button>
