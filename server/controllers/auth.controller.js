@@ -83,8 +83,10 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: "User not found" });
         }
 
+        const { password: userPassword, ...userData } = user._doc;
+
         // Check if password is correct
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        const isPasswordCorrect = await bcrypt.compare(password, userPassword);
         if (!isPasswordCorrect) {
             return res.status(400).json({ message: "Incorrect credentials." });
         }
@@ -93,10 +95,9 @@ export const login = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1d",
         });
-
-        // Send the response
         res.status(200).json({
             token,
+            user: userData,
         });
     } catch (error) {
         // Handle any errors

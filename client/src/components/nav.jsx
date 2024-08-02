@@ -7,6 +7,7 @@ import { FaRegMessage } from "react-icons/fa6";
 import { IoNotificationsOutline, IoNotificationsSharp } from "react-icons/io5";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { CiCirclePlus } from "react-icons/ci";
+import { useSelector } from "react-redux";
 
 import { NavLink } from "react-router-dom";
 import React, { useState } from "react";
@@ -14,6 +15,8 @@ import React, { useState } from "react";
 export default function Nav() {
     const [activeTab, setActiveTab] = useState("/");
     const [isDarkMode, setisDarkMode] = useState(true);
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const user = useSelector((state) => state.auth.user);
 
     const handleNavClick = (path) => {
         setActiveTab(path);
@@ -119,17 +122,35 @@ export default function Nav() {
                     )}
                     <span className="hidden lg:block">Create</span>
                 </NavLink>
-                {/* <NavLink
-                    to="/profile"
-                    className="flex gap-4 items-center text-customBase "
-                    onClick={() => handleNavClick("/profile")}
-                >
-                    <CiCirclePlus
-                        className="text-2xl"
-                        style={{ marginLeft: "-2px" }}
-                    />
-                    <span className="hidden lg:block">Profile</span>
-                </NavLink> */}
+                {(!isAuthenticated && (
+                    <NavLink
+                        to="/login"
+                        className="flex gap-4 items-center text-customBase "
+                        onClick={() => handleNavClick("/login")}
+                    >
+                        <span className="hidden lg:block">Login</span>
+                    </NavLink>
+                )) || (
+                    <NavLink
+                        to="/profile"
+                        className={`flex gap-4 items-center text-customBase ${
+                            activeTab === "/profile" ? "font-semibold" : ""
+                        }`}
+                        onClick={() => handleNavClick("/profile")}
+                    >
+                        {/* <CiCirclePlus
+                            className="text-2xl"
+                            style={{ marginLeft: "-2px" }}
+                        /> */}
+                        <img
+                            src={user.profilePicture}
+                            className="w-6 h-6 rounded-full"
+                            alt="profile"
+                            style={{ marginLeft: "-2px" }}
+                        />
+                        <span className="hidden lg:block">Profile</span>
+                    </NavLink>
+                )}
                 <div className="mt-auto mb-6 hidden md:block">
                     <DarkModeSwitch
                         checked={isDarkMode}

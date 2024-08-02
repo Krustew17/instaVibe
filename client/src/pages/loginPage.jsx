@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/auth/authSlice.js";
+import ClipLoader from "react-spinners/ClipLoader.js";
 
 const LoginPage = () => {
     const [data, setData] = useState({});
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -12,7 +16,7 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         const host = import.meta.env.VITE_SERVER_HOST;
         const fetchUrl = `${host}/auth/login`;
         const headers = {
@@ -23,6 +27,7 @@ const LoginPage = () => {
             email: data.email,
             password: data.password,
         });
+
         try {
             const response = await fetch(fetchUrl, {
                 method: "POST",
@@ -31,14 +36,14 @@ const LoginPage = () => {
             });
 
             const data = await response.json();
+
             if (response.status !== 200) {
                 setLoading(false);
                 setError(data.message);
                 return;
             }
-
-            setError("");
-            console.log(data);
+            dispatch(login({ token: data.token, user: data.user }));
+            // window.location.replace("/");
         } catch (error) {
             setError(error.message);
         } finally {

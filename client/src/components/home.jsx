@@ -5,6 +5,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import Post from "./post";
 import makeRequest from "../utils/makeRequest";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useSelector } from "react-redux";
 
 export default function Main() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -20,6 +21,9 @@ export default function Main() {
     const [image, setImage] = useState(null);
     const fileInputRef = useRef(null);
     const [description, setDescription] = useState("");
+
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    console.log(isAuthenticated);
 
     const handlePostClick = () => {
         sessionStorage.setItem("scrollPosition", window.scrollY);
