@@ -1,14 +1,49 @@
 import React, { useState } from "react";
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [data, setData] = useState({});
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setData({ ...data, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission
-        console.log("Email:", email);
-        console.log("Password:", password);
+
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/auth/login`;
+        const headers = {
+            "Content-Type": "application/json",
+        };
+
+        const body = JSON.stringify({
+            email: data.email,
+            password: data.password,
+        });
+        try {
+            const response = await fetch(fetchUrl, {
+                method: "POST",
+                headers,
+                body,
+            });
+
+            const data = await response.json();
+            if (response.status !== 200) {
+                setLoading(false);
+                setError(data.message);
+                return;
+            }
+
+            setError("");
+            console.log(data);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -18,6 +53,11 @@ const LoginPage = () => {
                     Sign in to your account
                 </h2>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="text-red-500 text-lg text-center font-bold">
+                            {error}
+                        </div>
+                    )}
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
                             <label htmlFor="email-address" className="sr-only">
@@ -29,8 +69,7 @@ const LoginPage = () => {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border border-gray-300 bg-transparent placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Email address"
                             />
@@ -45,8 +84,7 @@ const LoginPage = () => {
                                 type="password"
                                 autoComplete="current-password"
                                 required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border border-gray-300 bg-transparent placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Password"
                             />
@@ -99,7 +137,11 @@ const LoginPage = () => {
                                     />
                                 </svg>
                             </span>
-                            Sign in
+                            {loading ? (
+                                <ClipLoader size={15} color={"#ffffff"} />
+                            ) : (
+                                "Sign In"
+                            )}
                         </button>
                     </div>
                 </form>
