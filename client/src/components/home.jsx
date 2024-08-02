@@ -5,7 +5,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import Post from "./post";
 import makeRequest from "../utils/makeRequest";
 import ClipLoader from "react-spinners/ClipLoader";
-import Debounce from "../utils/debouce";
 
 export default function Main() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -75,14 +74,8 @@ export default function Main() {
         }
     }, [query]);
 
-    const debouncedFetchGifs = useCallback(
-        Debounce(fetchGifs, DEBOUNCE_DELAY),
-        [fetchGifs]
-    );
-
     const handleInputChange = (e) => {
         setQuery(e.target.value);
-        debouncedFetchGifs();
     };
 
     const handleFileChange = (e) => {
@@ -301,7 +294,7 @@ export default function Main() {
             </form>
 
             {showGifModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-3xl w-full h-[70vh] md:h-[80vh] overflow-auto">
                         {" "}
                         <h2 className="text-lg font-semibold mb-4 text-center">
@@ -350,7 +343,14 @@ export default function Main() {
                     </div>
                 </div>
             )}
-            {posts && posts.map((post) => <Post key={post._id} {...post} />)}
+            {posts &&
+                posts.map((post) => {
+                    return (
+                        <Link to={`/${post.username}/post/${post._id}`}>
+                            <Post key={post._id} {...post} />{" "}
+                        </Link>
+                    );
+                })}
         </div>
     );
 }
