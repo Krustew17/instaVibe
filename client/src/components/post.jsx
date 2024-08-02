@@ -38,14 +38,7 @@ const Post = ({
     };
 
     return (
-<<<<<<< Updated upstream
-        <div
-            className="flex p-4 border-b border-gray-200 dark:border-gray-700"
-            to={`${username}/post/${id}`}
-        >
-=======
         <div className="flex p-4 border-b border-gray-200 dark:border-gray-700">
->>>>>>> Stashed changes
             <img
                 src={profilePicture}
                 alt={`${username}'s profile`}
@@ -73,11 +66,7 @@ const Post = ({
                 <div className="flex gap-6 mt-4 text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-1">
                         <div
-<<<<<<< Updated upstream
-                            className="hover:text-red-500 p-1rounded gap-1 flex cursor-pointer"
-=======
                             className="hover:text-red-500 p-1 rounded gap-1 flex cursor-pointer"
->>>>>>> Stashed changes
                             onClick={handleLikePost}
                         >
                             {isLiked ? (

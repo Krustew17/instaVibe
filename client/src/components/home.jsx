@@ -347,16 +347,11 @@ export default function Main() {
             {posts &&
                 posts.map((post) => {
                     return (
-<<<<<<< Updated upstream
-                        <Link to={`/${post.username}/post/${post._id}`}>
-                            <Post key={post._id} {...post} />{" "}
-=======
                         <Link
                             to={`${post.createdBy.username}/post/${post.id}`}
                             key={post._id}
                         >
                             <Post {...post} />
->>>>>>> Stashed changes
                         </Link>
                     );
                 })}
