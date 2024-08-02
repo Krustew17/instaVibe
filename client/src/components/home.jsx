@@ -21,7 +21,9 @@ export default function Main() {
     const fileInputRef = useRef(null);
     const [description, setDescription] = useState("");
 
-    const DEBOUNCE_DELAY = 1000;
+    const handlePostClick = () => {
+        sessionStorage.setItem("scrollPosition", window.scrollY);
+    };
 
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value);
@@ -350,6 +352,7 @@ export default function Main() {
                         <Link
                             to={`${post.createdBy.username}/post/${post.id}`}
                             key={post._id}
+                            onClick={handlePostClick}
                         >
                             <Post {...post} />
                         </Link>
