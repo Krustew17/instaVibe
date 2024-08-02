@@ -38,7 +38,7 @@ const Post = ({
     };
 
     return (
-        <Link
+        <div
             className="flex p-4 border-b border-gray-200 dark:border-gray-700"
             to={`${username}/post/${id}`}
         >
@@ -69,7 +69,7 @@ const Post = ({
                 <div className="flex gap-6 mt-4 text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-1">
                         <div
-                            className="hover:text-red-500 p-1 hover:bg-gray-800 rounded gap-1 flex"
+                            className="hover:text-red-500 p-1rounded gap-1 flex cursor-pointer"
                             onClick={handleLikePost}
                         >
                             {isLiked ? (
@@ -80,18 +80,18 @@ const Post = ({
                             <span>{likesCount}</span>
                         </div>
                     </div>
-                    <div className="flex hover:text-blue-400">
+                    <div className="flex hover:text-blue-400 cursor-pointer">
                         <div className="flex items-center space-x-1">
                             <FaRegComment className="text-lg" />
                             <span>{comments.length}</span>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-1 hover:text-yellow-600">
+                    <div className="flex items-center space-x-1 hover:text-yellow-600 cursor-pointer">
                         <FaShare />
                     </div>
                 </div>
             </div>
-        </Link>
+        </div>
     );
 };
 

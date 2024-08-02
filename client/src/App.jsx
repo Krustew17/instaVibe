@@ -4,6 +4,7 @@ import Nav from "./components/nav";
 import Main from "./components/home";
 import RightSideBar from "./components/rightSideBar";
 import PostDetails from "./components/postDetails";
+import Search from "./components/Search";
 
 function App() {
     return (
@@ -16,7 +17,7 @@ function App() {
                         path="/:username/post/:id"
                         element={<PostDetails />}
                     />
-                    <Route path="/search" element={<div>he</div>} />
+                    <Route path="/search" element={<Search />} />
                     <Route path="/chat" element={<div>he</div>} />
                     <Route path="/notifications" element={<div>he</div>} />
                     <Route path="/create" element={<div>he</div>} />
