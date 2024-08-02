@@ -6,7 +6,6 @@ const initialState = {
     user: null,
 };
 
-// Function to load state from local storage
 const loadStateFromLocalStorage = () => {
     try {
         const serializedState = localStorage.getItem("authState");
@@ -19,7 +18,6 @@ const loadStateFromLocalStorage = () => {
     }
 };
 
-// Function to save state to local storage
 const saveStateToLocalStorage = (state) => {
     try {
         const serializedState = JSON.stringify(state);

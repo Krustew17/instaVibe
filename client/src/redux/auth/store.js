@@ -7,7 +7,6 @@ const store = configureStore({
     },
 });
 
-// Load state from local storage and rehydrate the store
 const authState = JSON.parse(localStorage.getItem("authState"));
 if (authState) {
     store.dispatch(rehydrate(authState));
