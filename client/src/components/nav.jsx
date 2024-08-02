@@ -119,7 +119,7 @@ export default function Nav() {
                     )}
                     <span className="hidden lg:block">Create</span>
                 </NavLink>
-                <NavLink
+                {/* <NavLink
                     to="/profile"
                     className="flex gap-4 items-center text-customBase "
                     onClick={() => handleNavClick("/profile")}
@@ -129,7 +129,7 @@ export default function Nav() {
                         style={{ marginLeft: "-2px" }}
                     />
                     <span className="hidden lg:block">Profile</span>
-                </NavLink>
+                </NavLink> */}
                 <div className="mt-auto mb-6 hidden md:block">
                     <DarkModeSwitch
                         checked={isDarkMode}
