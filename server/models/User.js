@@ -9,6 +9,12 @@ const UserSchema = new mongoose.Schema(
             min: 2,
             max: 20,
         },
+        displayName: {
+            type: String,
+            unique: true,
+            min: 2,
+            max: 20,
+        },
         email: {
             type: String,
             required: true,

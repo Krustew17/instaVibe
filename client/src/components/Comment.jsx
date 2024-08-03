@@ -3,21 +3,28 @@ import convertDate from "../utils/convertDate";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 import { FaRegComment } from "react-icons/fa";
 import likeComment from "../utils/likeComment";
+import { useSelector } from "react-redux";
 
 export default function Comment({
     id,
     comment,
-    user: { username, profilePicture, _id },
+    user: { username, profilePicture },
     createdAt,
     replies,
     likes,
     likesCount: initialLikesCount,
 }) {
-    const [isLiked, setIsLiked] = useState(!!likes[_id]);
+    const user = useSelector((state) => state.auth.user);
+    const [isLiked, setIsLiked] = useState(!!likes[user?._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
 
     const handleLikeComment = async (e) => {
         e.preventDefault();
+
+        if (!user) {
+            return;
+        }
+
         const {
             success,
             isLiked: newIsLiked,
@@ -34,7 +41,7 @@ export default function Comment({
     const formattedDate = convertDate(createdAt);
 
     return (
-        <div className="flex p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex p-4 border-b border-slate-200 dark:border-slate-800">
             <img
                 src={profilePicture || "/default_avatar.jpg"}
                 alt={`${username}'s profile`}
@@ -54,7 +61,7 @@ export default function Comment({
                 </div>
                 <div className="flex gap-6 mt-2 md:mt-4 text-gray-500 dark:text-gray-400">
                     <div
-                        className="flex gap-1 cursor-pointer hover:text-red-500"
+                        className="flex gap-1 cursor-pointer hover:text-red-500 select-none"
                         onClick={handleLikeComment}
                     >
                         {isLiked ? (
@@ -64,10 +71,10 @@ export default function Comment({
                         )}
                         <span>{likesCount}</span>
                     </div>
-                    <div className="flex items-center gap-1 hover:text-blue-400 hover:cursor-pointer select-none">
+                    {/* <div className="flex items-center gap-1 hover:text-blue-400 hover:cursor-pointer select-none">
                         <FaRegComment className="text-lg" />
                         <span>{replies.length}</span>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

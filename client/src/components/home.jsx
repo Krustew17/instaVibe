@@ -23,7 +23,7 @@ export default function Main() {
     const [description, setDescription] = useState("");
 
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-    console.log(isAuthenticated);
+    const user = useSelector((state) => state.auth.user);
 
     const handlePostClick = () => {
         sessionStorage.setItem("scrollPosition", window.scrollY);
@@ -120,7 +120,7 @@ export default function Main() {
 
     const fetchPosts = async () => {
         const host = import.meta.env.VITE_SERVER_HOST;
-        const data = await makeRequest(`${host}/posts/all`);
+        const { data } = await makeRequest(`${host}/posts/all`);
         setPosts(data);
         return data;
     };
@@ -140,8 +140,7 @@ export default function Main() {
             let request;
 
             // const token = localStorage.getItem("token");
-            const token =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjU5MDQ4MywiZXhwIjoxNzIyNjc2ODgzfQ.86THG-crd7Ec148o8GEbh-jsEVuFjFcq94G_X5euWM8";
+            const token = JSON.parse(localStorage.getItem("authState")).token;
 
             if (uploadedImage) {
                 request = await fetch(`${host}/posts/upload`, {
@@ -207,98 +206,102 @@ export default function Main() {
                     Following
                 </Link>
             </div>
-            <form
-                className="p-5 flex w-full border-b-2 border-slate-200 dark:border-slate-900"
-                onSubmit={handleSubmit}
-            >
-                <img
-                    src="/default_avatar.jpg"
-                    className="max-h-12 max-w-12 rounded-full"
-                />
-                <div className="ml-5 flex-1 flex-col w-full max-h-full">
-                    <textarea
-                        type="textarea"
-                        placeholder="What's on your mind?"
-                        name="description"
-                        value={description}
-                        onChange={handleDescriptionChange}
-                        className="w-full overflow-hidden resize-none border-b-2 border-slate-200 dark:border-slate-900 focus:outline-none bg-transparent"
+            {isAuthenticated && (
+                <form
+                    className="p-5 flex w-full border-b-2 border-slate-200 dark:border-slate-900"
+                    onSubmit={handleSubmit}
+                >
+                    <img
+                        src={`${user?.profilePicture}`}
+                        className="max-h-12 max-w-12 rounded-full"
                     />
-                    {selectedGif && (
-                        <div className="relative mt-2">
-                            <img
-                                src={selectedGif}
-                                alt="Selected GIF"
-                                className="w-full object-cover rounded-md"
-                            />
-                            <button
-                                onClick={removeSelectedGif}
-                                className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
-                                aria-label="Remove GIF"
-                            >
-                                <FaTimes />
-                            </button>
-                        </div>
-                    )}
-                    {uploadedImage && (
-                        <div className="relative mt-2">
-                            <img
-                                src={uploadedImage}
-                                alt="Uploaded"
-                                className="w-full object-cover rounded-md"
-                            />
-                            <button
-                                onClick={removeUploadedImage}
-                                className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
-                                aria-label="Remove Image"
-                                type="button"
-                            >
-                                <FaTimes />
-                            </button>
-                        </div>
-                    )}
-                    <div className="flex justify-between w-full mt-2">
-                        <div className="flex items-center">
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleFileChange}
-                                aria-label="upload a file"
-                                className="hidden"
-                                accept="image/*"
-                            />
-                            <button
-                                onClick={handleIconClick}
-                                className="p-2 rounded-full text-blue-500"
-                                aria-label="Upload File"
-                                type="button"
-                            >
-                                <FaImage className="text-2xl" />
-                            </button>
+                    <div className="ml-5 flex-1 flex-col w-full max-h-full">
+                        <textarea
+                            type="textarea"
+                            placeholder="What's on your mind?"
+                            name="description"
+                            value={description}
+                            onChange={handleDescriptionChange}
+                            className="w-full overflow-hidden resize-none border-b-2 border-slate-200 dark:border-slate-900 focus:outline-none bg-transparent"
+                        />
+                        {selectedGif && (
+                            <div className="relative mt-2">
+                                <img
+                                    src={selectedGif}
+                                    alt="Selected GIF"
+                                    className="w-full object-cover rounded-md"
+                                />
+                                <button
+                                    onClick={removeSelectedGif}
+                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                                    aria-label="Remove GIF"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+                        )}
+                        {uploadedImage && (
+                            <div className="relative mt-2">
+                                <img
+                                    src={uploadedImage}
+                                    alt="Uploaded"
+                                    className="w-full object-cover rounded-md"
+                                />
+                                <button
+                                    onClick={removeUploadedImage}
+                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                                    aria-label="Remove Image"
+                                    type="button"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+                        )}
+                        <div className="flex justify-between w-full mt-2">
+                            <div className="flex items-center">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    aria-label="upload a file"
+                                    className="hidden"
+                                    accept="image/*"
+                                />
+                                <button
+                                    onClick={handleIconClick}
+                                    className="p-2 rounded-full text-blue-500"
+                                    aria-label="Upload File"
+                                    type="button"
+                                >
+                                    <FaImage className="text-2xl" />
+                                </button>
 
+                                <button
+                                    onClick={() => setShowGifModal(true)}
+                                    className="text-blue-500 text-3xl"
+                                    type="button"
+                                >
+                                    <MdGifBox />
+                                </button>
+                            </div>
+                            <div className="text-red-500 font-semibold flex items-center">
+                                {error}
+                            </div>
                             <button
-                                onClick={() => setShowGifModal(true)}
-                                className="text-blue-500 text-3xl"
-                                type="button"
+                                className="bg-blue-500 px-6 rounded-full text-sm font-bold text-white"
+                                type="submit"
+                                disabled={loading}
                             >
-                                <MdGifBox />
+                                {loading ? (
+                                    <ClipLoader size={15} color={"#ffffff"} />
+                                ) : (
+                                    "Post"
+                                )}
                             </button>
                         </div>
-                        <div className="text-red-500">{error}</div>
-                        <button
-                            className="bg-blue-500 px-6 rounded-full text-sm font-bold text-white"
-                            type="submit"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <ClipLoader size={15} color={"#ffffff"} />
-                            ) : (
-                                "Post"
-                            )}
-                        </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            )}
 
             {showGifModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">

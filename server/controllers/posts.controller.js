@@ -37,6 +37,11 @@ export const getAllPosts = async (req, res) => {
 export const getPostDetails = async (req, res) => {
     try {
         // Retrieve the post
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Post not found" });
+        }
+
         const post = await Post.findById(req.params.id)
             .populate({
                 path: "comments",
@@ -49,16 +54,18 @@ export const getPostDetails = async (req, res) => {
                     {
                         path: "replies",
                         select: "comment user createdAt",
-                        populate: {
-                            path: "user",
-                            select: "username profilePicture",
-                        },
                     },
                 ],
             })
             .populate({ path: "createdBy", select: "username profilePicture" });
-        // If post doesn't exist return 404 error
-        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // If post doesn't exist return 404 erro
+        if (!post) return res.status(400).json({ message: "Post not found" });
+
+        // Sort the comments by createdAt in descending order
+        post.comments.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
 
         // Send the response
         res.status(200).json(post);
@@ -234,10 +241,17 @@ export const commentPost = async (req, res) => {
         const postId = req.params.id;
         const user = req.user;
 
+        // validate the comment
+        if (!mongoose.Types.ObjectId.isValid(postId)) {
+            return res.status(400).json({ message: "Post not found" });
+        }
+
+        const post = await Post.findById(postId);
+        if (!post)
+            return res.status(400).json({ message: "Comment not found" });
+
         // check if user exists
         if (!user) return res.status(400).json({ message: "bad request" });
-
-        const post = await validation(postId, user, res);
 
         // Check if comment is empty
         if (!comment) {
@@ -252,6 +266,7 @@ export const commentPost = async (req, res) => {
             post,
             likes: {},
             comments: [],
+            createdAt: new Date(),
         });
 
         // Save the new comment
@@ -316,7 +331,8 @@ export const replyComment = async (req, res) => {
         const user = req.user;
 
         // validate the post
-        const post = await validation(postId, user, res);
+        // const post = await validation(postId, user, res);
+        const post = await Post.findById(post);
         if (!post) return res.status(400).json({ message: "post not found" });
 
         // validate the comment
@@ -333,6 +349,7 @@ export const replyComment = async (req, res) => {
             user,
             reply,
             comment,
+            createdAt: new Date(),
         });
 
         // save the reply
