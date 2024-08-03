@@ -19,12 +19,12 @@ export const authMiddleware = async (req, res, next) => {
 
         // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         // Fetch user from the database
-        const user = await User.findById(decoded.id).select("-password");
+        const user = await User.findById(decoded.user._id).select("-password");
         if (!user) {
             return res.status(401).json({ message: "Unauthorized" });
         }
+        console.log(user);
 
         // Attach user information to the request object
         req.user = user;

@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import makeRequest from "../utils/makeRequest";
 import Comment from "./Comment";
 import Post from "./post";
+import { useSelector } from "react-redux";
 import { GoArrowLeft } from "react-icons/go";
+import ClipLoader from "react-spinners/ClipLoader";
 
 export default function PostDetails() {
     const [post, setPost] = useState(null);
-    const { username, id } = useParams();
+    const [comment, setComment] = useState("");
+    const { username, id, commentId } = useParams();
+    const user = useSelector((state) => state.auth.user);
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const commentData = post?.comments?.find(
+        (comment) => comment._id === commentId
+    );
+    console.log(commentData);
 
     const fetchPost = async () => {
         try {
             const host = import.meta.env.VITE_SERVER_HOST;
             const fetchUrl = `${host}/posts/${username}/${id}`;
 
-            const data = await makeRequest(fetchUrl);
+            const { data } = await makeRequest(fetchUrl);
 
             if (!data) return window.location.replace("/");
 
@@ -39,6 +51,38 @@ export default function PostDetails() {
         }, 0);
     };
 
+    const handleCommentSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/posts/${id}/comment`;
+        const body = JSON.stringify({ comment });
+        const headers = { "Content-Type": "application/json" };
+        try {
+            const { status, data } = await makeRequest(
+                fetchUrl,
+                "POST",
+                headers,
+                body
+            );
+            if (status !== 201) {
+                setError(data.message);
+                setTimeout(() => {
+                    setError("");
+                }, 3000);
+                return;
+            }
+            fetchPost();
+            setComment("");
+        } catch (error) {
+            console.log(error.message);
+            return;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (!post) return null;
 
     return (
@@ -46,14 +90,69 @@ export default function PostDetails() {
             <div onClick={goBack}>
                 <GoArrowLeft className="text-2xl m-2 md:ml-[80px] lg:ml-[260px]" />
             </div>
-            <div className=" md:ml-[70px] lg:ml-[250px]">
+            <div className=" md:ml-[70px] lg:ml-[250px] min-h-screen">
                 <Post {...post} />
-                <div className="mt-2 md:mt-4">
-                    {post.comments &&
-                        post.comments.map((comment, index) => (
-                            <Comment key={index} {...comment} />
-                        ))}
-                </div>
+                {isAuthenticated && (
+                    <form
+                        className="border-b border-slate-200 dark:border-slate-800 pb-2 px-4"
+                        onSubmit={handleCommentSubmit}
+                    >
+                        <div className="flex gap-4 p-2">
+                            <img
+                                src={user.profilePicture}
+                                alt="userPicture"
+                                className="w-12 h-12 rounded-full"
+                            />
+                            <textarea
+                                name="comment"
+                                id="reply"
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                className="w-full p-2 border border-slate-300 rounded-md dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent"
+                                placeholder="Add a comment"
+                            ></textarea>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <div className="text-red-500">
+                                {error && <p>{error}</p>}
+                            </div>
+                            <button className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                {loading ? (
+                                    <ClipLoader size={15} color={"#ffffff"} />
+                                ) : (
+                                    "Reply"
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                )}
+                {commentId ? (
+                    <>
+                        <Comment {...commentData} />
+                        {/* {commentData?.replies && (
+                            <div>
+                                {commentData.replies.map((reply, index) => (
+                                    <Comment
+                                        key={reply.id || index}
+                                        {...reply}
+                                    />
+                                ))}
+                            </div>
+                        )} */}
+                    </>
+                ) : (
+                    <div>
+                        {post.comments &&
+                            post.comments.map((comment) => (
+                                // <Link
+                                // key={comment.id}
+                                // to={`comment/${comment.id}`}
+                                // >
+                                <Comment {...comment} />
+                                // </Link>
+                            ))}
+                    </div>
+                )}
             </div>
         </div>
     );

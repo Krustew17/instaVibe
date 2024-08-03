@@ -19,13 +19,17 @@ function App() {
                         path="/:username/post/:id"
                         element={<PostDetails />}
                     />
+                    <Route
+                        path="/:username/post/:id/comment/:commentId"
+                        element={<PostDetails />}
+                    />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/chat" element={<div>he</div>} />
                     <Route path="/notifications" element={<div>he</div>} />
                     <Route path="/create" element={<div>he</div>} />
-                    <Route path="/profile" element={<div>he</div>} />
+                    <Route path="/:username" element={<div>he</div>} />
                 </Routes>
             </main>
             <RightSideBar />

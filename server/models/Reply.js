@@ -11,9 +11,10 @@ export const ReplySchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    reply: {
-        type: String,
-        required: true,
+    replies: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Reply",
+        default: [],
     },
     likes: {
         type: Map,

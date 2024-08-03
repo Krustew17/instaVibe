@@ -21,11 +21,12 @@ export const CommentSchema = new mongoose.Schema(
             type: Date,
             default: new Date(),
         },
-        replies: {
-            type: [mongoose.Schema.Types.ObjectId],
-            ref: "Reply",
-            default: [],
-        },
+        replies: [
+            {
+                type: [mongoose.Schema.Types.ObjectId],
+                ref: "Comment",
+            },
+        ],
         likes: {
             type: Map,
             of: Boolean,

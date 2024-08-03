@@ -31,7 +31,7 @@ export default function Nav() {
         <div className="h-screen">
             <div
                 className="bg-white dark:bg-black md:w-[70px] w-full justify-between px-5 cxs:px-16 lg:w-[250px] dark:text-white fixed md:h-screen border-t-2 h-[50px] bottom-0 z-50
-            md:overflow-auto flex md:flex-col md:pl-6 md:pr-5 md:gap-8 text-3xl list-none md:border-r-[2px] border-slate-200 dark:border-slate-900"
+            md:overflow-auto flex md:flex-col md:pl-6 md:pr-5 md:gap-8 text-3xl list-none md:border-r-[2px] border-slate-200 dark:border-slate-900 select-none"
             >
                 <h1 className="text-2xl mt-6 font-Pacifico mb-10 absolute md:relative">
                     <span className="hidden lg:block">instaVibe</span>
@@ -122,26 +122,16 @@ export default function Nav() {
                     )}
                     <span className="hidden lg:block">Create</span>
                 </NavLink>
-                {(!isAuthenticated && (
+                {isAuthenticated && (
                     <NavLink
-                        to="/login"
-                        className="flex gap-4 items-center text-customBase "
-                        onClick={() => handleNavClick("/login")}
-                    >
-                        <span className="hidden lg:block">Login</span>
-                    </NavLink>
-                )) || (
-                    <NavLink
-                        to="/profile"
+                        to={`/${user.username}`}
                         className={`flex gap-4 items-center text-customBase ${
-                            activeTab === "/profile" ? "font-semibold" : ""
+                            activeTab === `/${user.username}`
+                                ? "font-semibold"
+                                : ""
                         }`}
-                        onClick={() => handleNavClick("/profile")}
+                        onClick={() => handleNavClick(`/${user.username}`)}
                     >
-                        {/* <CiCirclePlus
-                            className="text-2xl"
-                            style={{ marginLeft: "-2px" }}
-                        /> */}
                         <img
                             src={user.profilePicture}
                             className="w-6 h-6 rounded-full"

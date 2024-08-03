@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { FaRegComment, FaShare } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 import convertDate from "../utils/convertDate";
 import likePost from "../utils/likePost";
+import { useSelector } from "react-redux";
 
 const Post = ({
     id,
-    createdBy: { username, profilePicture, _id },
+    createdBy: { username, profilePicture },
     description,
     picturePath,
     createdAt,
@@ -15,7 +16,10 @@ const Post = ({
     likesCount: initialLikesCount,
     comments,
 }) => {
-    const [isLiked, setIsLiked] = useState(!!likes[_id]);
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const navigate = useNavigate();
+    const user = useSelector((state) => state.auth.user);
+    const [isLiked, setIsLiked] = useState(!!likes[user?._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
 
     // CONVERT CREATEDATE
@@ -23,6 +27,10 @@ const Post = ({
 
     const handleLikePost = async (e) => {
         e.preventDefault();
+        if (!isAuthenticated) {
+            navigate("/login");
+            return;
+        }
         const {
             success,
             isLiked: newIsLiked,

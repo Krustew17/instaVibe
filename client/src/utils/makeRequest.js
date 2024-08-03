@@ -7,6 +7,7 @@ export default async function makeRequest(
 ) {
     // set default options
     const options = {};
+    let status;
 
     // if method is not GET update the options method
     if (method) options.method = method;
@@ -19,8 +20,8 @@ export default async function makeRequest(
 
     // if token is not empty update the options headers
     if (useToken) {
-        const token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTRjZTYyZTUxY2Y1NDAzN2NkYTgwOCIsImlhdCI6MTcyMjU5MDQ4MywiZXhwIjoxNzIyNjc2ODgzfQ.86THG-crd7Ec148o8GEbh-jsEVuFjFcq94G_X5euWM8";
+        const token = JSON.parse(localStorage.getItem("authState")).token;
+
         if (token) {
             options.headers = {
                 ...options.headers,
@@ -28,14 +29,18 @@ export default async function makeRequest(
             };
         }
     }
+    console.log(options);
 
     // make the request
     const response = await fetch(url, options);
+
+    // get the status
+    status = response.status;
 
     // convert the response to json
     const data = await response.json();
     console.log(data);
 
     // return the data
-    return data;
+    return { status, data };
 }
