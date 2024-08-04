@@ -24,13 +24,24 @@ export const getUserDetails = async (req, res) => {
     try {
         // Check if user exists
         const username = req.params.username;
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ username }).select("-password");
+
+        // GET ALL POSTS OF THE USER
+        const posts = await Post.find({ createdBy: user._id }).populate(
+            "createdBy",
+            "username displayName"
+        );
+
+        // GET ALL LIKED POSTS OF THE USER
+        const likedPosts = await Post.find({ [`likes.${user._id}`]: true })
+            .populate("createdBy", "username profilePicture")
+            .exec();
 
         // If user doesn't exist return 404 error
         if (!user) return res.status(404).json({ message: "User not found" });
 
         // Send the response
-        res.status(200).json(user);
+        res.status(200).json({ user, posts, likedPosts });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });

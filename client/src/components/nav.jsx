@@ -133,7 +133,7 @@ export default function Nav() {
                         onClick={() => handleNavClick(`/${user.username}`)}
                     >
                         <img
-                            src={user.profilePicture}
+                            src={user?.profilePicture}
                             className="w-6 h-6 rounded-full"
                             alt="profile"
                             style={{ marginLeft: "-2px" }}

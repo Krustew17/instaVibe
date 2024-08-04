@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import convertDate from "../utils/convertDate";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
-import { FaRegComment } from "react-icons/fa";
 import likeComment from "../utils/likeComment";
 import { useSelector } from "react-redux";
+import { FaTrashAlt } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import makeRequest from "../utils/makeRequest";
 
 export default function Comment({
     id,
     comment,
     user: { username, profilePicture },
     createdAt,
-    replies,
     likes,
     likesCount: initialLikesCount,
 }) {
     const user = useSelector((state) => state.auth.user);
     const [isLiked, setIsLiked] = useState(!!likes[user?._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
+    const { postId } = useParams();
 
     const handleLikeComment = async (e) => {
         e.preventDefault();
@@ -38,6 +40,24 @@ export default function Comment({
         }
     };
 
+    const handleDeleteComment = async (e) => {
+        e.preventDefault();
+        console.log(postId);
+        if (!user) {
+            return;
+        }
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/posts/${postId}/comment/${id}/delete`;
+
+        try {
+            await makeRequest(fetchUrl, "DELETE");
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            return;
+        }
+    };
+
     const formattedDate = convertDate(createdAt);
 
     return (
@@ -55,6 +75,16 @@ export default function Comment({
                             {formattedDate}
                         </span>
                     </div>
+                    {user?.username === username && (
+                        <div>
+                            <button
+                                className="text-red-500 hover:text-red-600"
+                                onClick={handleDeleteComment}
+                            >
+                                <FaTrashAlt />
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <div className="mt-2">
                     <p>{comment}</p>

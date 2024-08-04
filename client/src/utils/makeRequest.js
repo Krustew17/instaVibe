@@ -29,7 +29,6 @@ export default async function makeRequest(
             };
         }
     }
-    console.log(options);
 
     // make the request
     const response = await fetch(url, options);
@@ -39,7 +38,6 @@ export default async function makeRequest(
 
     // convert the response to json
     const data = await response.json();
-    console.log(data);
 
     // return the data
     return { status, data };

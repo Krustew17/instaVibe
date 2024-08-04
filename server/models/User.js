@@ -55,7 +55,7 @@ UserSchema.virtual("followersCount").get(function () {
     return this.followers ? this.followers.length : 0;
 });
 
-UserSchema.virtual("followedCount").get(function () {
+UserSchema.virtual("followingCount").get(function () {
     return this.following ? this.following.length : 0;
 });
 

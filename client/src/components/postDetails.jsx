@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import makeRequest from "../utils/makeRequest";
 import Comment from "./Comment";
 import Post from "./post";
@@ -10,21 +10,16 @@ import ClipLoader from "react-spinners/ClipLoader";
 export default function PostDetails() {
     const [post, setPost] = useState(null);
     const [comment, setComment] = useState("");
-    const { username, id, commentId } = useParams();
+    const { username, postId, commentId } = useParams();
     const user = useSelector((state) => state.auth.user);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const commentData = post?.comments?.find(
-        (comment) => comment._id === commentId
-    );
-    console.log(commentData);
-
     const fetchPost = async () => {
         try {
             const host = import.meta.env.VITE_SERVER_HOST;
-            const fetchUrl = `${host}/posts/${username}/${id}`;
+            const fetchUrl = `${host}/posts/${username}/${postId}`;
 
             const { data } = await makeRequest(fetchUrl);
 
@@ -56,7 +51,7 @@ export default function PostDetails() {
         setLoading(true);
 
         const host = import.meta.env.VITE_SERVER_HOST;
-        const fetchUrl = `${host}/posts/${id}/comment`;
+        const fetchUrl = `${host}/posts/${postId}/comment`;
         const body = JSON.stringify({ comment });
         const headers = { "Content-Type": "application/json" };
         try {
@@ -126,33 +121,12 @@ export default function PostDetails() {
                         </div>
                     </form>
                 )}
-                {commentId ? (
-                    <>
-                        <Comment {...commentData} />
-                        {/* {commentData?.replies && (
-                            <div>
-                                {commentData.replies.map((reply, index) => (
-                                    <Comment
-                                        key={reply.id || index}
-                                        {...reply}
-                                    />
-                                ))}
-                            </div>
-                        )} */}
-                    </>
-                ) : (
-                    <div>
-                        {post.comments &&
-                            post.comments.map((comment) => (
-                                // <Link
-                                // key={comment.id}
-                                // to={`comment/${comment.id}`}
-                                // >
-                                <Comment {...comment} />
-                                // </Link>
-                            ))}
-                    </div>
-                )}
+                <div>
+                    {post.comments &&
+                        post.comments.map((comment) => (
+                            <Comment {...comment} key={comment.id} />
+                        ))}
+                </div>
             </div>
         </div>
     );
