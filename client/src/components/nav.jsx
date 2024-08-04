@@ -124,13 +124,13 @@ export default function Nav() {
                 </NavLink>
                 {isAuthenticated && (
                     <NavLink
-                        to={`/${user.username}`}
+                        to={`/${user?.username}`}
                         className={`flex gap-4 items-center text-customBase ${
-                            activeTab === `/${user.username}`
+                            activeTab === `/${user?.username}`
                                 ? "font-semibold"
                                 : ""
                         }`}
-                        onClick={() => handleNavClick(`/${user.username}`)}
+                        onClick={() => handleNavClick(`/${user?.username}`)}
                     >
                         <img
                             src={user?.profilePicture}

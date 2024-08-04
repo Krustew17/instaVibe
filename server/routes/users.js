@@ -6,7 +6,7 @@ import {
     deleteUser,
     followUser,
 } from "../controllers/users.controller.js";
-
+import { upload } from "../configs/multer.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
@@ -14,7 +14,12 @@ const router = express.Router();
 router.get("/", getUsers);
 router.get("/:username", getUserDetails);
 
-router.put("/update", authMiddleware, updateUserDetails);
+router.put(
+    "/update",
+    authMiddleware,
+    upload.single("image"),
+    updateUserDetails
+);
 
 router.delete("/delete", authMiddleware, deleteUser);
 

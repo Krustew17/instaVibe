@@ -3,21 +3,74 @@ import { IoHeartSharp } from "react-icons/io5";
 import { FaTableCells } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { FaComment } from "react-icons/fa";
+import { BsGearWide } from "react-icons/bs";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/auth/authSlice";
+import makeRequest from "../utils/makeRequest";
 
 export default function Profile({ user, posts, likedPosts }) {
+    const loggedUser = useSelector((state) => state.auth.user);
     const [activeTab, setActiveTab] = useState("posts");
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout());
+    };
+
+    console.log(user?.followers?.includes(loggedUser?._id));
+
+    const [isFollowing, setIsFollowing] = useState(
+        !!user?.followers.includes(loggedUser?._id)
+    );
+
+    console.log(isFollowing);
+    const handleFollow = async () => {
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/users/${user._id}/follow`;
+
+        try {
+            const { status, data } = await makeRequest(fetchUrl, "POST");
+            if (status !== 200) {
+                return;
+            }
+            setIsFollowing(!isFollowing);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div className="mt-6 md:ml-20 md:mt-10 md:pr-6 px-2">
             <div className="flex gap-6 md:gap-20 border-b pb-12 border-slate-200 dark:border-slate-800 md:flex-row">
+                <button onClick={handleLogout}>logout</button>
                 <img
                     src={`${user?.profilePicture}`}
                     alt="profileImage"
                     className="md:w-40 md:h-40 h-16 w-16 rounded-full select-none"
                 />
                 <div className="flex flex-col gap-7">
-                    <h1>@{user?.username}</h1>
-                    <div className="flex gap-2 md:gap-10">
+                    <div className="flex items-center justify-between text-xl">
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <h1>{user?.displayName}</h1>
+                            <h1 className="dark:text-gray-600 text-gray-400">
+                                @{user?.username}
+                            </h1>
+                        </div>
+                        {(loggedUser?.username === user?.username && (
+                            <Link to={`/profile/edit`}>
+                                <BsGearWide />
+                            </Link>
+                        )) || (
+                            <button
+                                className="px-6  border-none rounded-sm bg-black dark:bg-white dark:text-black text-white"
+                                onClick={handleFollow}
+                                type="button"
+                            >
+                                {isFollowing ? "Unfollow" : "Follow"}
+                            </button>
+                        )}
+                    </div>
+                    <div className="flex gap-2 md:gap-14 md:text-lg">
                         <h2>
                             <strong>{posts?.length}</strong> posts
                         </h2>
@@ -62,7 +115,7 @@ export default function Profile({ user, posts, likedPosts }) {
                             <Link
                                 to={`/${post.createdBy.username}/post/${post._id}`}
                                 key={post._id}
-                                className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-lg shadow-md group"
+                                className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
                             >
                                 <img
                                     src={post.picturePath}
@@ -85,9 +138,10 @@ export default function Profile({ user, posts, likedPosts }) {
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
                         {likedPosts?.map((post) => (
-                            <div
+                            <Link
+                                to={`/${post.createdBy.username}/post/${post._id}`}
                                 key={post._id}
-                                className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-lg shadow-md group"
+                                className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
                             >
                                 <img
                                     src={post.picturePath}
@@ -104,7 +158,7 @@ export default function Profile({ user, posts, likedPosts }) {
                                         {post?.comments?.length || 0}
                                     </span>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 )}

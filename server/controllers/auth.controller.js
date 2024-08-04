@@ -7,13 +7,15 @@ export const register = async (req, res) => {
     try {
         // deconstruct the req.body
         const { username, email, password, confirmPassword } = req.body;
-        console.log(req.body);
 
         // Check if username is taken
         const user = await User.findOne({ username });
         if (user) {
             return res.status(400).json({ message: "Username already taken" });
         }
+
+        // validate the username
+        validateUsername(username);
 
         // Check if email is taken
         const userEmail = await User.findOne({ email });

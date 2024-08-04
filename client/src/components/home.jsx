@@ -139,7 +139,6 @@ export default function Main() {
             const host = import.meta.env.VITE_SERVER_HOST;
             let request;
 
-            // const token = localStorage.getItem("token");
             const token = JSON.parse(localStorage.getItem("authState")).token;
 
             if (uploadedImage) {

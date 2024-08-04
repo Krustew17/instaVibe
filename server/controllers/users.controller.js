@@ -1,6 +1,9 @@
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 import Post from "../models/Post.js";
+import validateUsername from "../utils/validateUsername.js";
+import cloudinary from "../configs/cloudinary.js";
+import generatePublicId from "../utils/generatePublicId.js";
 
 // GET ALL USERS
 export const getUsers = async (req, res) => {
@@ -52,32 +55,89 @@ export const getUserDetails = async (req, res) => {
 export const updateUserDetails = async (req, res) => {
     try {
         // deconstruct the req.body
-        const { username, email, password } = req.body;
+        const { username, email, displayName, bio, profilePicture } = req.body;
         const user = req.user;
 
         // Check if user exists
         if (!user) return res.status(404).json({ message: "User not found" });
 
         // Check for empty fields
-        if (!username || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
+        if (!username || !email || !displayName) {
+            return res.status(400).json({
+                message: "username, email and displayName are required",
+            });
         }
 
         // Check if username already exists
         const checkUsername = await User.findOne({ username });
-        if (checkUsername) {
+
+        if (checkUsername && req.user.username !== username) {
             return res.status(400).json({ message: "Username already exists" });
+        }
+
+        // Check if email already exists
+        const checkEmail = await User.findOne({ email });
+        if (checkEmail && email !== req.user.email) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        // validate the username
+        validateUsername(username);
+
+        let imageUrl;
+        const public_id = generatePublicId();
+
+        if (req.file) {
+            // Retrieve the image cloudinary public id
+            const cloudinaryPublicId = user.profilePicture
+                ?.split("/")
+                ?.pop()
+                ?.split(".")
+                ?.shift();
+            console.log(cloudinaryPublicId);
+
+            // Delete image from cloudinary if not default avatar
+            if (cloudinaryPublicId && cloudinaryPublicId !== "default_avatar") {
+                await cloudinary.uploader.destroy([cloudinaryPublicId], {
+                    resource_type: "image",
+                });
+            }
+
+            const result = await cloudinary.uploader.upload(
+                // Upload image to cloudinary
+                req.file.path,
+                { public_id },
+                (error, result) => {
+                    if (error) {
+                        // Check for errors
+                        return res.status(500).json({ message: error.message }); // Send error
+                    }
+                    imageUrl = result.secure_url; // Save image url
+                }
+            );
+        }
+        if (profilePicture) {
+            imageUrl = profilePicture;
         }
 
         // Update the user
         const updatedUser = await User.findByIdAndUpdate(
             user._id,
-            { username },
+            {
+                username,
+                email,
+                displayName,
+                description: bio,
+                profilePicture: imageUrl,
+            },
             { new: true }
         );
 
         // Send the response
-        res.status(200).json(updatedUser);
+        res.status(200).json({
+            message: "User updated successfully",
+            updatedUser,
+        });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });
@@ -94,7 +154,7 @@ export const deleteUser = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         // Retrieve the image cloudinary public id
-        const cloudinaryPublicId = user.picturePath
+        const cloudinaryPublicId = user.profilePicture
             ?.split("/")
             ?.pop()
             ?.split(".")

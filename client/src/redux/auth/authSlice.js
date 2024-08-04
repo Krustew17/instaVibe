@@ -43,11 +43,17 @@ const authSlice = createSlice({
             state.user = null;
             saveStateToLocalStorage(state);
         },
+        updateUser: (state, action) => {
+            state.isAuthenticated = true;
+            state.token = state.token;
+            state.user = action.payload.updatedUser;
+            saveStateToLocalStorage(state);
+        },
         rehydrate: (state, action) => {
             return action.payload;
         },
     },
 });
 
-export const { login, logout, rehydrate } = authSlice.actions;
+export const { login, logout, updateUser, rehydrate } = authSlice.actions;
 export default authSlice.reducer;
