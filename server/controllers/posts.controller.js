@@ -2,7 +2,7 @@ import Post from "../models/Post.js";
 import cloudinary from "../configs/cloudinary.js";
 import validation from "../utils/postValidation.js";
 import Comment from "../models/Comment.js";
-import generatePublicId from "../utils/generatePublicId";
+import generatePublicId from "../utils/generatePublicId.js";
 import Reply from "../models/Reply.js";
 import mongoose from "mongoose";
 

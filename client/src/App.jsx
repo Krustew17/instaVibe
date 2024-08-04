@@ -8,12 +8,13 @@ import Search from "./components/Search";
 import LoginPage from "./pages/loginPage";
 import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
+import ProfileEdit from "./pages/profileEdit";
 
 function App() {
     const location = useLocation();
-    const hideRightSideBar = /^\/[^/]+(\/post|\/comment)?$/.test(
-        location.pathname
-    );
+    const hideRightSideBar =
+        /^\/[^/]+(\/post|\/comment)?$/.test(location.pathname) ||
+        location.pathname === "/profile/edit";
 
     return (
         <div className="flex min-h-screen max-w-[1200px] mx-auto">
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/notifications" element={<div>he</div>} />
                     <Route path="/create" element={<div>he</div>} />
                     <Route path="/:username" element={<ProfilePage />} />
+                    <Route path="/profile/edit" element={<ProfileEdit />} />
                 </Routes>
             </main>
             {(!hideRightSideBar ||
