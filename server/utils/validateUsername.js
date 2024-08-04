@@ -11,7 +11,10 @@ export default function validateUsername(username) {
         throw new Error("Username must only contain letters and numbers");
     }
 
-    if (username.match(/^[0-9]+$/)) {
+    const regex = /^[0-9]/;
+    const usernameStartsWithNum = regex.test(username);
+
+    if (usernameStartsWithNum) {
         throw new Error("Username cannot start with a number");
     }
 }
