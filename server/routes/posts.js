@@ -21,7 +21,7 @@ router.get("/:username/:id", getPostDetails);
 router.post("/upload", authMiddleware, upload.single("image"), createPost);
 router.post("/:id/like", authMiddleware, likePost);
 router.post("/:id/comment", authMiddleware, commentPost);
-router.post(
+router.delete(
     "/:postId/comment/:commentId/delete",
     authMiddleware,
     deleteComment

@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Nav from "./components/nav";
 import Main from "./components/home";
 import RightSideBar from "./components/rightSideBar";
@@ -7,8 +7,14 @@ import PostDetails from "./components/postDetails";
 import Search from "./components/Search";
 import LoginPage from "./pages/loginPage";
 import RegisterPage from "./pages/registerPage";
+import ProfilePage from "./pages/profilePage";
 
 function App() {
+    const location = useLocation();
+    const hideRightSideBar = /^\/[^/]+(\/post|\/comment)?$/.test(
+        location.pathname
+    );
+
     return (
         <div className="flex min-h-screen max-w-[1200px] mx-auto">
             <Nav />
@@ -16,11 +22,11 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Main />} />
                     <Route
-                        path="/:username/post/:id"
+                        path="/:username/post/:postId"
                         element={<PostDetails />}
                     />
                     <Route
-                        path="/:username/post/:id/comment/:commentId"
+                        path="/:username/post/:postId/comment/:commentId"
                         element={<PostDetails />}
                     />
                     <Route path="/login" element={<LoginPage />} />
@@ -29,10 +35,13 @@ function App() {
                     <Route path="/chat" element={<div>he</div>} />
                     <Route path="/notifications" element={<div>he</div>} />
                     <Route path="/create" element={<div>he</div>} />
-                    <Route path="/:username" element={<div>he</div>} />
+                    <Route path="/:username" element={<ProfilePage />} />
                 </Routes>
             </main>
-            <RightSideBar />
+            {(!hideRightSideBar ||
+                /\/search|\/chat|\/notifications|\/create/.test(
+                    location.pathname
+                )) && <RightSideBar />}
         </div>
     );
 }
