@@ -14,6 +14,8 @@ export default {
             },
             screens: {
                 cxs: "500px",
+                customBreakPoint: "420px",
+                customBreakPoint2: "335px",
             },
         },
         plugins: [],

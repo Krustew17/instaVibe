@@ -12,7 +12,8 @@ export const getUsers = async (req, res) => {
         const users = await User.find();
 
         // If users don't exist return 404 error
-        if (!users) return res.status(404).json({ message: "Users not found" });
+        if (!users)
+            return res.status(404).json({ message: "Users not found." });
 
         // Send the response
         res.status(200).json(users);
@@ -41,7 +42,7 @@ export const getUserDetails = async (req, res) => {
             .exec();
 
         // If user doesn't exist return 404 error
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: "User not found." });
 
         // Send the response
         res.status(200).json({ user, posts, likedPosts });
@@ -54,17 +55,18 @@ export const getUserDetails = async (req, res) => {
 // UPDATE USER DETAILS
 export const updateUserDetails = async (req, res) => {
     try {
+        const MAX_BIO_LENGTH = 150;
         // deconstruct the req.body
         const { username, email, displayName, bio, profilePicture } = req.body;
         const user = req.user;
 
         // Check if user exists
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: "User not found." });
 
         // Check for empty fields
         if (!username || !email || !displayName) {
             return res.status(400).json({
-                message: "username, email and displayName are required",
+                message: "username, email and displayName are required.",
             });
         }
 
@@ -72,13 +74,21 @@ export const updateUserDetails = async (req, res) => {
         const checkUsername = await User.findOne({ username });
 
         if (checkUsername && req.user.username !== username) {
-            return res.status(400).json({ message: "Username already exists" });
+            return res
+                .status(400)
+                .json({ message: "Username already exists." });
         }
 
         // Check if email already exists
         const checkEmail = await User.findOne({ email });
         if (checkEmail && email !== req.user.email) {
-            return res.status(400).json({ message: "Email already exists" });
+            return res.status(400).json({ message: "Email already exists." });
+        }
+
+        if (bio && bio.length > MAX_BIO_LENGTH) {
+            return res.status(400).json({
+                message: `bio length should be less than ${MAX_BIO_LENGTH} characters.`,
+            });
         }
 
         // validate the username
@@ -151,7 +161,7 @@ export const deleteUser = async (req, res) => {
         const user = req.user;
 
         // Check if user exists
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: "User not found." });
 
         // Retrieve the image cloudinary public id
         const cloudinaryPublicId = user.profilePicture
@@ -192,7 +202,7 @@ export const deleteUser = async (req, res) => {
         await User.findByIdAndDelete(user._id);
 
         // Send the response
-        res.status(200).json({ message: "User deleted successfully" });
+        res.status(200).json({ message: "User deleted successfully." });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });
@@ -207,12 +217,12 @@ export const followUser = async (req, res) => {
         const user = req.user; // The current logged-in user
 
         // Check if user exists
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: "User not found." });
 
         // Check if followed user exists
         const followedUser = await User.findById(userId);
         if (!followedUser) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found." });
         }
 
         // Check if the user has already followed the followedUser
@@ -231,7 +241,7 @@ export const followUser = async (req, res) => {
             // Send the response
             return res
                 .status(200)
-                .json({ message: "User unfollowed successfully" });
+                .json({ message: "User unfollowed successfully." });
         }
 
         // Update the followed user's followers array
@@ -249,7 +259,7 @@ export const followUser = async (req, res) => {
         );
 
         // Send the response
-        res.status(200).json({ message: "User followed successfully" });
+        res.status(200).json({ message: "User followed successfully." });
     } catch (error) {
         // Handle any errors
         res.status(400).json({ message: error.message });

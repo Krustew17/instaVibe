@@ -1,10 +1,15 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../redux/auth/authSlice";
+import { useNavigate } from "react-router-dom";
+
+const MAX_BIO_LENGTH = 150;
 
 export default function ProfileEdit() {
+    const navigate = useNavigate();
     const user = useSelector((state) => state.auth.user);
     const token = useSelector((state) => state.auth.token);
+    const [error, setError] = useState("");
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
     const [isFocused, setIsFocused] = useState("");
@@ -14,6 +19,9 @@ export default function ProfileEdit() {
         email: user?.email || "",
         bio: user?.description || "",
     });
+    const [bioLength, setBioLength] = useState(
+        MAX_BIO_LENGTH - data.bio.length
+    );
 
     const fileInputRef = useRef(null);
     const [profilePicture, setProfilePicture] = useState(
@@ -23,6 +31,10 @@ export default function ProfileEdit() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setData({ ...data, [name]: value });
+
+        if (name === "bio") {
+            setBioLength(MAX_BIO_LENGTH - value.length);
+        }
     };
 
     const handleIconClick = () => {
@@ -67,24 +79,28 @@ export default function ProfileEdit() {
                 Authorization: `Bearer ${token}`,
             },
         });
+        const dataJson = await response.json();
         if (response.status !== 200) {
+            setError(dataJson.message);
+            setTimeout(() => {
+                setError("");
+            }, 2000);
             return;
         }
-        const dataJson = await response.json();
-        console.log(dataJson);
 
         dispatch(updateUser(dataJson));
+        navigate(`/${data.username}`);
     };
 
     return (
         <div className="sm:ml-[70px] md:ml-[250px]">
             <form
-                className="px-2 mt-5 md:ml-[100px] flex flex-col gap-6"
+                className="px-2 mt-5 md:ml-[150px] flex flex-col gap-6"
                 onSubmit={handleSubmit}
             >
                 <strong className="text-xl">Edit Profile</strong>
 
-                <div className="flex flex-wrap justify-between items-center">
+                <div className="flex flex-wrap justify-between">
                     <img
                         className="w-[100px] h-[100px] rounded-full"
                         src={profilePicture || "/default_avatar.jpg"}
@@ -101,7 +117,7 @@ export default function ProfileEdit() {
                         />
                         <label htmlFor="profilePictureInput">
                             <button
-                                className="px-6 border-none rounded-sm bg-black dark:bg-white dark:text-black text-white"
+                                className="px-6 border-none text-xs md:text-lg rounded-sm mt-6 h-10 bg-black dark:bg-white dark:text-black text-white"
                                 type="button"
                                 onClick={handleIconClick}
                             >
@@ -109,7 +125,7 @@ export default function ProfileEdit() {
                             </button>
                         </label>
                         <button
-                            className="px-6 border-none rounded-sm bg-black dark:bg-white dark:text-black text-white"
+                            className="px-6 border-none text-xs md:text-lg rounded-sm mt-6 h-10 bg-black dark:bg-white dark:text-black text-white"
                             type="button"
                             onClick={handleRemovePicture}
                         >
@@ -209,8 +225,19 @@ export default function ProfileEdit() {
                         onFocus={() => setIsFocused("bio")}
                         onBlur={() => setIsFocused("")}
                     />
+                    <small
+                        className={`self-start text-sm ${
+                            data.bio.length > MAX_BIO_LENGTH
+                                ? "text-red-500"
+                                : "text-gray-400 dark:text-gray-600"
+                        }`}
+                    >
+                        {bioLength} / {MAX_BIO_LENGTH}
+                    </small>
                 </div>
-
+                <div className="flex flex-col">
+                    <h1 className="text-red-500">{error}</h1>
+                </div>
                 <button className="py-2 px-4 max-w-[170px] self-center rounded-sm border border-black hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">
                     Save Changes
                 </button>
