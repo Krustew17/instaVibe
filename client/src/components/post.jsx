@@ -47,15 +47,20 @@ const Post = ({
 
     return (
         <div className="flex p-4 border-b border-gray-200 dark:border-gray-700">
-            <img
-                src={profilePicture}
-                alt={`${username}'s profile`}
-                className="w-12 h-12 rounded-full mr-4"
-            />
+            <Link to={`/${username}`}>
+                <img
+                    src={profilePicture}
+                    alt={`${username}'s profile`}
+                    className="w-12 h-12 rounded-full mr-4"
+                />
+            </Link>
             <div className="flex-1">
                 <div className="flex justify-between items-center">
                     <div className="flex gap-3">
-                        <span className="font-bold">@{username}</span>
+                        <Link to={`/${username}`}>
+                            {" "}
+                            <span className="font-bold">@{username}</span>{" "}
+                        </Link>
                         <span className="text-gray-400 dark:text-gray-600 ">
                             {formattedDate}
                         </span>

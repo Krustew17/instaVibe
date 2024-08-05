@@ -14,7 +14,7 @@ const SearchComponent = () => {
     const [loading, setLoading] = useState(false);
 
     const handleSearch = async (activeTab) => {
-        setLoading(true);
+        setResults([]);
         const type = activeTab === "accounts" ? "users" : "posts";
         const host = import.meta.env.VITE_SERVER_HOST;
         const headers = {
@@ -39,14 +39,18 @@ const SearchComponent = () => {
     };
 
     useEffect(() => {
-        setTimeout(() => {
+        setLoading(true);
+
+        const delay = setTimeout(() => {
             handleSearch(activeTab);
         }, 300);
+
+        return () => clearTimeout(delay);
     }, [activeTab, query]);
 
     if (loading) {
         return (
-            <div className="md:ml-[70px] lg:ml-[250px]">
+            <div className="md:ml-[70px] lg:ml-[250px] min-h-screen">
                 <Spinner />
             </div>
         );

@@ -9,11 +9,12 @@ import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { CiCirclePlus } from "react-icons/ci";
 import { useSelector } from "react-redux";
 
-import { NavLink } from "react-router-dom";
-import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
 export default function Nav() {
     const [activeTab, setActiveTab] = useState(".");
+    const navigate = useNavigate();
     const [isDarkMode, setisDarkMode] = useState(true);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
@@ -26,6 +27,10 @@ export default function Nav() {
         document.documentElement.classList.toggle("dark");
         setisDarkMode(!isDarkMode);
     };
+
+    useEffect(() => {
+        setActiveTab(window.location.pathname);
+    }, [window.location.pathname]);
 
     return (
         <div className="h-screen">
