@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 import React, { useState } from "react";
 
 export default function Nav() {
-    const [activeTab, setActiveTab] = useState("/");
+    const [activeTab, setActiveTab] = useState(".");
     const [isDarkMode, setisDarkMode] = useState(true);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);

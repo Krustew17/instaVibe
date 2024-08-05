@@ -111,11 +111,11 @@ export default function PostDetails() {
                             <div className="text-red-500">
                                 {error && <p>{error}</p>}
                             </div>
-                            <button className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button className="px-4 py-2 bg-blue-500 text-white border-none rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2">
                                 {loading ? (
                                     <ClipLoader size={15} color={"#ffffff"} />
                                 ) : (
-                                    "Reply"
+                                    "Coment"
                                 )}
                             </button>
                         </div>

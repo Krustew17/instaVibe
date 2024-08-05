@@ -184,7 +184,7 @@ export default function Main() {
     };
 
     return (
-        <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen mt-2 sm:mt-4">
+        <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen mt-2 sm:mt-4 px-2">
             <div className="flex gap-4 border-b-2 border-slate-200 dark:border-slate-900 pb-2">
                 <Link
                     to="?tab=for_you"

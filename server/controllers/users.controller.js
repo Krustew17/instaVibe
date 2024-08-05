@@ -23,6 +23,37 @@ export const getUsers = async (req, res) => {
     }
 };
 
+// FILTER USERS
+
+export const searchUsers = async (req, res) => {
+    try {
+        // Ensure query is properly extracted and sanitized
+        const { query } = req.query;
+
+        // Validate query input
+        if (!query || typeof query !== "string") {
+            return res.status(400).json({ message: "Invalid query" });
+        }
+
+        // Perform the search operation
+        const users = await User.find({
+            username: { $regex: query, $options: "i" }, // Case-insensitive search
+        });
+
+        // Log the retrieved users for debugging
+        console.log("Filtered users:", users);
+
+        // Send back the filtered users
+        res.status(200).json(users);
+    } catch (error) {
+        // Log the error for debugging
+        console.error("Error filtering users:", error);
+
+        // Send error response
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // GET USER DETAILS
 export const getUserDetails = async (req, res) => {
     try {

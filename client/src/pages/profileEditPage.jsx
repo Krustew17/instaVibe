@@ -117,7 +117,7 @@ export default function ProfileEdit() {
                         />
                         <label htmlFor="profilePictureInput">
                             <button
-                                className="px-6 border-none text-xs md:text-lg rounded-sm mt-6 h-10 bg-black dark:bg-white dark:text-black text-white"
+                                className="px-6  text-xs md:text-lg rounded-sm mt-6 h-10 border border-black hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black"
                                 type="button"
                                 onClick={handleIconClick}
                             >
@@ -125,7 +125,7 @@ export default function ProfileEdit() {
                             </button>
                         </label>
                         <button
-                            className="px-6 border-none text-xs md:text-lg rounded-sm mt-6 h-10 bg-black dark:bg-white dark:text-black text-white"
+                            className="px-6  text-xs md:text-lg rounded-sm mt-6 h-10 border border-black hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black"
                             type="button"
                             onClick={handleRemovePicture}
                         >
@@ -216,7 +216,7 @@ export default function ProfileEdit() {
                         Bio
                     </label>
                     <textarea
-                        className="border-2 border-slate-200 dark:border-gray-800 bg-transparent w-full p-2 rounded-md"
+                        className="border-2 border-slate-200 dark:border-gray-800 bg-transparent w-full p-2 rounded-md max-h-32"
                         placeholder="description"
                         name="bio"
                         id="bio"
@@ -238,7 +238,7 @@ export default function ProfileEdit() {
                 <div className="flex flex-col">
                     <h1 className="text-red-500">{error}</h1>
                 </div>
-                <button className="py-2 px-4 max-w-[170px] self-center rounded-sm border border-black hover:bg-black hover:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">
+                <button className="py-2 px-4 max-w-[170px] self-center rounded-sm  border-none bg-blue-500">
                     Save Changes
                 </button>
             </form>
