@@ -238,7 +238,7 @@ export default function ProfileEdit() {
                 <div className="flex flex-col">
                     <h1 className="text-red-500">{error}</h1>
                 </div>
-                <button className="py-2 px-4 max-w-[170px] self-center rounded-sm  border-none bg-blue-500">
+                <button className="py-2 px-4 max-w-[170px] self-center rounded-sm  border-none bg-blue-500 text-white">
                     Save Changes
                 </button>
             </form>

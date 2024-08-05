@@ -33,6 +33,33 @@ export const getAllPosts = async (req, res) => {
     }
 };
 
+// SEARCH POSTS
+export const searchPosts = async (req, res) => {
+    try {
+        // Ensure query is properly extracted and sanitized
+        const { query } = req.query;
+
+        // Validate query input
+        if (!query || typeof query !== "string") {
+            return res.status(400).json({ message: "Invalid query" });
+        }
+
+        // Perform the search operation
+        const posts = await Post.find({
+            description: { $regex: query, $options: "i" }, // Case-insensitive search
+        }).populate("createdBy", "username profilePicture");
+
+        // Send back the filtered users
+        res.status(200).json(posts);
+    } catch (error) {
+        // Log the error for debugging
+        console.error("Error filtering users:", error);
+
+        // Send error response
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // GET POST DETAILS
 export const getPostDetails = async (req, res) => {
     try {

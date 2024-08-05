@@ -49,16 +49,9 @@ body {
     }
 }
 
-@media screen and (max-width: 768px) {
-    .loading-container {
-        margin-left: 0;
-    }
-}
-
 .loading-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-left: 250px;
 }

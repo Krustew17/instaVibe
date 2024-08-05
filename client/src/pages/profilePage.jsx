@@ -32,7 +32,11 @@ export default function ProfilePage() {
     }, []);
 
     if (loading) {
-        return <Spinner />;
+        return (
+            <div className="md:ml-[70px] lg:ml-[250px]">
+                <Spinner />
+            </div>
+        );
     }
 
     return (
