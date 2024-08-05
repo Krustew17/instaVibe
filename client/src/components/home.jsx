@@ -212,7 +212,7 @@ export default function Main() {
                 >
                     <img
                         src={`${user?.profilePicture}`}
-                        className="max-h-12 max-w-12 rounded-full"
+                        className="max-h-12 max-w-12 rounded-full aspect-square"
                     />
                     <div className="ml-5 flex-1 flex-col w-full max-h-full">
                         <textarea

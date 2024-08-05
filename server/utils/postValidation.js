@@ -3,7 +3,7 @@ import Post from "../models/Post.js";
 export default async function validation(postId, user, res) {
     // Check if user exists
     if (!user) {
-        res.status(400).json({ message: "bad request" });
+        res.status(400).json({ message: "bad request." });
     }
 
     // Check if post exists

@@ -134,7 +134,7 @@ export default function Nav() {
                     >
                         <img
                             src={user?.profilePicture}
-                            className="w-6 h-6 rounded-full"
+                            className="w-6 h-6 rounded-full border-2 dark:border-white border-black"
                             alt="profile"
                             style={{ marginLeft: "-2px" }}
                         />
