@@ -5,6 +5,7 @@ import {
     updateUserDetails,
     deleteUser,
     followUser,
+    searchUsers,
 } from "../controllers/users.controller.js";
 import { upload } from "../configs/multer.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
@@ -20,6 +21,7 @@ router.put(
     upload.single("image"),
     updateUserDetails
 );
+router.post("/search", searchUsers);
 
 router.delete("/delete", authMiddleware, deleteUser);
 

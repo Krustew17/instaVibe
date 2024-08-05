@@ -50,15 +50,25 @@ export default function Profile({ user, posts, likedPosts }) {
                             @{user?.username}
                         </h1>
                     </div>
-                    <div className="flex gap-2 flex-end">
-                        <button className=" border-black py-1 bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-md text-sm">
-                            Edit Profile
+                    {(user?._id === loggedUser?._id && (
+                        <div className="flex gap-2 flex-end">
+                            <button className=" border-black py-1 bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-md text-sm">
+                                Edit Profile
+                            </button>
+                            <button>
+                                <BsGearWide />
+                            </button>
+                        </div>
+                    )) || (
+                        <button
+                            className="border-black py-1 bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-lg text-md"
+                            onClick={handleFollow}
+                        >
+                            {isFollowing ? "Unfollow" : "Follow"}
                         </button>
-                        <button>
-                            <BsGearWide />
-                        </button>
-                    </div>
+                    )}
                 </div>
+
                 <div className="mt-6">
                     <div className="flex gap-10 items-center">
                         <img
@@ -221,7 +231,7 @@ export default function Profile({ user, posts, likedPosts }) {
                                 </div>
                             )) || (
                                 <button
-                                    className="px-6  border-none rounded-sm bg-black dark:bg-white dark:text-black text-white"
+                                    className="px-6  border-none rounded-lg py-1 bg-black dark:bg-white dark:text-black text-white"
                                     onClick={handleFollow}
                                     type="button"
                                 >

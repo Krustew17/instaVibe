@@ -8,7 +8,7 @@ import Search from "./components/Search";
 import LoginPage from "./pages/loginPage";
 import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
-import ProfileEdit from "./pages/profileEdit";
+import ProfileEdit from "./pages/profileEditPage";
 
 function App() {
     const location = useLocation();

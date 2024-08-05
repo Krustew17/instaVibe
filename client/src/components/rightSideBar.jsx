@@ -13,7 +13,7 @@ export default function RightSideBar() {
         dispatch(logout());
     };
     return (
-        <div className="right-sidebar border-l-2 border-slate-200 dark:border-slate-900 hidden md:block md:w-[200px] lg:w-[300px]">
+        <div className="right-sidebar border-l-2 border-slate-200 dark:border-slate-900 hidden md:block md:w-[200px] lg:w-[300px] select-none">
             {(!isAuthenticated && (
                 <NavLink
                     to="/login"
@@ -32,7 +32,7 @@ export default function RightSideBar() {
                     <span>@{user?.username}</span>
 
                     <button
-                        className="bg-blue-500 px-4 py-2 rounded-md text-white"
+                        className="bg-black dark:bg-white dark:text-black px-4 py-1 rounded-md text-white"
                         onClick={handleLogout}
                     >
                         Logout
