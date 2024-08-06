@@ -18,15 +18,20 @@ export default function Notifications() {
         (state) => state.notifications.notifications
     );
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const loggedUser = useSelector((state) => {
+        state.auth.user;
+    });
     const [loading, setLoading] = useState(false);
 
     const fetchNotifications = async () => {
         const host = import.meta.env.VITE_SERVER_HOST;
-        const fetchUrl = `${host}/notifications/`;
+        const fetchUrl = `${host}/notifications/all`;
         const { status, data } = await makeRequest(fetchUrl, "GET");
 
         if (status === 200) {
             dispatch(setNotifications(data.notifications));
+        } else {
+            dispatch(clearNotifications());
         }
         dispatch(markAllAsRead());
         setLoading(false);
@@ -37,6 +42,9 @@ export default function Notifications() {
         fetchNotifications();
 
         socket.on("notification", (notification) => {
+            if (notification.receiver !== loggedUser._id) {
+                return;
+            }
             dispatch(addNotification(notification));
             dispatch(markAllAsRead());
         });
@@ -47,7 +55,11 @@ export default function Notifications() {
     }, [dispatch]);
 
     if (loading) {
-        return <Spinner />;
+        return (
+            <div className="md:ml-[70px] lg:ml-[250px] min-h-screen dark:border-l-white">
+                <Spinner className="dark:border-l-white" />
+            </div>
+        );
     }
 
     return (

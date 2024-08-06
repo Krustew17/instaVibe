@@ -7,6 +7,8 @@ export default async function makeRequest(
 ) {
     // set default options
     const options = {};
+
+    // initialize status variable
     let status;
 
     // if method is not GET update the options method

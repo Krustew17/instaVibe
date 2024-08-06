@@ -18,8 +18,6 @@ export default function Nav() {
     const [isDarkMode, setisDarkMode] = useState(true);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
-    const unreadCount = useSelector((state) => state.notifications.unreadCount);
-    console.log(unreadCount);
 
     const handleNavClick = (path) => {
         setActiveTab(path);
@@ -78,63 +76,66 @@ export default function Nav() {
                     )}
                     <span className="hidden lg:block">Search</span>
                 </NavLink>
-                <NavLink
-                    to="/chat"
-                    className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 list-none
-                    ${activeTab === "/chat" ? "font-semibold" : ""}`}
-                    onClick={() => handleNavClick("/chat")}
-                >
-                    {" "}
-                    {activeTab === "/chat" ? (
-                        <FaMessage className="text-xl" />
-                    ) : (
-                        <FaRegMessage className="text-xl" />
-                    )}
-                    <span className="hidden lg:block">Messages</span>
-                </NavLink>
-                <NotificationNavLink
-                    activeTab={activeTab}
-                    handleNavClick={handleNavClick}
-                />
-                <NavLink
-                    to="/create"
-                    className={`flex gap-4 items-center text-customBase  lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
-                        activeTab === "/create" ? "font-semibold" : ""
-                    }`}
-                    onClick={() => handleNavClick("/create")}
-                >
-                    {" "}
-                    {activeTab === "/create" ? (
-                        <FaCirclePlus
-                            style={{ marginLeft: "-2px" }}
-                            className="text-2xl"
-                        />
-                    ) : (
-                        <CiCirclePlus
-                            style={{ marginLeft: "-2px" }}
-                            className="text-2xl"
-                        />
-                    )}
-                    <span className="hidden lg:block">Create</span>
-                </NavLink>
+
                 {isAuthenticated && (
-                    <NavLink
-                        to={`/${user?.username}`}
-                        className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
-                            activeTab === `/${user?.username}`
-                                ? "font-semibold"
-                                : ""
-                        }`}
-                        onClick={() => handleNavClick(`/${user?.username}`)}
-                    >
-                        <img
-                            src={user?.profilePicture}
-                            className="w-6 h-6 rounded-full border-2 dark:border-white border-black"
-                            alt="profile"
-                            style={{ marginLeft: "-2px" }}
+                    <>
+                        <NavLink
+                            to="/chat"
+                            className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 list-none
+                    ${activeTab === "/chat" ? "font-semibold" : ""}`}
+                            onClick={() => handleNavClick("/chat")}
+                        >
+                            {" "}
+                            {activeTab === "/chat" ? (
+                                <FaMessage className="text-xl" />
+                            ) : (
+                                <FaRegMessage className="text-xl" />
+                            )}
+                            <span className="hidden lg:block">Messages</span>
+                        </NavLink>
+                        <NotificationNavLink
+                            activeTab={activeTab}
+                            handleNavClick={handleNavClick}
                         />
-                        <span className="hidden lg:block">Profile</span>
-                    </NavLink>
+                        <NavLink
+                            to="/create"
+                            className={`flex gap-4 items-center text-customBase  lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
+                                activeTab === "/create" ? "font-semibold" : ""
+                            }`}
+                            onClick={() => handleNavClick("/create")}
+                        >
+                            {" "}
+                            {activeTab === "/create" ? (
+                                <FaCirclePlus
+                                    style={{ marginLeft: "-2px" }}
+                                    className="text-2xl"
+                                />
+                            ) : (
+                                <CiCirclePlus
+                                    style={{ marginLeft: "-2px" }}
+                                    className="text-2xl"
+                                />
+                            )}
+                            <span className="hidden lg:block">Create</span>
+                        </NavLink>
+                        <NavLink
+                            to={`/${user?.username}`}
+                            className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
+                                activeTab === `/${user?.username}`
+                                    ? "font-semibold"
+                                    : ""
+                            }`}
+                            onClick={() => handleNavClick(`/${user?.username}`)}
+                        >
+                            <img
+                                src={user?.profilePicture}
+                                className="w-6 h-6 rounded-full border-2 dark:border-white border-black"
+                                alt="profile"
+                                style={{ marginLeft: "-2px" }}
+                            />
+                            <span className="hidden lg:block">Profile</span>
+                        </NavLink>
+                    </>
                 )}
                 <div className="mt-auto mb-6 hidden md:block">
                     <DarkModeSwitch
