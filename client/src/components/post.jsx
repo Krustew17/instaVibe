@@ -5,10 +5,11 @@ import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 import convertDate from "../utils/convertDate";
 import likePost from "../utils/likePost";
 import { useSelector } from "react-redux";
+import sendNotification from "../utils/sendNotification";
 
 const Post = ({
     id,
-    createdBy: { username, profilePicture },
+    createdBy: { username, profilePicture, _id },
     description,
     picturePath,
     createdAt,
@@ -18,8 +19,8 @@ const Post = ({
 }) => {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const navigate = useNavigate();
-    const user = useSelector((state) => state.auth.user);
-    const [isLiked, setIsLiked] = useState(!!likes[user?._id]);
+    const loggedUser = useSelector((state) => state.auth.user);
+    const [isLiked, setIsLiked] = useState(!!likes[loggedUser?._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
 
     // CONVERT CREATEDATE
@@ -42,6 +43,8 @@ const Post = ({
             setLikesCount(
                 (prevLikesCount) => prevLikesCount + likesCountChange
             );
+            const type = newIsLiked ? "unlike" : "like";
+            await sendNotification(loggedUser._id, _id, type, id);
         }
     };
 

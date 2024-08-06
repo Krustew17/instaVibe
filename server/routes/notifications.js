@@ -8,7 +8,7 @@ import { io } from "../index.js";
 
 const router = express.Router();
 
-router.get("/", authMiddleware, fetchNotifications);
+router.get("/all", authMiddleware, fetchNotifications);
 router.post("/create", authMiddleware, (req, res) => {
     createNotification(req, res, io);
 });

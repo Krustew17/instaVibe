@@ -19,7 +19,11 @@ const app = express();
 /* CONFIGURATIONS */
 
 const corsOptions = {
-    origin: ["http://127.0.0.1:5173", "http://localhost:5173"],
+    origin: [
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://127.0.0.1:3001",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -29,6 +33,22 @@ app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": [
+                "'self'",
+                "data:",
+                "https://cloudinary.com",
+                "https://res.cloudinary.com",
+                "https://media.tenor.com",
+                "https://tenor.googleapis.com",
+            ],
+            "connect-src": ["'self'", "https://tenor.googleapis.com"],
+        },
+    })
+);
 // Define __dirname and __filename
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

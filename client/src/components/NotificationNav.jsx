@@ -5,8 +5,6 @@ import { IoNotificationsOutline, IoNotificationsSharp } from "react-icons/io5";
 
 function NotificationNavLink({ activeTab, handleNavClick }) {
     const unreadCount = useSelector((state) => state.notifications.unreadCount);
-    // In NotificationNavLink component
-    console.log("Rendering with unreadCount:", unreadCount);
 
     return (
         <NavLink

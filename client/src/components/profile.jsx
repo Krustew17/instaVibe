@@ -6,17 +6,23 @@ import { FaComment } from "react-icons/fa";
 import { BsGearWide } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import makeRequest from "../utils/makeRequest";
+import sendNotification from "../utils/sendNotification";
 
-export default function Profile({ user, posts, likedPosts }) {
+export default function Profile({ user: initialUser, posts, likedPosts }) {
     const loggedUser = useSelector((state) => state.auth.user);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [activeTab, setActiveTab] = useState("posts");
+    const [user, setUser] = useState(initialUser);
 
     const [isFollowing, setIsFollowing] = useState(
-        !!user?.followers.includes(loggedUser?._id)
+        !!user?.followers?.includes(loggedUser?._id)
     );
 
     const handleFollow = async () => {
+        if (!loggedUser) {
+            window.location.replace("/login");
+            return;
+        }
         const host = import.meta.env.VITE_SERVER_HOST;
         const fetchUrl = `${host}/users/${user._id}/follow`;
 
@@ -26,6 +32,16 @@ export default function Profile({ user, posts, likedPosts }) {
                 return;
             }
             setIsFollowing(!isFollowing);
+
+            setUser((prevUser) => ({
+                ...prevUser,
+                followersCount: isFollowing
+                    ? prevUser.followersCount - 1
+                    : prevUser.followersCount + 1,
+            }));
+
+            const type = isFollowing ? "unfollow" : "follow";
+            await sendNotification(loggedUser._id, user._id, type, null);
         } catch (error) {
             console.error(error);
         }

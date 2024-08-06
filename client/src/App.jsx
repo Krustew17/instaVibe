@@ -10,7 +10,7 @@ import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
 import ProfileEdit from "./pages/profileEditPage";
 import Notifications from "./components/Notifications";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUnreadCount } from "./redux/notifications/notifSlice";
 import { io } from "socket.io-client";
 
@@ -18,6 +18,7 @@ const socket = io(import.meta.env.VITE_SERVER_HOST);
 
 function App() {
     const location = useLocation();
+    const loggedUser = useSelector((state) => state.auth.user);
     const hideRightSideBar =
         /^\/[^/]+(\/post|\/comment)?$/.test(location.pathname) ||
         location.pathname === "/profile/edit";
@@ -27,6 +28,9 @@ function App() {
     useEffect(() => {
         if (location.pathname !== "notifications") {
             socket.on("notification", (notification) => {
+                if (notification.receiver !== loggedUser._id) {
+                    return;
+                }
                 dispatch(updateUnreadCount());
             });
 
