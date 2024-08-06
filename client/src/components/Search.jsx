@@ -50,8 +50,8 @@ const SearchComponent = () => {
 
     if (loading) {
         return (
-            <div className="md:ml-[70px] lg:ml-[250px] min-h-screen">
-                <Spinner />
+            <div className="md:ml-[70px] lg:ml-[250px] min-h-screen dark:border-l-white">
+                <Spinner className="dark:border-l-white" />
             </div>
         );
     }

@@ -9,6 +9,7 @@ import LoginPage from "./pages/loginPage";
 import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
 import ProfileEdit from "./pages/profileEditPage";
+import Notifications from "./components/Notifications";
 
 function App() {
     const location = useLocation();
@@ -34,7 +35,7 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/chat" element={<div>he</div>} />
-                    <Route path="/notifications" element={<div>he</div>} />
+                    <Route path="/notifications" element={<Notifications />} />
                     <Route path="/create" element={<div>he</div>} />
                     <Route path="/:username" element={<ProfilePage />} />
                     <Route path="/profile/edit" element={<ProfileEdit />} />
