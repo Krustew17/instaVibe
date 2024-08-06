@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postsRoutes from "./routes/posts.js";
+import notificationRoutes from "./routes/notifications.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -34,6 +35,7 @@ const __dirname = path.dirname(__filename);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postsRoutes);
+app.use("/notifications", notificationRoutes);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../client/dist")));

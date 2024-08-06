@@ -93,9 +93,9 @@ export default function ProfileEdit() {
     };
 
     return (
-        <div className="sm:ml-[70px] md:ml-[250px]">
+        <div className="sm:ml-[70px] lg:ml-[250px]">
             <form
-                className="px-2 mt-5 md:ml-[150px] flex flex-col gap-6"
+                className="px-10 lg:px-6 mt-5 ml-[50px] lg:ml-[150px] flex flex-col gap-6"
                 onSubmit={handleSubmit}
             >
                 <strong className="text-xl">Edit Profile</strong>

@@ -24,6 +24,7 @@ body {
     color: #000;
     height: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .dark body {
@@ -33,12 +34,17 @@ body {
 
 .spinner {
     border: 8px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #000;
+    border-left-color: #000000;
     border-radius: 50%;
     width: 64px;
     height: 64px;
     animation: spin 1s linear infinite;
     margin: auto;
+}
+
+.dark .spinner {
+    border: 8px solid rgba(255, 255, 255, 0.1);
+    border-left-color: #fff;
 }
 
 @keyframes spin {
