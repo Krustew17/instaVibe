@@ -40,19 +40,21 @@ export default function Nav() {
                 className="bg-white dark:bg-black md:w-[70px] w-full justify-between px-5 cxs:px-16 lg:w-[250px] dark:text-white fixed md:h-screen border-t-2 h-[50px] bottom-0 z-50
             md:overflow-auto flex md:flex-col md:pl-6 md:pr-5 md:gap-6 text-3xl list-none md:border-r-[2px] border-slate-200 dark:border-slate-900 select-none"
             >
-                <h1 className="text-2xl mt-6 font-Pacifico mb-10 absolute md:relative pl-5">
-                    <NavLink className="hidden lg:block " to="/">
+                <h1 className="text-2xl mt-6 font-Pacifico mb-10 absolute md:relative lg:pl-5">
+                    <NavLink className="hidden lg:block" to="/">
                         instaVibe
                     </NavLink>
-                    <img
-                        src="/instaVibe.png"
-                        className="lg:hidden hidden md:block dark:text-white md:h-6 md:w-6 dark:invert"
-                    />
+                    <NavLink to="/">
+                        <img
+                            src="/instaVibe.png"
+                            className="lg:hidden hidden md:block dark:text-white md:h-6 md:w-6 dark:invert"
+                        />
+                    </NavLink>
                 </h1>
 
                 <NavLink
                     to="/"
-                    className={`flex gap-4 items-center text-customBase hover:bg-gray-200 rounded-lg pl-4 py-1 dark:hover:bg-gray-800
+                    className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
                     ${activeTab === "/" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/")}
                 >
@@ -65,7 +67,7 @@ export default function Nav() {
                 </NavLink>
                 <NavLink
                     to="/search"
-                    className={`hidden md:flex gap-4 items-center text-customBase hover:bg-gray-200 rounded-lg pl-4 py-1 dark:hover:bg-gray-800
+                    className={`hidden md:flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
                     ${activeTab === "/search" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/search")}
                 >
@@ -78,7 +80,7 @@ export default function Nav() {
                 </NavLink>
                 <NavLink
                     to="/chat"
-                    className={`flex gap-4 items-center text-customBase hover:bg-gray-200 rounded-lg pl-4 py-1 dark:hover:bg-gray-800 list-none
+                    className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 list-none
                     ${activeTab === "/chat" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/chat")}
                 >
@@ -96,7 +98,7 @@ export default function Nav() {
                 />
                 <NavLink
                     to="/create"
-                    className={`flex gap-4 items-center text-customBase  hover:bg-gray-200 rounded-lg pl-4 py-1 dark:hover:bg-gray-800 ${
+                    className={`flex gap-4 items-center text-customBase  lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
                         activeTab === "/create" ? "font-semibold" : ""
                     }`}
                     onClick={() => handleNavClick("/create")}
@@ -118,7 +120,7 @@ export default function Nav() {
                 {isAuthenticated && (
                     <NavLink
                         to={`/${user?.username}`}
-                        className={`flex gap-4 items-center text-customBase hover:bg-gray-200 rounded-lg pl-4 py-1 dark:hover:bg-gray-800 ${
+                        className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
                             activeTab === `/${user?.username}`
                                 ? "font-semibold"
                                 : ""

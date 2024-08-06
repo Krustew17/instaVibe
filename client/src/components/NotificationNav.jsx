@@ -11,7 +11,7 @@ function NotificationNavLink({ activeTab, handleNavClick }) {
     return (
         <NavLink
             to="/notifications"
-            className={`relative flex gap-4 items-center text-customBase hover:bg-gray-200 rounded-lg pl-4 py-1 dark:hover:bg-gray-800
+            className={`relative flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
             ${activeTab === "/notifications" ? "font-semibold" : ""}`}
             onClick={() => handleNavClick("/notifications")}
         >

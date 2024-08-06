@@ -27,8 +27,8 @@ export default function Notifications() {
 
         if (status === 200) {
             dispatch(setNotifications(data.notifications));
-            dispatch(markAllAsRead());
         }
+        dispatch(markAllAsRead());
         setLoading(false);
     };
 
