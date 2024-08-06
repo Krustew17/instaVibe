@@ -105,7 +105,6 @@ export const getPostDetails = async (req, res) => {
 // CREATE POST
 export const createPost = async (req, res) => {
     try {
-        console.log(req.body);
         // deconstruct the req.body
         const { gifUrl, description } = req.body;
 

@@ -355,6 +355,7 @@ export default function Main() {
             {posts &&
                 posts.map((post) => {
                     return (
+                        // FIX LINK IN LINK HERE LATER
                         <Link
                             to={`${post.createdBy.username}/post/${post.id}`}
                             key={post._id}
