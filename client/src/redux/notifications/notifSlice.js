@@ -9,7 +9,7 @@ const notificationsSlice = createSlice({
     reducers: {
         addNotification(state, action) {
             const newNotification = action.payload;
-            // Check if the notification already exists
+
             const exists = state.notifications.some(
                 (notif) => notif._id === newNotification._id
             );
@@ -17,15 +17,11 @@ const notificationsSlice = createSlice({
                 state.notifications = [newNotification, ...state.notifications];
             }
         },
-        markAsRead: (state, action) => {
-            state.notifications = state.notifications.map((notification) =>
-                notification.id === action.payload.id
-                    ? { ...notification, read: true }
-                    : notification
-            );
-            state.unreadCount = state.notifications.filter(
-                (n) => !n.read
-            ).length;
+        markAllAsRead(state) {
+            state.unreadCount = 0;
+        },
+        updateUnreadCount: (state) => {
+            state.unreadCount += 1;
         },
         clearNotifications: (state) => {
             state.notifications = [];
@@ -39,8 +35,9 @@ const notificationsSlice = createSlice({
 
 export const {
     addNotification,
-    markAsRead,
+    markAllAsRead,
     clearNotifications,
     setNotifications,
+    updateUnreadCount,
 } = notificationsSlice.actions;
 export default notificationsSlice.reducer;

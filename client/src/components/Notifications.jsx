@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import makeRequest from "../utils/makeRequest";
 import Spinner from "./spinner.jsx";
-import { useDispatch } from "react-redux";
-import { setNotifications } from "../redux/notifications/notifSlice.js";
+import {
+    setNotifications,
+    addNotification,
+    markAllAsRead,
+    clearNotifications,
+} from "../redux/notifications/notifSlice.js";
 import io from "socket.io-client";
-import { addNotification } from "../redux/notifications/notifSlice.js";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -24,19 +27,23 @@ export default function Notifications() {
 
         if (status === 200) {
             dispatch(setNotifications(data.notifications));
-            console.log(data);
+            dispatch(markAllAsRead());
         }
+        setLoading(false);
     };
+
     useEffect(() => {
         setLoading(true);
         fetchNotifications();
 
         socket.on("notification", (notification) => {
-            console.log("Received notification:", notification);
             dispatch(addNotification(notification));
+            dispatch(markAllAsRead());
         });
 
-        setLoading(false);
+        return () => {
+            socket.off("notification");
+        };
     }, [dispatch]);
 
     if (loading) {

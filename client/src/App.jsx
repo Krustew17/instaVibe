@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Nav from "./components/nav";
 import Main from "./components/home";
@@ -10,6 +10,11 @@ import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
 import ProfileEdit from "./pages/profileEditPage";
 import Notifications from "./components/Notifications";
+import { useDispatch } from "react-redux";
+import { updateUnreadCount } from "./redux/notifications/notifSlice";
+import { io } from "socket.io-client";
+
+const socket = io(import.meta.env.VITE_SERVER_HOST);
 
 function App() {
     const location = useLocation();
@@ -17,8 +22,22 @@ function App() {
         /^\/[^/]+(\/post|\/comment)?$/.test(location.pathname) ||
         location.pathname === "/profile/edit";
 
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (location.pathname !== "notifications") {
+            socket.on("notification", (notification) => {
+                dispatch(updateUnreadCount());
+            });
+
+            return () => {
+                socket.off("notification");
+            };
+        }
+    }, [dispatch]);
+
     return (
-        <div className="flex min-h-screen max-w-[1200px] mx-auto">
+        <div className="flex min-h-screen max-w-[1250px] mx-auto">
             <Nav />
             <main className="flex-1">
                 <Routes>
