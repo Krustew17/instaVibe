@@ -5,19 +5,21 @@ import { FaSearch } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";
 import { IoNotificationsOutline, IoNotificationsSharp } from "react-icons/io5";
+import NotificationNavLink from "./NotificationNav";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { CiCirclePlus } from "react-icons/ci";
 import { useSelector } from "react-redux";
 
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
 export default function Nav() {
     const [activeTab, setActiveTab] = useState(".");
-    const navigate = useNavigate();
     const [isDarkMode, setisDarkMode] = useState(true);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
+    const unreadCount = useSelector((state) => state.notifications.unreadCount);
+    console.log(unreadCount);
 
     const handleNavClick = (path) => {
         setActiveTab(path);
@@ -36,19 +38,23 @@ export default function Nav() {
         <div className="h-screen">
             <div
                 className="bg-white dark:bg-black md:w-[70px] w-full justify-between px-5 cxs:px-16 lg:w-[250px] dark:text-white fixed md:h-screen border-t-2 h-[50px] bottom-0 z-50
-            md:overflow-auto flex md:flex-col md:pl-6 md:pr-5 md:gap-8 text-3xl list-none md:border-r-[2px] border-slate-200 dark:border-slate-900 select-none"
+            md:overflow-auto flex md:flex-col md:pl-6 md:pr-5 md:gap-6 text-3xl list-none md:border-r-[2px] border-slate-200 dark:border-slate-900 select-none"
             >
-                <h1 className="text-2xl mt-6 font-Pacifico mb-10 absolute md:relative">
-                    <span className="hidden lg:block">instaVibe</span>
-                    <img
-                        src="/instaVibe.png"
-                        className="lg:hidden hidden md:block dark:text-white md:h-6 md:w-6 dark:invert"
-                    />
+                <h1 className="text-2xl mt-6 font-Pacifico mb-10 absolute md:relative lg:pl-5">
+                    <NavLink className="hidden lg:block" to="/">
+                        instaVibe
+                    </NavLink>
+                    <NavLink to="/">
+                        <img
+                            src="/instaVibe.png"
+                            className="lg:hidden hidden md:block dark:text-white md:h-6 md:w-6 dark:invert"
+                        />
+                    </NavLink>
                 </h1>
 
                 <NavLink
                     to="/"
-                    className={`flex gap-4 items-center text-customBase
+                    className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
                     ${activeTab === "/" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/")}
                 >
@@ -61,7 +67,7 @@ export default function Nav() {
                 </NavLink>
                 <NavLink
                     to="/search"
-                    className={`hidden md:flex gap-4 items-center text-customBase
+                    className={`hidden md:flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
                     ${activeTab === "/search" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/search")}
                 >
@@ -74,7 +80,7 @@ export default function Nav() {
                 </NavLink>
                 <NavLink
                     to="/chat"
-                    className={`flex gap-4 items-center text-customBase list-none
+                    className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 list-none
                     ${activeTab === "/chat" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/chat")}
                 >
@@ -86,29 +92,13 @@ export default function Nav() {
                     )}
                     <span className="hidden lg:block">Messages</span>
                 </NavLink>
-                <NavLink
-                    to="/notifications"
-                    className={`flex gap-4 items-center text-customBase 
-                    ${activeTab === "/notifications" ? "font-semibold" : ""}`}
-                    onClick={() => handleNavClick("/notifications")}
-                >
-                    {" "}
-                    {activeTab === "/notifications" ? (
-                        <IoNotificationsSharp
-                            style={{ marginLeft: "-2px" }}
-                            className="text-2xl"
-                        />
-                    ) : (
-                        <IoNotificationsOutline
-                            style={{ marginLeft: "-2px" }}
-                            className="text-2xl"
-                        />
-                    )}
-                    <span className="hidden lg:block">Notifications</span>
-                </NavLink>
+                <NotificationNavLink
+                    activeTab={activeTab}
+                    handleNavClick={handleNavClick}
+                />
                 <NavLink
                     to="/create"
-                    className={`flex gap-4 items-center text-customBase ${
+                    className={`flex gap-4 items-center text-customBase  lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
                         activeTab === "/create" ? "font-semibold" : ""
                     }`}
                     onClick={() => handleNavClick("/create")}
@@ -130,7 +120,7 @@ export default function Nav() {
                 {isAuthenticated && (
                     <NavLink
                         to={`/${user?.username}`}
-                        className={`flex gap-4 items-center text-customBase ${
+                        className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
                             activeTab === `/${user?.username}`
                                 ? "font-semibold"
                                 : ""
