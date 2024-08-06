@@ -9,6 +9,8 @@ import notificationRoutes from "./routes/notifications.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import { Server as SocketIOServer } from "socket.io";
+import http from "http";
 
 dotenv.config();
 
@@ -17,7 +19,7 @@ const app = express();
 /* CONFIGURATIONS */
 
 const corsOptions = {
-    origin: "http://127.0.0.1:5173",
+    origin: ["http://127.0.0.1:5173", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -45,11 +47,20 @@ app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
+// SOCKET IO SETUP
+const server = http.createServer(app);
+export const io = new SocketIOServer(server, { cors: corsOptions });
+io.on("connection", (socket) => {
+    console.log(socket.id);
+});
+
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 5000;
 mongoose
     .connect(process.env.MONGO_URI)
     .then(
-        app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
+        server.listen(PORT, () =>
+            console.log(`Server running on port: ${PORT}`)
+        )
     )
     .catch((err) => console.log(`error: ${err.message}`));

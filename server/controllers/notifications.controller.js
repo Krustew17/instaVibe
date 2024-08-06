@@ -23,7 +23,7 @@ export const fetchNotifications = async (req, res) => {
 };
 
 // CREATE NOTIFICATION OBJECT
-export const createNotification = async (req, res) => {
+export const createNotification = async (req, res, io) => {
     try {
         const { sender, receiver, type, postId = null } = req.body;
 
@@ -55,6 +55,13 @@ export const createNotification = async (req, res) => {
         });
 
         await newNotification.save();
+
+        const notification = await newNotification.populate([
+            { path: "sender", select: "username profilePicture" },
+        ]);
+
+        io.emit("notification", notification);
+        console.log("emitted notification");
 
         return res
             .status(201)

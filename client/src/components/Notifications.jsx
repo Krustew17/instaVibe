@@ -2,9 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import makeRequest from "../utils/makeRequest";
 import Spinner from "./spinner.jsx";
+import { useDispatch } from "react-redux";
+import { setNotifications } from "../redux/notifications/notifSlice.js";
+import io from "socket.io-client";
+import { addNotification } from "../redux/notifications/notifSlice.js";
+
+const socket = io(import.meta.env.VITE_SERVER_HOST);
 
 export default function Notifications() {
-    const [notifications, setNotifications] = useState([]);
+    const dispatch = useDispatch();
+    const notifications = useSelector(
+        (state) => state.notifications.notifications
+    );
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const [loading, setLoading] = useState(false);
 
@@ -14,16 +23,21 @@ export default function Notifications() {
         const { status, data } = await makeRequest(fetchUrl, "GET");
 
         if (status === 200) {
+            dispatch(setNotifications(data.notifications));
             console.log(data);
-            setNotifications(data.notifications);
         }
-        setLoading(false);
     };
-
     useEffect(() => {
         setLoading(true);
         fetchNotifications();
-    }, []);
+
+        socket.on("notification", (notification) => {
+            console.log("Received notification:", notification);
+            dispatch(addNotification(notification));
+        });
+
+        setLoading(false);
+    }, [dispatch]);
 
     if (loading) {
         return <Spinner />;
@@ -38,7 +52,10 @@ export default function Notifications() {
                     </h1>
                     <div className="px-2 py-2">
                         {notifications.map((notification) => (
-                            <div className="flex items-center gap-2 border-b border-gray-300 dark:border-gray-800 mb-2 pb-2">
+                            <div
+                                className={`flex items-center gap-2 border-b border-gray-300 dark:border-gray-800 mb-2 pb-2`}
+                                key={notification._id}
+                            >
                                 <img
                                     src={`${notification.sender.profilePicture}`}
                                     alt="profilePic"
