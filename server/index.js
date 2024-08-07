@@ -20,7 +20,10 @@ const app = express();
 /* CONFIGURATIONS */
 
 const corsOptions = {
-    origin: "*",
+    origin: [
+        "https://insta-vibe-be.vercel.app",
+        "insta-vibe-91rh1squw-krustew17s-projects.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
