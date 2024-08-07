@@ -10,7 +10,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 export default function PostDetails() {
     const [post, setPost] = useState(null);
     const [comment, setComment] = useState("");
-    const { username, postId, commentId } = useParams();
+    const { username, postId } = useParams();
     const user = useSelector((state) => state.auth.user);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const [loading, setLoading] = useState(false);
@@ -86,7 +86,7 @@ export default function PostDetails() {
                 <GoArrowLeft className="text-2xl m-2 md:ml-[80px] lg:ml-[260px]" />
             </div>
             <div className=" md:ml-[70px] lg:ml-[250px] min-h-screen">
-                <Post {...post} />
+                <Post {...post} showMenu={true} />
                 {isAuthenticated && (
                     <form
                         className="border-b border-slate-200 dark:border-slate-800 pb-2 px-4"
