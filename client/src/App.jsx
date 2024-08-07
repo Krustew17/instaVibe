@@ -13,20 +13,27 @@ import Notifications from "./components/Notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUnreadCount } from "./redux/notifications/notifSlice";
 import { io } from "socket.io-client";
+import Chat from "./components/chat";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
 function App() {
     const location = useLocation();
     const loggedUser = useSelector((state) => state.auth.user);
-    const hideRightSideBar =
-        /^\/[^/]+(\/post|\/comment)?$/.test(location.pathname) ||
-        location.pathname === "/profile/edit";
 
+    // Determine if the right sidebar should be hidden
+    const visibleRoutes = ["/", "/create", "/search", "/notifications"];
+
+    const hideRightSideBar = !visibleRoutes.some((route) => {
+        return (
+            location.pathname === route ||
+            location.pathname.startsWith(route + "/")
+        );
+    });
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (location.pathname !== "notifications") {
+        if (location.pathname !== "/notifications") {
             socket.on("notification", (notification) => {
                 if (notification.receiver !== loggedUser._id) {
                     return;
@@ -38,7 +45,7 @@ function App() {
                 socket.off("notification");
             };
         }
-    }, [dispatch]);
+    }, [dispatch, location.pathname, loggedUser._id]);
 
     return (
         <div className="flex min-h-screen max-w-[1250px] mx-auto">
@@ -57,17 +64,14 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/search" element={<Search />} />
-                    <Route path="/chat" element={<div>he</div>} />
+                    <Route path="/chat/:conversationId?" element={<Chat />} />
                     <Route path="/notifications" element={<Notifications />} />
                     <Route path="/create" element={<div>he</div>} />
                     <Route path="/:username" element={<ProfilePage />} />
                     <Route path="/profile/edit" element={<ProfileEdit />} />
                 </Routes>
             </main>
-            {(!hideRightSideBar ||
-                /\/search|\/chat|\/notifications|\/create/.test(
-                    location.pathname
-                )) && <RightSideBar />}
+            {!hideRightSideBar && <RightSideBar />}
         </div>
     );
 }

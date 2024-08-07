@@ -25,6 +25,8 @@ const Post = ({
     const [isLiked, setIsLiked] = useState(!!likes[loggedUser?._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newDescription, setNewDescription] = useState(description);
 
     const owner = _id === loggedUser?._id;
 
@@ -67,6 +69,29 @@ const Post = ({
         return;
     };
 
+    const handleEdit = () => {
+        setIsEditing(true);
+        setIsMenuOpen(false);
+    };
+
+    const handleSave = async () => {
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/posts/${id}/update`;
+        const headers = {
+            "Content-Type": "application/json",
+        };
+        const body = JSON.stringify({ description: newDescription });
+        const { status } = await makeRequest(fetchUrl, "PUT", headers, body);
+        if (status === 200) {
+            setIsEditing(false);
+        }
+    };
+
+    const handleCancel = () => {
+        setNewDescription(description);
+        setIsEditing(false);
+    };
+
     return (
         <div className="flex p-4 border-b border-gray-200 dark:border-gray-700">
             <img
@@ -94,7 +119,13 @@ const Post = ({
                                     ...
                                 </button>
                                 {isMenuOpen && (
-                                    <div className="absolute right-0 md:mt-2 w-24 bg-white border border-gray-300 dark:border-gray-800 rounded-lg shadow-lg z-10 dark:bg-gray-800">
+                                    <div className="absolute flex flex-col gap-2 right-0 md:mt-2 w-32 border p-4 bg-white dark:bg-black dark:border-gray-800 rounded-lg shadow-lg z-10">
+                                        <button
+                                            onClick={handleEdit}
+                                            className="block w-full rounded-lg text-center px-4 py-2 bg-black dark:bg-white text-sm text-white hover:bg-gray-700 dark:text-black dark:hover:bg-gray-300"
+                                        >
+                                            Edit
+                                        </button>
                                         <button
                                             onClick={handleDelete}
                                             className="block w-full rounded-lg text-center px-4 py-2 text-sm bg-red-500 text-white hover:bg-red-600 dark:text-gray-200 dark:hover:bg-red-700"
@@ -108,7 +139,33 @@ const Post = ({
                     </div>
                 </div>
                 <div className="mt-2">
-                    <p className="text-xl overflow-hidden">{description}</p>
+                    {isEditing ? (
+                        <div className="flex flex-col gap-2">
+                            <textarea
+                                className="w-full p-2 border border-gray-300 rounded-md dark:border-gray-700 dark:bg-black dark:text-white"
+                                value={newDescription}
+                                onChange={(e) =>
+                                    setNewDescription(e.target.value)
+                                }
+                            />
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleSave}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    onClick={handleCancel}
+                                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-xl overflow-hidden">{description}</p>
+                    )}
                     {picturePath && (
                         <img
                             src={picturePath}

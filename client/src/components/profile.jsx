@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IoHeartSharp } from "react-icons/io5";
 import { FaTableCells } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaComment } from "react-icons/fa";
 import { BsGearWide } from "react-icons/bs";
 import { useSelector } from "react-redux";
@@ -9,6 +9,7 @@ import makeRequest from "../utils/makeRequest";
 import sendNotification from "../utils/sendNotification";
 
 export default function Profile({ user: initialUser, posts, likedPosts }) {
+    const navigate = useNavigate();
     const loggedUser = useSelector((state) => state.auth.user);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [activeTab, setActiveTab] = useState("posts");
@@ -47,6 +48,31 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
         }
     };
 
+    const handleMessage = async () => {
+        const host = import.meta.env.VITE_SERVER_HOST;
+
+        const fetchUrl = `${host}/chat/conversation`;
+        const headers = {
+            "Content-Type": "application/json",
+        };
+
+        const body = JSON.stringify({
+            receiverId: user._id,
+        });
+        const { status, data } = await makeRequest(
+            fetchUrl,
+            "POST",
+            headers,
+            body
+        );
+        if (status !== 200) {
+            console.error(data.message);
+            return;
+        }
+        const coversationId = data._id;
+        navigate(`/chat/${coversationId}`);
+    };
+
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 640);
@@ -58,7 +84,7 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
 
     if (isMobile) {
         return (
-            <div className="mt-4 customBreakPoint:mt-8 customBreakPoint:ml-6 px-2">
+            <div className="mt-4 customBreakPoint:mt-8 customBreakPoint:ml-4 px-2 min-h-screen">
                 <div className=" flex justify-between items-center">
                     <div className="flex gap-2 text-sm">
                         <h1 className="font-semibold ">{user?.displayName}</h1>
@@ -76,12 +102,20 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                             </button>
                         </div>
                     )) || (
-                        <button
-                            className="border-black py-1 bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-lg text-md"
-                            onClick={handleFollow}
-                        >
-                            {isFollowing ? "Unfollow" : "Follow"}
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                className="border-black py-1 bg-black text-white dark:border-white select-none dark:bg-white dark:text-black border px-2 rounded-lg text-sm"
+                                onClick={handleFollow}
+                            >
+                                {isFollowing ? "Unfollow" : "Follow"}
+                            </button>
+                            <button
+                                className="border-black py-1 active:bg-black active:text-white dark:active:bg-white dark:active:text-black select-none text-black dark:border-white dark:text-white border px-2 rounded-lg text-sm"
+                                onClick={handleMessage}
+                            >
+                                Message
+                            </button>
+                        </div>
                     )}
                 </div>
 
@@ -123,7 +157,7 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                 WebkitBoxOrient: "vertical",
                                 WebkitLineClamp: 4,
                                 overflow: "hidden",
-                                textOverflow: "clip", // Changed from 'ellipsis' to 'clip'
+                                textOverflow: "clip",
                                 lineHeight: "1em",
                                 maxHeight: "4em",
                             }}
@@ -246,13 +280,21 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                     </Link>
                                 </div>
                             )) || (
-                                <button
-                                    className="px-6  border-none rounded-lg py-1 bg-black dark:bg-white dark:text-black text-white"
-                                    onClick={handleFollow}
-                                    type="button"
-                                >
-                                    {isFollowing ? "Unfollow" : "Follow"}
-                                </button>
+                                <div className="flex gap-6">
+                                    <button
+                                        className="px-6  border-none rounded-lg py-1 bg-black dark:bg-white dark:text-black text-white"
+                                        onClick={handleFollow}
+                                        type="button"
+                                    >
+                                        {isFollowing ? "Unfollow" : "Follow"}
+                                    </button>
+                                    <button
+                                        className="border-black py-1  hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black select-none text-black dark:border-white dark:text-white border px-4 rounded-lg"
+                                        onClick={handleMessage}
+                                    >
+                                        Message
+                                    </button>
+                                </div>
                             )}
                         </div>
                         <div className="flex gap-2 md:gap-14 md:text-lg">
