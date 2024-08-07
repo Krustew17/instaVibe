@@ -6,6 +6,7 @@ import convertDate from "../utils/convertDate";
 import likePost from "../utils/likePost";
 import { useSelector } from "react-redux";
 import sendNotification from "../utils/sendNotification";
+import makeRequest from "../utils/makeRequest";
 
 const Post = ({
     id,
@@ -16,12 +17,16 @@ const Post = ({
     likes,
     likesCount: initialLikesCount,
     comments,
+    showMenu = false,
 }) => {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const navigate = useNavigate();
     const loggedUser = useSelector((state) => state.auth.user);
     const [isLiked, setIsLiked] = useState(!!likes[loggedUser?._id]);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const owner = _id === loggedUser?._id;
 
     // CONVERT CREATEDATE
     const formattedDate = convertDate(createdAt);
@@ -48,25 +53,58 @@ const Post = ({
         }
     };
 
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    const handleDelete = async () => {
+        const host = import.meta.env.VITE_SERVER_HOST;
+        const fetchUrl = `${host}/posts/${id}/delete`;
+        const { status } = await makeRequest(fetchUrl, "DELETE");
+        if (status === 200) {
+            navigate("/");
+        }
+        return;
+    };
+
     return (
         <div className="flex p-4 border-b border-gray-200 dark:border-gray-700">
-            <Link to={`/${username}`}>
-                <img
-                    src={profilePicture}
-                    alt={`${username}'s profile`}
-                    className="w-12 h-12 rounded-full mr-4"
-                />
-            </Link>
+            <img
+                src={profilePicture}
+                alt={`${username}'s profile`}
+                className="w-12 h-12 rounded-full mr-4"
+            />
             <div className="flex-1">
                 <div className="flex justify-between items-center">
-                    <div className="flex gap-3">
-                        <Link to={`/${username}`}>
-                            {" "}
-                            <span className="font-bold">@{username}</span>{" "}
-                        </Link>
-                        <span className="text-gray-400 dark:text-gray-600 ">
-                            {formattedDate}
-                        </span>
+                    <div className="flex justify-between w-full">
+                        <div className="flex gap-3">
+                            <Link to={`/${username}`}>
+                                <span className="font-bold">@{username}</span>
+                            </Link>
+                            <span className="text-gray-400 dark:text-gray-600">
+                                {formattedDate}
+                            </span>
+                        </div>
+                        {showMenu && owner && (
+                            <div className="relative text-gray-500 select-none">
+                                <button
+                                    onClick={toggleMenu}
+                                    className="focus:outline-none"
+                                >
+                                    ...
+                                </button>
+                                {isMenuOpen && (
+                                    <div className="absolute right-0 md:mt-2 w-24 bg-white border border-gray-300 dark:border-gray-800 rounded-lg shadow-lg z-10 dark:bg-gray-800">
+                                        <button
+                                            onClick={handleDelete}
+                                            className="block w-full rounded-lg text-center px-4 py-2 text-sm bg-red-500 text-white hover:bg-red-600 dark:text-gray-200 dark:hover:bg-red-700"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="mt-2">
