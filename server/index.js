@@ -27,7 +27,7 @@ const corsOptions = {
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.json());
 app.use(helmet());
@@ -71,9 +71,16 @@ app.use("/", (req, res) => {
 //     res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 // });
 
+const socketIoCORSOptions = {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 // SOCKET IO SETUP
 const server = http.createServer(app);
-export const io = new SocketIOServer(server, { cors: corsOptions });
+export const io = new SocketIOServer(server, { cors: socketIoCORSOptions });
 io.on("connection", (socket) => {
     socket.on("joinConversation", (conversationId) => {
         socket.join(conversationId);
