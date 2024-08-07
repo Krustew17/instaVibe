@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postsRoutes from "./routes/posts.js";
 import notificationRoutes from "./routes/notifications.js";
+import chatRoutes from "./routes/chat.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -58,6 +59,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postsRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/chat", chatRoutes);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../client/dist")));
@@ -71,7 +73,10 @@ app.get("*", (req, res) => {
 const server = http.createServer(app);
 export const io = new SocketIOServer(server, { cors: corsOptions });
 io.on("connection", (socket) => {
-    console.log(socket.id);
+    socket.on("joinConversation", (conversationId) => {
+        socket.join(conversationId);
+        console.log(`User joined conversation ${conversationId}`);
+    });
 });
 
 /* MONGOOSE SETUP */
