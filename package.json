@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "build": "cd client && npm install && npm run build && cd .. && mv client/dist server/public",
+        "build": "cd client && npm install && npm run build",
         "start": "cd server && npm install && npm start"
     },
     "keywords": [],
