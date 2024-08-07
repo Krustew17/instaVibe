@@ -5,3 +5,4 @@ server/package-lock.json
 server/.env
 # Local Netlify folder
 .netlify
+.vercel
