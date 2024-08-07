@@ -56,14 +56,17 @@ app.use("/users", userRoutes);
 app.use("/posts", postsRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/chat", chatRoutes);
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
-// Handle React routing, return all requests to React app
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+app.use("/", (req, res) => {
+    res.send("hello world");
 });
+
+// // Serve static files from the React app
+// app.use(express.static(path.join(__dirname, "../client/dist")));
+
+// // Handle React routing, return all requests to React app
+// app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+// });
 
 // SOCKET IO SETUP
 const server = http.createServer(app);
