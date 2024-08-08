@@ -5,7 +5,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "cd client && npm install && npm run build",
-        "start": "cd server && npm install && nodemon index.js"
+        "start": "cd server && npm install && npm run start:prod"
     },
     "keywords": [],
     "author": "krustew",
