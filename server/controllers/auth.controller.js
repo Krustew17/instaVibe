@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import validateUsername from "../utils/validateUsername.js";
 
 // REGISTER USER
 export const register = async (req, res) => {
