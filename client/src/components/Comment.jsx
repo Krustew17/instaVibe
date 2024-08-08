@@ -42,7 +42,6 @@ export default function Comment({
 
     const handleDeleteComment = async (e) => {
         e.preventDefault();
-        console.log(postId);
         if (!user) {
             return;
         }
