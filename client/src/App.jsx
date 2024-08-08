@@ -35,7 +35,7 @@ function App() {
     useEffect(() => {
         if (location.pathname !== "/notifications") {
             socket.on("notification", (notification) => {
-                if (notification.receiver !== loggedUser._id) {
+                if (notification.receiver !== loggedUser?._id) {
                     return;
                 }
                 dispatch(updateUnreadCount());
@@ -45,7 +45,7 @@ function App() {
                 socket.off("notification");
             };
         }
-    }, [dispatch, location.pathname, loggedUser._id]);
+    }, [dispatch, location.pathname, loggedUser?._id]);
 
     return (
         <div className="flex min-h-screen max-w-[1250px] mx-auto">

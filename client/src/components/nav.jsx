@@ -98,11 +98,11 @@ export default function Nav() {
                             handleNavClick={handleNavClick}
                         />
                         <NavLink
-                            to="/create"
+                            to="/"
                             className={`flex gap-4 items-center text-customBase  lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
                                 activeTab === "/create" ? "font-semibold" : ""
                             }`}
-                            onClick={() => handleNavClick("/create")}
+                            onClick={() => handleNavClick("/")}
                         >
                             {" "}
                             {activeTab === "/create" ? (

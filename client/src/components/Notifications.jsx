@@ -42,7 +42,7 @@ export default function Notifications() {
         fetchNotifications();
 
         socket.on("notification", (notification) => {
-            if (notification.receiver !== loggedUser._id) {
+            if (notification.receiver !== loggedUser?._id) {
                 return;
             }
             dispatch(addNotification(notification));

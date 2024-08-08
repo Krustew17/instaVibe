@@ -71,7 +71,6 @@ export default function PostDetails() {
             fetchPost();
             setComment("");
         } catch (error) {
-            console.log(error.message);
             return;
         } finally {
             setLoading(false);

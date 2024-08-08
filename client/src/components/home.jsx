@@ -175,7 +175,6 @@ export default function Main() {
             setDescription("");
             fetchPosts();
             fileInputRef.current.value = "";
-            console.log("cleared inputs");
         } catch (error) {
             setError(error.message);
         } finally {
