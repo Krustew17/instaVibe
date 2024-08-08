@@ -84,6 +84,7 @@ const Post = ({
         const { status } = await makeRequest(fetchUrl, "PUT", headers, body);
         if (status === 200) {
             setIsEditing(false);
+            setNewDescription(newDescription);
         }
     };
 
@@ -164,7 +165,9 @@ const Post = ({
                             </div>
                         </div>
                     ) : (
-                        <p className="text-xl overflow-hidden">{description}</p>
+                        <p className="text-xl overflow-hidden">
+                            {newDescription}
+                        </p>
                     )}
                     {picturePath && (
                         <img
