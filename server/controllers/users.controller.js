@@ -40,9 +40,6 @@ export const searchUsers = async (req, res) => {
             username: { $regex: query, $options: "i" }, // Case-insensitive search
         });
 
-        // Log the retrieved users for debugging
-        console.log("Filtered users:", users);
-
         // Send back the filtered users
         res.status(200).json(users);
     } catch (error) {
@@ -135,7 +132,6 @@ export const updateUserDetails = async (req, res) => {
                 ?.pop()
                 ?.split(".")
                 ?.shift();
-            console.log(cloudinaryPublicId);
 
             // Delete image from cloudinary if not default avatar
             if (cloudinaryPublicId && cloudinaryPublicId !== "default_avatar") {

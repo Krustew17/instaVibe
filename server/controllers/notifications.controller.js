@@ -61,7 +61,6 @@ export const createNotification = async (req, res, io) => {
         ]);
 
         io.emit("notification", notification);
-        console.log("emitted notification");
 
         return res
             .status(201)
