@@ -49,8 +49,12 @@ export default function Comment({
         const fetchUrl = `${host}/posts/${postId}/comment/${id}/delete`;
 
         try {
-            await makeRequest(fetchUrl, "DELETE");
-            window.location.reload();
+            const { status, data } = await makeRequest(fetchUrl, "DELETE");
+            if (status === 200) {
+                console.log(data);
+                window.location.reload();
+            }
+            console.log(data);
         } catch (error) {
             console.error(error);
             return;

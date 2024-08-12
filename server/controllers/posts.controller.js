@@ -195,25 +195,27 @@ export const deletePost = async (req, res) => {
         // deconstruct the req.body
         const postId = req.params.id;
         const user = req.user;
+        console.log(postId);
 
         const post = await validation(postId, user, res);
+        console.log(post);
 
         if (!post) return res.status(400).json({ message: "post not found" });
 
-        // Retrieve the image cloudinary public id
-        const cloudinaryPublicId = post.picturePath
-            .split("/")
-            .pop()
-            .split(".")
-            .shift();
+        // // Retrieve the image cloudinary public id
+        // const cloudinaryPublicId = post.picturePath
+        //     .split("/")
+        //     .pop()
+        //     .split(".")
+        //     .shift();
 
-        // Delete image from cloudinary
-        await cloudinary.uploader.destroy([cloudinaryPublicId], {
-            resource_type: "image",
-        });
+        // // Delete image from cloudinary
+        // await cloudinary.uploader.destroy([cloudinaryPublicId], {
+        //     resource_type: "image",
+        // });
 
         // Delete the post
-        await Post.findOneAndDelete(postId);
+        await Post.deleteOne({ _id: postId });
 
         // Send the response
         return res.status(200).json({ message: "Post deleted successfully" });
@@ -321,8 +323,10 @@ export const deleteComment = async (req, res) => {
         const postId = req.params.postId;
 
         const user = req.user;
+        console.log(req.user);
 
-        const post = await validation(postId, user, res);
+        const post = await Post.findById(postId);
+
         if (!post) return res.status(400).json({ message: "post not found" });
 
         const comment = await Comment.findById(commentId);

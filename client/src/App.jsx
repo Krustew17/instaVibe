@@ -21,15 +21,13 @@ function App() {
     const location = useLocation();
     const loggedUser = useSelector((state) => state.auth.user);
 
-    // Determine if the right sidebar should be hidden
     const visibleRoutes = ["/", "/create", "/search", "/notifications"];
 
-    const hideRightSideBar = !visibleRoutes.some((route) => {
-        return (
-            location.pathname === route ||
-            location.pathname.startsWith(route + "/")
-        );
-    });
+    // Determine if the right sidebar should be hidden
+    const hideRightSideBar = !(
+        visibleRoutes.some((route) => location.pathname === route) ||
+        location.pathname.match(/^\/[^/]+\/post\/[^/]+$/)
+    );
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -66,7 +64,6 @@ function App() {
                     <Route path="/search" element={<Search />} />
                     <Route path="/chat/:conversationId?" element={<Chat />} />
                     <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/create" element={<div>he</div>} />
                     <Route path="/:username" element={<ProfilePage />} />
                     <Route path="/profile/edit" element={<ProfileEdit />} />
                 </Routes>

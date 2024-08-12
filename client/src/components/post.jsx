@@ -9,7 +9,7 @@ import sendNotification from "../utils/sendNotification";
 import makeRequest from "../utils/makeRequest";
 
 const Post = ({
-    id,
+    _id: postId,
     createdBy: { username, profilePicture, _id },
     description,
     picturePath,
@@ -39,19 +39,25 @@ const Post = ({
             navigate("/login");
             return;
         }
+        console.log(isLiked);
+
         const {
             success,
             isLiked: newIsLiked,
             likesCountChange,
-        } = await likePost(e, id, isLiked);
+        } = await likePost(e, postId, isLiked);
 
         if (success) {
             setIsLiked(newIsLiked);
             setLikesCount(
                 (prevLikesCount) => prevLikesCount + likesCountChange
             );
-            const type = newIsLiked ? "unlike" : "like";
-            await sendNotification(loggedUser._id, _id, type, id);
+            const type = newIsLiked ? "like" : "unlike";
+            console.log(type);
+
+            if (loggedUser?._id !== _id) {
+                await sendNotification(_id, loggedUser?._id, type, postId);
+            }
         }
     };
 
@@ -61,7 +67,7 @@ const Post = ({
 
     const handleDelete = async () => {
         const host = import.meta.env.VITE_SERVER_HOST;
-        const fetchUrl = `${host}/posts/${id}/delete`;
+        const fetchUrl = `${host}/posts/${postId}/delete`;
         const { status } = await makeRequest(fetchUrl, "DELETE");
         if (status === 200) {
             navigate("/");
@@ -76,7 +82,7 @@ const Post = ({
 
     const handleSave = async () => {
         const host = import.meta.env.VITE_SERVER_HOST;
-        const fetchUrl = `${host}/posts/${id}/update`;
+        const fetchUrl = `${host}/posts/${postId}/update`;
         const headers = {
             "Content-Type": "application/json",
         };

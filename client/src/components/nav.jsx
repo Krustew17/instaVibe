@@ -15,7 +15,7 @@ import React, { useState, useEffect } from "react";
 
 export default function Nav() {
     const [activeTab, setActiveTab] = useState(".");
-    const [isDarkMode, setisDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(true);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
 
@@ -25,7 +25,7 @@ export default function Nav() {
 
     const toggleDarkMode = () => {
         document.documentElement.classList.toggle("dark");
-        setisDarkMode(!isDarkMode);
+        setIsDarkMode(!isDarkMode);
     };
 
     useEffect(() => {
@@ -65,7 +65,7 @@ export default function Nav() {
                 </NavLink>
                 <NavLink
                     to="/search"
-                    className={`hidden md:flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
+                    className={`md:flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
                     ${activeTab === "/search" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/search")}
                 >
@@ -98,27 +98,6 @@ export default function Nav() {
                             handleNavClick={handleNavClick}
                         />
                         <NavLink
-                            to="/"
-                            className={`flex gap-4 items-center text-customBase  lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
-                                activeTab === "/create" ? "font-semibold" : ""
-                            }`}
-                            onClick={() => handleNavClick("/")}
-                        >
-                            {" "}
-                            {activeTab === "/create" ? (
-                                <FaCirclePlus
-                                    style={{ marginLeft: "-2px" }}
-                                    className="text-2xl"
-                                />
-                            ) : (
-                                <CiCirclePlus
-                                    style={{ marginLeft: "-2px" }}
-                                    className="text-2xl"
-                                />
-                            )}
-                            <span className="hidden lg:block">Create</span>
-                        </NavLink>
-                        <NavLink
                             to={`/${user?.username}`}
                             className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 ${
                                 activeTab === `/${user?.username}`
@@ -129,7 +108,11 @@ export default function Nav() {
                         >
                             <img
                                 src={user?.profilePicture}
-                                className="w-6 h-6 rounded-full border-2 dark:border-white border-black"
+                                className={`w-6 h-6 rounded-full aspect-square ${
+                                    activeTab === `/${user?.username}`
+                                        ? "border-2 border-black dark:border-white"
+                                        : ""
+                                }`}
                                 alt="profile"
                                 style={{ marginLeft: "-2px" }}
                             />

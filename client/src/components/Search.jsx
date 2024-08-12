@@ -39,11 +39,10 @@ const SearchComponent = () => {
     };
 
     useEffect(() => {
-        setLoading(true);
-
         const delay = setTimeout(() => {
+            setLoading(true);
             handleSearch(activeTab);
-        }, 300);
+        }, 500);
 
         return () => clearTimeout(delay);
     }, [activeTab, query]);
@@ -74,6 +73,29 @@ const SearchComponent = () => {
                         onChange={(e) => setQuery(e.target.value)}
                         className="flex-1 px-4 py-2 border-none rounded-l-md focus:outline-none bg-transparent"
                     />
+                    {query && (
+                        <button
+                            type="button"
+                            onClick={() => setQuery("")}
+                            className="text-black dark:text-white px-2"
+                        >
+                            {" "}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    )}
                 </form>
             </div>
             <div className="text-red-500 mt-2 text-center">{error}</div>

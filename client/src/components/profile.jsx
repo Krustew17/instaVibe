@@ -93,13 +93,16 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                         </h1>
                     </div>
                     {(user?._id === loggedUser?._id && (
-                        <div className="flex gap-2 flex-end">
-                            <button className=" border-black py-1 bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-md text-sm">
+                        <div className="flex gap-2 flex-end items-center">
+                            <Link
+                                to={"/profile/edit"}
+                                className="border-black lg:text-xl bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-md"
+                            >
                                 Edit Profile
-                            </button>
-                            <button>
+                            </Link>
+                            <Link to={`/profile/edit`} className="lg:text-xl">
                                 <BsGearWide />
-                            </button>
+                            </Link>
                         </div>
                     )) || (
                         <div className="flex gap-2">

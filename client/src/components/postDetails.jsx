@@ -21,7 +21,13 @@ export default function PostDetails() {
             const host = import.meta.env.VITE_SERVER_HOST;
             const fetchUrl = `${host}/posts/${username}/${postId}`;
 
-            const { data } = await makeRequest(fetchUrl);
+            const { data } = await makeRequest(
+                fetchUrl,
+                "GET",
+                null,
+                null,
+                null
+            );
 
             if (!data) return window.location.replace("/");
 

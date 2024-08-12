@@ -120,7 +120,13 @@ export default function Main() {
 
     const fetchPosts = async () => {
         const host = import.meta.env.VITE_SERVER_HOST;
-        const { data } = await makeRequest(`${host}/posts/all`);
+        const { data } = await makeRequest(
+            `${host}/posts/all`,
+            "GET",
+            null,
+            null,
+            null
+        );
         setPosts(data);
         return data;
     };
