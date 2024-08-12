@@ -6,6 +6,7 @@ import Post from "./post";
 import makeRequest from "../utils/makeRequest";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useSelector } from "react-redux";
+import { DarkModeSwitch } from "react-toggle-dark-mode";
 
 export default function Main() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -21,9 +22,15 @@ export default function Main() {
     const [image, setImage] = useState(null);
     const fileInputRef = useRef(null);
     const [description, setDescription] = useState("");
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
+
+    const toggleDarkMode = () => {
+        document.documentElement.classList.toggle("dark");
+        setIsDarkMode(!isDarkMode);
+    };
 
     const handlePostClick = () => {
         sessionStorage.setItem("scrollPosition", window.scrollY);
@@ -190,25 +197,37 @@ export default function Main() {
 
     return (
         <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen mt-2 sm:mt-4 md:pr-32 lg:px-2">
-            <div className="flex gap-4 border-b-2 border-slate-200 dark:border-slate-900 pb-2">
-                <Link
-                    to="?tab=for_you"
-                    className={`${
-                        activeTab === "for_you" ? "font-semibold" : ""
-                    } ml-5`}
-                    onClick={() => setSearchParams({ tab: "for_you" })}
-                >
-                    For you
-                </Link>
-                <Link
-                    to="?tab=following"
-                    className={`${
-                        activeTab === "following" ? "font-semibold" : ""
-                    }`}
-                    onClick={() => setSearchParams({ tab: "following" })}
-                >
-                    Following
-                </Link>
+            <div className="flex justify-between items-center border-b-2 border-slate-200 dark:border-slate-900 pb-2">
+                <div className="flex gap-4">
+                    <Link
+                        to="?tab=for_you"
+                        className={`${
+                            activeTab === "for_you" ? "font-semibold" : ""
+                        } ml-5`}
+                        onClick={() => setSearchParams({ tab: "for_you" })}
+                    >
+                        For you
+                    </Link>
+                    <Link
+                        to="?tab=following"
+                        className={`${
+                            activeTab === "following" ? "font-semibold" : ""
+                        }`}
+                        onClick={() => setSearchParams({ tab: "following" })}
+                    >
+                        Following
+                    </Link>
+                </div>
+                <div className="flex items-center md:hidden px-2">
+                    <DarkModeSwitch
+                        checked={isDarkMode}
+                        onChange={toggleDarkMode}
+                        size={25}
+                        moonColor="#000000"
+                        sunColor="#f5f5f5"
+                        className="select-none"
+                    />
+                </div>
             </div>
             {isAuthenticated && (
                 <form
