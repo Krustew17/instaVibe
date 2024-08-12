@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateUnreadCount } from "./redux/notifications/notifSlice";
 import { io } from "socket.io-client";
 import Chat from "./components/chat";
+import ProtectedRoute from "./components/protectedRoute";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -59,13 +60,58 @@ function App() {
                         path="/:username/post/:postId/comment/:commentId"
                         element={<PostDetails />}
                     />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                        path="/login"
+                        element={
+                            <ProtectedRoute
+                                children={<LoginPage />}
+                                to="/"
+                                shouldBeAuthenticated={false}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/register"
+                        element={
+                            <ProtectedRoute
+                                children={<RegisterPage />}
+                                to="/"
+                                shouldBeAuthenticated={false}
+                            />
+                        }
+                    />
                     <Route path="/search" element={<Search />} />
-                    <Route path="/chat/:conversationId?" element={<Chat />} />
-                    <Route path="/notifications" element={<Notifications />} />
+                    <Route
+                        path="/chat/:conversationId?"
+                        element={
+                            <ProtectedRoute
+                                children={<Chat />}
+                                to="/login"
+                                shouldBeAuthenticated={true}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/notifications"
+                        element={
+                            <ProtectedRoute
+                                children={<Notifications />}
+                                to="/"
+                                shouldBeAuthenticated={true}
+                            />
+                        }
+                    />
                     <Route path="/:username" element={<ProfilePage />} />
-                    <Route path="/profile/edit" element={<ProfileEdit />} />
+                    <Route
+                        path="/profile/edit"
+                        element={
+                            <ProtectedRoute
+                                children={<ProfileEdit />}
+                                to="/login"
+                                shouldBeAuthenticated={true}
+                            />
+                        }
+                    />
                 </Routes>
             </main>
             {!hideRightSideBar && <RightSideBar />}

@@ -47,7 +47,6 @@ const Chat = () => {
         dispatch(setCurrentConversation(data));
     });
 
-    // Fetch messages for the current conversation
     useEffect(() => {
         if (conversationId) {
             const fetchMessages = async () => {
@@ -60,19 +59,17 @@ const Chat = () => {
 
             socket.emit("joinConversation", conversationId);
 
-            // Listener for new messages
             const handleNewMessage = (message) => {
                 dispatch(addMessage(message));
             };
 
             socket.on("new-message", handleNewMessage);
 
-            // Cleanup function to remove the event listener
             return () => {
                 socket.off("new-message", handleNewMessage);
             };
         }
-    }, [conversationId, dispatch]); // Only run this effect when conversationId or dispatch changes
+    }, [conversationId, dispatch]);
 
     const handleConversationClick = (conversation) => {
         navigate(`/chat/${conversation._id}`);
@@ -98,7 +95,6 @@ const Chat = () => {
         const fetchUrl = `${host}/chat/send-message`;
         const { data } = await makeRequest(fetchUrl, "POST", headers, body);
 
-        // Dispatch the message to Redux and emit it to the socket
         dispatch(addMessage(data));
         socket.emit("new-message", data);
         setText("");

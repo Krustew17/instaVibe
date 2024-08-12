@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/auth/authSlice";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const LoginPage = () => {
     const [data, setData] = useState({});
@@ -93,16 +93,11 @@ const LoginPage = () => {
                             />
                         </div>
                     </div>
-                    <div>
-                        <span className="text-gray-700 dark:text-gray-400">
-                            Don't have an account?
-                        </span>
-                        <a
-                            href="/register"
-                            className="ml-2 font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
-                        >
+                    <div className="flex justify-between">
+                        <span>Already have an account?</span>
+                        <Link to="/register" className="hover:underline">
                             Sign up
-                        </a>
+                        </Link>
                     </div>
                     <div className="text-red-500">{error}</div>
                     <div>
