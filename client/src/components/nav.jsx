@@ -65,7 +65,7 @@ export default function Nav() {
                 </NavLink>
                 <NavLink
                     to="/search"
-                    className={`md:flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
+                    className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800
                     ${activeTab === "/search" ? "font-semibold" : ""}`}
                     onClick={() => handleNavClick("/search")}
                 >
