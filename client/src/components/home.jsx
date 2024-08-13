@@ -218,6 +218,14 @@ export default function Main() {
                         Following
                     </Link>
                 </div>
+                <div className="flex md:hidden items-center">
+                    <Link
+                        to="/login"
+                        className="bg-blue-500 px-4 py-1 text-white rounded-md"
+                    >
+                        Sign in
+                    </Link>
+                </div>
                 <div className="flex items-center md:hidden px-2">
                     <DarkModeSwitch
                         checked={isDarkMode}

@@ -1,15 +1,11 @@
 import { PiHouse, PiHouseFill } from "react-icons/pi";
 import { FaMessage } from "react-icons/fa6";
-import { FaCirclePlus } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";
-import { IoNotificationsOutline, IoNotificationsSharp } from "react-icons/io5";
 import NotificationNavLink from "./NotificationNav";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
-import { CiCirclePlus } from "react-icons/ci";
 import { useSelector } from "react-redux";
-
 import { NavLink } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
@@ -82,11 +78,11 @@ export default function Nav() {
                         <NavLink
                             to="/chat"
                             className={`flex gap-4 items-center text-customBase lg:hover:bg-gray-200 rounded-lg lg:pl-4 lg:py-1 lg:dark:hover:bg-gray-800 list-none
-                    ${activeTab === "/chat" ? "font-semibold" : ""}`}
+                    ${activeTab.startsWith("/chat") ? "font-semibold" : ""}`}
                             onClick={() => handleNavClick("/chat")}
                         >
                             {" "}
-                            {activeTab === "/chat" ? (
+                            {activeTab.startsWith("/chat") ? (
                                 <FaMessage className="text-xl" />
                             ) : (
                                 <FaRegMessage className="text-xl" />

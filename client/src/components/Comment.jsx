@@ -51,10 +51,8 @@ export default function Comment({
         try {
             const { status, data } = await makeRequest(fetchUrl, "DELETE");
             if (status === 200) {
-                console.log(data);
                 window.location.reload();
             }
-            console.log(data);
         } catch (error) {
             console.error(error);
             return;

@@ -6,6 +6,7 @@ import Post from "./post";
 import { useSelector } from "react-redux";
 import { GoArrowLeft } from "react-icons/go";
 import ClipLoader from "react-spinners/ClipLoader";
+import sendNotification from "../utils/sendNotification";
 
 export default function PostDetails() {
     const [post, setPost] = useState(null);
@@ -13,6 +14,7 @@ export default function PostDetails() {
     const { username, postId } = useParams();
     const user = useSelector((state) => state.auth.user);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const loggedUser = useSelector((state) => state.auth.user);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -76,6 +78,15 @@ export default function PostDetails() {
             }
             fetchPost();
             setComment("");
+            const type = "comment";
+            if (loggedUser?._id !== post?.createdBy?._id) {
+                await sendNotification(
+                    loggedUser?._id,
+                    post?.createdBy?._id,
+                    type,
+                    postId
+                );
+            }
         } catch (error) {
             return;
         } finally {

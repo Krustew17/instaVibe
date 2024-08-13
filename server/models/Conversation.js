@@ -12,6 +12,10 @@ const conversationSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    lastMessage: {
+        type: String,
+        default: "",
+    },
 });
 
 const Conversation = mongoose.model("Conversation", conversationSchema);
