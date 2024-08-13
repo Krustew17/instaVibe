@@ -29,51 +29,17 @@ git clone https://github.com/Krustew17/instaVibe.git
 cd instaVibe
 ```
 
-2. Install Dependencies
-Backend
-Navigate to the backend directory and install dependencies:
+2. Run Environment Variables setup command
 ```bash
-Copy code
-cd server
-npm install
+npm run setup-env
 ```
 
-Frontend
-Navigate to the frontend directory and install dependencies:
-
-```bash
-Copy code
-cd ../client
-npm install
+3. Start the project
+  ```bash
+npm run power
 ```
 
-3. Set Up Environment Variables
-Create a .env file in the server directory and add the following variables:
-
-```plaintext
-Copy code
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-```
-4. Run the Application
-Start the backend server:
-
-```bash
-Copy code
-cd ../server
-npm run start
-```
-Start the frontend:
-
-```bash
-Copy code
-cd ../client
-npm start
-```
-The application should now be running on http://localhost:5173.
+The application should now be running on http://127.0.0.1:3001.
 
 Usage
 Once the application is up and running:
@@ -82,24 +48,9 @@ Sign Up: Create a new account or log in with existing credentials.
 Post Photos: Share your favorite moments by uploading photos with captions.
 Follow Users: Follow other users to see their posts in your feed.
 Interact: Like and comment on posts to engage with the community.
-Screenshots
-(Add screenshots or GIFs here to showcase the application.)
+Live Chat: Message your friends.
 
-Contributing
-Contributions are welcome! If you have suggestions or find bugs, feel free to create an issue or submit a pull request. Please ensure your code follows the established coding standards.
-
-Steps to Contribute
-Fork the repository.
-Create a new branch (git checkout -b feature/your-feature-name).
-Commit your changes (git commit -m 'Add some feature').
-Push to the branch (git push origin feature/your-feature-name).
-Open a Pull Request.
 License
 This project is licensed under the MIT License. See the LICENSE file for more information.
 
-### Customization
-- **Screenshots/GIFs**: Include images or animated GIFs of the application to give users a visual overview.
-- **Contribution Guidelines**: If you have specific guidelines, mention them in detail.
-- **Technologies**: Update the list if you are using additional technologies or libraries not mentioned above.
-
-This `README.md` file provides a comprehensive overview of the project and guides users on how to set it up and contribute.
+This `README.md` file provides a comprehensive overview of the project and guides users on how to set it up.
