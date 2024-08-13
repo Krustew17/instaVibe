@@ -22,7 +22,7 @@ instaVibe is a modern social media platform inspired by Instagram. It allows use
 
 To set up the project locally, follow these steps:
 
-### 1. Clone the Repository
+1. Clone the Repository
 
 ```bash
 git clone https://github.com/Krustew17/instaVibe.git
