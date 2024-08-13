@@ -40,7 +40,7 @@ npm run power
 ```
 
 The application should now be running on http://127.0.0.1:3001.
-
+```plaintext
 Usage
 Once the application is up and running:
 
@@ -48,7 +48,7 @@ Sign Up: Create a new account or log in with existing credentials.
 Post Photos: Share your favorite moments by uploading photos with captions.
 Follow Users: Follow other users to see their posts in your feed.
 Interact: Like and comment on posts to engage with the community.
-Live Chat: Message your friends.
+```
 
 License
 This project is licensed under the MIT License. See the LICENSE file for more information.
