@@ -7,6 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "cd client && npm install && npm run build",
         "start": "cd server && npm install && npm run start:prod",
+        "installBE": "cd server && npm install"
         "setup-env": "node setup-env.js",
         "power": "npm run build && npm run start"
     },
