@@ -8,8 +8,8 @@ const __dirname = path.dirname(__filename);
 
 // Server .env variables
 const serverEnvVariables = `
-ORT=3001
-MONGODB_URI=mongodb+srv://instaVibeUser:instaVibePassword@instavibetestdb.yncbm.mongodb.net/?retryWrites=true&w=majority&appName=instaVibeTestDB
+PORT=3001
+MONGO_URI=mongodb+srv://instaVibeUser:instaVibePassword@instavibetestdb.yncbm.mongodb.net/?retryWrites=true&w=majority&appName=instaVibeTestDB
 JWT_SECRET=somereallylongsecretthatcannotbeguessedbyanybody!
 CLOUDINARY_CLOUD_NAME=dlac8f4rt
 API_KEY=798293197172219
