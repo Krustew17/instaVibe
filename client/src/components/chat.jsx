@@ -23,6 +23,7 @@ const Chat = () => {
     const messages = useSelector((state) => state.chat.messages);
     const loggedUser = useSelector((state) => state.auth.user);
     const [text, setText] = useState("");
+    const [isMobileView, setIsMobileView] = useState(true); // To toggle views on mobile
 
     // Fetch conversations
     useEffect(() => {
@@ -74,6 +75,7 @@ const Chat = () => {
     const handleConversationClick = (conversation) => {
         navigate(`/chat/${conversation._id}`);
         dispatch(setCurrentConversation(conversation));
+        setIsMobileView(false); // Switch to chat view on mobile
     };
 
     const handleSendMessage = async (e) => {
@@ -106,69 +108,124 @@ const Chat = () => {
     }
 
     return (
-        <div className="flex max-h-screen md:ml-[70px] lg:ml-[250px] w-full">
-            <div className="w-[400px] border-r border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex flex-col h-screen w-full lg:flex-row lg:ml-[250px] md:ml-[70px]">
+            {/* Conversations List */}
+            <div
+                className={`lg:w-[400px] w-full border-r border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900 ${
+                    isMobileView ? "" : "hidden lg:block"
+                }`}
+            >
                 <h2 className="text-xl font-bold mb-4">Conversations</h2>
-                {conversations.map((conversation) => (
-                    <div
-                        key={conversation._id}
-                        onClick={() => handleConversationClick(conversation)}
-                        className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    >
-                        {conversation.participants.map((participant) => (
-                            <div>
-                                {participant._id !== loggedUser._id && (
-                                    <div
-                                        key={participant._id}
-                                        className="flex items-center"
-                                    >
-                                        <img
-                                            src={participant.profilePicture}
-                                            alt={participant.username}
-                                            className="w-10 h-10 rounded-full mr-2"
-                                        />
-                                        <span>{participant.username}</span>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                ))}
+                <div className="overflow-y-auto h-[calc(100vh-100px)]">
+                    {conversations.map((conversation) => (
+                        <div
+                            key={conversation._id}
+                            onClick={() =>
+                                handleConversationClick(conversation)
+                            }
+                            className={`cursor-pointer p-2 flex items-center gap-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all rounded-lg ${
+                                currentConversation?._id === conversation._id
+                                    ? "bg-gray-200 dark:bg-gray-800"
+                                    : ""
+                            }`}
+                        >
+                            {conversation.participants.map(
+                                (participant) =>
+                                    participant._id !== loggedUser._id && (
+                                        <div
+                                            key={participant._id}
+                                            className="flex items-center"
+                                        >
+                                            <img
+                                                src={participant.profilePicture}
+                                                alt={participant.username}
+                                                className="w-12 h-12 rounded-full mr-2 object-cover aspect-square"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">
+                                                    {participant.username}
+                                                </span>
+                                                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                                                    {conversation.lastMessage ||
+                                                        "No messages yet"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div className="w-full p-4 flex flex-col">
+
+            {/* Chat View */}
+            <div className="flex-1 p-4 flex flex-col bg-white dark:bg-gray-900">
                 {currentConversation ? (
                     <>
-                        <div className="mb-4 max-h-screen overflow-auto px-2">
+                        {/* Back button for mobile view */}
+                        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-4 lg:mb-0">
+                            <div className="flex items-center">
+                                {isMobileView && (
+                                    <button
+                                        onClick={() => setIsMobileView(true)}
+                                        className="lg:hidden mr-2 text-blue-500"
+                                    >
+                                        &larr; Back
+                                    </button>
+                                )}
+                                <img
+                                    src={
+                                        currentConversation.participants.find(
+                                            (p) => p._id !== loggedUser._id
+                                        )?.profilePicture
+                                    }
+                                    alt="Recipient"
+                                    className="w-10 h-10 rounded-full mr-2 object-cover"
+                                />
+                                <h3 className="font-semibold text-lg">
+                                    {
+                                        currentConversation.participants.find(
+                                            (p) => p._id !== loggedUser._id
+                                        )?.username
+                                    }
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-800">
                             {messages.map((message) => (
                                 <div
                                     key={message._id}
-                                    className={`mb-2 ${
+                                    className={`mb-2 flex ${
                                         message.sender._id === loggedUser._id
-                                            ? "text-right"
-                                            : "text-left"
+                                            ? "justify-end"
+                                            : "justify-start"
                                     }`}
                                 >
-                                    <span
-                                        className={`inline-block p-2 rounded-lg ${
+                                    <div
+                                        className={`inline-block p-2 rounded-lg max-w-[75%] ${
                                             message.sender._id ===
                                             loggedUser._id
                                                 ? "bg-blue-500 text-white"
-                                                : "bg-gray-200 dark:bg-gray-700"
+                                                : "bg-gray-200 dark:bg-gray-700 text-black dark:text-white"
                                         }`}
                                     >
                                         {message.text}
-                                    </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                        <form onSubmit={handleSendMessage} className="flex">
+                        <form
+                            onSubmit={handleSendMessage}
+                            className="flex items-center"
+                        >
                             <input
                                 type="text"
                                 value={text}
                                 onChange={(e) => setText(e.target.value)}
                                 placeholder="Type your message..."
                                 required
-                                className="flex-1 border dark:border-gray-800 bg-transparent rounded-l-lg p-2"
+                                className="flex-1 border dark:border-gray-800 bg-transparent rounded-l-lg p-2 focus:outline-none"
                             />
                             <button
                                 type="submit"
@@ -179,7 +236,11 @@ const Chat = () => {
                         </form>
                     </>
                 ) : (
-                    <div>Select a conversation to start chatting</div>
+                    <div className="flex items-center justify-center flex-1">
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Select a conversation to start chatting
+                        </p>
+                    </div>
                 )}
             </div>
         </div>

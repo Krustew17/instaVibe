@@ -56,7 +56,7 @@ const Post = ({
             console.log(type);
 
             if (loggedUser?._id !== _id) {
-                await sendNotification(_id, loggedUser?._id, type, postId);
+                await sendNotification(loggedUser?._id, _id, type, postId);
             }
         }
     };

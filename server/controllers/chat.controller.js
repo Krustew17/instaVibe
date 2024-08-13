@@ -23,6 +23,7 @@ export const sendMessage = async (req, res, io) => {
         const savedMessage = await newMessage.save();
 
         conversation.lastMessageDate = newMessage.date;
+        conversation.lastMessage = newMessage.text;
         await conversation.save();
 
         const populatedMessage = await savedMessage.populate([

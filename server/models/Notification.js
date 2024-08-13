@@ -13,7 +13,7 @@ const NotificationSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["follow", "unfollow", "like", "unlike"],
+        enum: ["follow", "unfollow", "like", "unlike", "comment"],
         required: true,
     },
     post: {
@@ -56,6 +56,9 @@ NotificationSchema.pre("validate", async function (next) {
             break;
         case "unlike":
             this.message = `${this.sender.username} unliked your post.`;
+            break;
+        case "comment":
+            this.message = `${this.sender.username} commented on your post.`;
             break;
     }
 
