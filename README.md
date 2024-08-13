@@ -40,8 +40,11 @@ npm run power
 ```
 
 The application should now be running on http://127.0.0.1:3001.
+
+
+## Usage
+
 ```plaintext
-Usage
 Once the application is up and running:
 
 Sign Up: Create a new account or log in with existing credentials.
