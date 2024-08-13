@@ -8,16 +8,18 @@ const __dirname = path.dirname(__filename);
 
 // Server .env variables
 const serverEnvVariables = `
-SERVER_PORT=3001
-MONGODB_URI=mongodb://localhost:27017/yourdb
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_API_KEY=your_cloudinary_api_key
+ORT=3001
+MONGODB_URI=mongodb+srv://instaVibeUser:instaVibePassword@instavibetestdb.yncbm.mongodb.net/?retryWrites=true&w=majority&appName=instaVibeTestDB
+JWT_SECRET=somereallylongsecretthatcannotbeguessedbyanybody!
+CLOUDINARY_CLOUD_NAME=dlac8f4rt
+API_KEY=798293197172219
+API_SECRET=SAjxCmNBZlz_ZnpBFMVkSA-1_6Y
 `;
 
 // Client .env variables
 const clientEnvVariables = `
-VITE_API_URL=http://127.0.0.1:3001
-VITE_PUBLIC_API_KEY=your_public_api_key
+VITE_SERVER_HOST=http://127.0.0.1:3001
+VITE_TENOR_API=AIzaSyDR-qoRW6PGxzEF6ms44U14fzBx_JmugFs
 `;
 
 // Paths to the .env files

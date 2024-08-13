@@ -1,12 +1,4 @@
 server/node_modules
 client/node_modules
 client/.env
-server/package-lock.json
-<<<<<<< Updated upstream
 server/.env
-# Local Netlify folder
-.netlify
-.vercel
-=======
-server/.env
->>>>>>> Stashed changes
