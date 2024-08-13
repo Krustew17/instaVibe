@@ -27,45 +27,53 @@ To set up the project locally, follow these steps:
 ```bash
 git clone https://github.com/Krustew17/instaVibe.git
 cd instaVibe
+```
+
 2. Install Dependencies
 Backend
 Navigate to the backend directory and install dependencies:
-
-bash
+```bash
 Copy code
 cd server
 npm install
+```
+
 Frontend
 Navigate to the frontend directory and install dependencies:
 
-bash
+```bash
 Copy code
 cd ../client
 npm install
+```
+
 3. Set Up Environment Variables
 Create a .env file in the server directory and add the following variables:
 
-plaintext
+```plaintext
 Copy code
 MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 4. Run the Application
 Start the backend server:
 
-bash
+```bash
 Copy code
 cd ../server
-npm run dev
+npm run start
+```
 Start the frontend:
 
-bash
+```bash
 Copy code
 cd ../client
 npm start
-The application should now be running on http://localhost:3000.
+```
+The application should now be running on http://localhost:5173.
 
 Usage
 Once the application is up and running:
@@ -88,9 +96,6 @@ Push to the branch (git push origin feature/your-feature-name).
 Open a Pull Request.
 License
 This project is licensed under the MIT License. See the LICENSE file for more information.
-
-markdown
-Copy code
 
 ### Customization
 - **Screenshots/GIFs**: Include images or animated GIFs of the application to give users a visual overview.
