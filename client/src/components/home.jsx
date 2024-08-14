@@ -7,6 +7,8 @@ import makeRequest from "../utils/makeRequest";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useSelector } from "react-redux";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/auth/authSlice.js";
 
 export default function Main() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -24,8 +26,14 @@ export default function Main() {
     const [description, setDescription] = useState("");
     const [isDarkMode, setIsDarkMode] = useState(true);
 
+    const dispatch = useDispatch();
+
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
+
+    const handleLogout = () => {
+        dispatch(logout());
+    };
 
     const toggleDarkMode = () => {
         document.documentElement.classList.toggle("dark");
@@ -196,7 +204,7 @@ export default function Main() {
     };
 
     return (
-        <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen mt-2 sm:mt-4 md:pr-32 lg:px-2">
+        <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen mt-2 sm:mt-4 md:pr-32 lg:px-2 pb-[50px] md:pb-0">
             <div className="flex justify-between items-center border-b-2 border-slate-200 dark:border-slate-900 pb-2">
                 <div className="flex gap-4">
                     <Link
@@ -208,6 +216,7 @@ export default function Main() {
                     >
                         For you
                     </Link>
+
                     <Link
                         to="?tab=following"
                         className={`${
@@ -218,14 +227,25 @@ export default function Main() {
                         Following
                     </Link>
                 </div>
-                <div className="flex md:hidden items-center">
-                    <Link
-                        to="/login"
-                        className="bg-blue-500 px-4 py-1 text-white rounded-md"
-                    >
-                        Sign in
-                    </Link>
-                </div>
+                {(isAuthenticated && (
+                    <div className="flex md:hidden items-center">
+                        <button
+                            className="px-4 dark:bg-white dark:text-black bg-black text-white py-1 rounded-md"
+                            onClick={handleLogout}
+                        >
+                            logout
+                        </button>
+                    </div>
+                )) || (
+                    <div className="flex md:hidden items-center">
+                        <Link
+                            to="/login"
+                            className="dark:bg-white dark:text-black bg-black text-white  px-4 py-1 rounded-md"
+                        >
+                            Sign in
+                        </Link>
+                    </div>
+                )}
                 <div className="flex items-center md:hidden px-2">
                     <DarkModeSwitch
                         checked={isDarkMode}

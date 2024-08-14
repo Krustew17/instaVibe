@@ -22,6 +22,7 @@ const RegisterPage = () => {
         };
         const body = JSON.stringify({
             username: data.username,
+            displayName: data.displayName,
             email: data.email,
             password: data.password,
             confirmPassword: data.confirmPassword,
@@ -76,6 +77,22 @@ const RegisterPage = () => {
                                 onChange={handleInputChange}
                                 className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                 placeholder="Username"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="displayName" className="sr-only">
+                                Display Name
+                            </label>
+                            <input
+                                id="displayName"
+                                name="displayName"
+                                type="text"
+                                autoComplete="displayName"
+                                required
+                                // value={username}
+                                onChange={handleInputChange}
+                                className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                placeholder="Display name"
                             />
                         </div>
                         <div>
