@@ -18,7 +18,7 @@ export default function RightSideBar() {
                 {(!isAuthenticated && (
                     <NavLink
                         to="/login"
-                        className="gap-4 items-center text-customBase hidden lg:flex max-w-24 m-4 py-1 rounded-lg justify-center bg-blue-500 hover:bg-blue-600 text-white"
+                        className="gap-4 items-center text-customBase hidden lg:flex max-w-24 m-4 py-1 rounded-lg justify-center bg-black text-white dark:bg-white dark:text-black"
                         // onClick={() => handleNavClick("/login")}
                     >
                         <span className="hidden lg:block">Login</span>

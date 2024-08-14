@@ -101,7 +101,7 @@ export default function PostDetails() {
             <div onClick={goBack}>
                 <GoArrowLeft className="text-2xl m-2 md:ml-[80px] lg:ml-[260px]" />
             </div>
-            <div className=" md:ml-[70px] lg:ml-[250px] min-h-screen">
+            <div className=" md:ml-[70px] lg:ml-[250px] min-h-screen pb-[50px] md:pb-0">
                 <Post {...post} showMenu={true} />
                 {isAuthenticated && (
                     <form

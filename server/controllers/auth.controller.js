@@ -7,7 +7,8 @@ import validateUsername from "../utils/validateUsername.js";
 export const register = async (req, res) => {
     try {
         // deconstruct the req.body
-        const { username, email, password, confirmPassword } = req.body;
+        const { username, displayName, email, password, confirmPassword } =
+            req.body;
 
         // Check if username is taken
         const user = await User.findOne({ username });
@@ -15,8 +16,19 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "Username already taken" });
         }
 
+        // check if display name is taken
+        const displayNameTaken = await User.findOne({ displayName });
+        if (displayNameTaken) {
+            return res
+                .status(400)
+                .json({ message: "Display name already taken" });
+        }
+
         // validate the username
-        validateUsername(username);
+        validateUsername(username, "username");
+
+        // validate the display name
+        validateUsername(displayName, "display name");
 
         // Check if email is taken
         const userEmail = await User.findOne({ email });
@@ -25,7 +37,7 @@ export const register = async (req, res) => {
         }
 
         // Check for empty fields
-        if (!password || !username || !email) {
+        if (!password || !username || !email || !displayName) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -46,6 +58,7 @@ export const register = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, salt);
         const newUser = new User({
             username,
+            displayName,
             email,
             password: passwordHash,
         });

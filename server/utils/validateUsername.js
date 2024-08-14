@@ -1,20 +1,20 @@
-export default function validateUsername(username) {
+export default function validateUsername(username, type) {
     if (!username) {
-        throw new Error("Username cannot be empty.");
+        throw new Error(`${type} cannot be empty.`);
     }
 
     if (username.length < 3 || username.length > 20) {
-        throw new Error("Username must be between 3 and 20 characters.");
+        throw new Error(`${type} must be between 3 and 20 characters.`);
     }
 
     if (!username.match(/^[a-zA-Z0-9]+$/)) {
-        throw new Error("Username must only contain letters and numbers.");
+        throw new Error(`${type} must only contain letters and numbers.`);
     }
 
     const regex = /^[0-9]/;
     const usernameStartsWithNum = regex.test(username);
 
     if (usernameStartsWithNum) {
-        throw new Error("Username cannot start with a number.");
+        throw new Error(`${type} cannot start with a number.`);
     }
 }
