@@ -18,6 +18,12 @@ instaVibe is a modern social media platform inspired by Instagram. It allows use
 - **Authentication**: JWT (JSON Web Tokens)
 - **File Storage**: Cloudinary
 
+## Test the hosted version
+
+```bash
+https://instavibe.onrender.com
+```
+
 ## Installation
 
 To set up the project locally, follow these steps:
