@@ -19,7 +19,7 @@ instaVibe is a modern social media platform inspired by Instagram. It allows use
 - **File Storage**: Cloudinary
 
 ## Test the hosted version
-
+might take 1-3 minutes to load since render turns the vm off due to inactivity.
 ```bash
 https://instavibe.onrender.com
 ```
