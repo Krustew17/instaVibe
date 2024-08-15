@@ -120,7 +120,10 @@ export const updateUserDetails = async (req, res) => {
         }
 
         // validate the username
-        validateUsername(username);
+        validateUsername(username, "username");
+
+        // validate the display name
+        validateUsername(displayName, "display name");
 
         let imageUrl;
         const public_id = generatePublicId();
