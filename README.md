@@ -17,9 +17,10 @@ instaVibe is a modern social media platform inspired by Instagram. It allows use
 - **Real-Time Communication**: Socket.io
 - **Authentication**: JWT (JSON Web Tokens)
 - **File Storage**: Cloudinary
+- **Gif API**: Tenor
 
 ## Test the hosted version
-might take 1-3 minutes to load since render turns the vm off due to inactivity.
+might take 1-5 minutes to load since render turns the vm off due to inactivity.
 ```bash
 https://instavibe.onrender.com
 ```
