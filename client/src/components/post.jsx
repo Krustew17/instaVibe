@@ -39,7 +39,6 @@ const Post = ({
             navigate("/login");
             return;
         }
-        console.log(isLiked);
 
         const {
             success,
@@ -53,7 +52,6 @@ const Post = ({
                 (prevLikesCount) => prevLikesCount + likesCountChange
             );
             const type = newIsLiked ? "like" : "unlike";
-            console.log(type);
 
             if (loggedUser?._id !== _id) {
                 await sendNotification(loggedUser?._id, _id, type, postId);

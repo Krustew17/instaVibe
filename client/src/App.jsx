@@ -15,6 +15,7 @@ import { updateUnreadCount } from "./redux/notifications/notifSlice";
 import { io } from "socket.io-client";
 import Chat from "./components/chat";
 import ProtectedRoute from "./components/protectedRoute";
+import NotFound from "./components/notFound";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -112,6 +113,7 @@ function App() {
                             />
                         }
                     />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
             {!hideRightSideBar && <RightSideBar />}
