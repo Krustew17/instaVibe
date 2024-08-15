@@ -99,7 +99,7 @@ export default function PostDetails() {
     return (
         <div>
             <div onClick={goBack}>
-                <GoArrowLeft className="text-2xl m-2 md:ml-[80px] lg:ml-[260px]" />
+                <GoArrowLeft className="text-2xl m-2 md:ml-[80px] lg:ml-[260px] cursor-pointer" />
             </div>
             <div className=" md:ml-[70px] lg:ml-[250px] min-h-screen pb-[50px] md:pb-0">
                 <Post {...post} showMenu={true} />

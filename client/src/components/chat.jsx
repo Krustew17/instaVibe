@@ -23,7 +23,7 @@ const Chat = () => {
     const messages = useSelector((state) => state.chat.messages);
     const loggedUser = useSelector((state) => state.auth.user);
     const [text, setText] = useState("");
-    const [isMobileView, setIsMobileView] = useState(true); // To toggle views on mobile
+    const [isMobileView, setIsMobileView] = useState(true);
 
     // Fetch conversations
     useEffect(() => {

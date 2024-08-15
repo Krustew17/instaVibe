@@ -81,7 +81,6 @@ export const io = new SocketIOServer(server, { cors: socketIoCORSOptions });
 io.on("connection", (socket) => {
     socket.on("joinConversation", (conversationId) => {
         socket.join(conversationId);
-        console.log(`User joined conversation ${conversationId}`);
     });
 });
 

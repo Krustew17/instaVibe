@@ -10,7 +10,6 @@ export default async function validation(postId, user, res) {
     const post = await Post.findById(postId);
 
     // Check if user is the creator of the post
-    console.log(post.createdBy.toString(), user._id.toString());
     if (post && post.createdBy.toString() !== user._id.toString()) {
         throw new Error("unauthorized");
     }
