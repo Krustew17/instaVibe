@@ -335,7 +335,9 @@ export const deleteComment = async (req, res) => {
         }
 
         // Delete the comment
+        post.comments = post.comments.filter((c) => c._id != commentId);
         await Comment.findByIdAndDelete(commentId);
+        await post.save();
 
         // Send the response
         return res
