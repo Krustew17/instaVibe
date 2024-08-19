@@ -1,9 +1,9 @@
 export default function validateUsername(username, type) {
-    if (!username) {
+    if (!username || username.trim() === "") {
         throw new Error(`${type} cannot be empty.`);
     }
 
-    if (username.length < 3 || username.length > 20) {
+    if (username.trim().length < 3 || username.trim().length > 20) {
         throw new Error(`${type} must be between 3 and 20 characters.`);
     }
 

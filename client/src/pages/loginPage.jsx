@@ -10,6 +10,11 @@ const LoginPage = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -81,18 +86,37 @@ const LoginPage = () => {
                             <label htmlFor="password" className="sr-only">
                                 Password
                             </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
-                                required
-                                onChange={handleInputChange}
-                                className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Password"
-                            />
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="current-password"
+                                    required
+                                    onChange={handleInputChange}
+                                    className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                    placeholder="Password"
+                                />
+                                <span
+                                    onClick={toggleShowPassword}
+                                    className="absolute z-10 right-2 top-2.5 md:top-2 cursor-pointer text-sm text-blue-500 select-none"
+                                >
+                                    {showPassword ? "Hide" : "Show"}
+                                </span>
+                            </div>
                         </div>
                     </div>
+                    {error && (
+                        <div className="flex justify-between ">
+                            <span>Forgotten password?</span>
+                            <Link
+                                to="/reset-password"
+                                className="hover:underline"
+                            >
+                                Reset
+                            </Link>
+                        </div>
+                    )}
                     <div className="flex justify-between">
                         <span>Already have an account?</span>
                         <Link to="/register" className="hover:underline">

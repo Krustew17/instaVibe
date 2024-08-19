@@ -6,6 +6,16 @@ const RegisterPage = () => {
     const [data, setData] = useState({});
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const toggleShowPassword = (field) => {
+        if (field === "password") {
+            setShowPassword(!showPassword);
+        } else if (field === "confirmPassword") {
+            setShowConfirmPassword(!showConfirmPassword);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -115,17 +125,26 @@ const RegisterPage = () => {
                             <label htmlFor="password" className="sr-only">
                                 Password
                             </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                // value={password}
-                                onChange={handleInputChange}
-                                className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Password"
-                            />
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="current-password"
+                                    required
+                                    onChange={handleInputChange}
+                                    className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                    placeholder="Password"
+                                />
+                                <span
+                                    onClick={(e) =>
+                                        toggleShowPassword("password")
+                                    }
+                                    className="absolute z-10 right-2 top-2.5 md:top-2 cursor-pointer text-sm text-blue-500 select-none"
+                                >
+                                    {showPassword ? "Hide" : "Show"}
+                                </span>
+                            </div>
                         </div>
                         <div>
                             <label
@@ -134,16 +153,30 @@ const RegisterPage = () => {
                             >
                                 Confirm Password
                             </label>
-                            <input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                onChange={handleInputChange}
-                                className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Confirm Password"
-                            />
+                            <div className="relative">
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type={
+                                        showConfirmPassword
+                                            ? "text"
+                                            : "password"
+                                    }
+                                    autoComplete="confirmPassword"
+                                    required
+                                    onChange={handleInputChange}
+                                    className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                    placeholder="Confirm Password"
+                                />
+                                <span
+                                    onClick={(e) =>
+                                        toggleShowPassword("confirmPassword")
+                                    }
+                                    className="absolute z-10 right-2 top-2.5 md:top-2 cursor-pointer text-sm text-blue-500 select-none"
+                                >
+                                    {showConfirmPassword ? "Hide" : "Show"}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div className="flex justify-between">
