@@ -11,13 +11,19 @@ export const register = async (req, res) => {
             req.body;
 
         // Check if username is taken
-        const user = await User.findOne({ username });
+        const lowerUsername = username.toString().toLowerCase();
+
+        const user = await User.findOne({ username: lowerUsername });
         if (user) {
             return res.status(400).json({ message: "Username already taken" });
         }
 
         // check if display name is taken
-        const displayNameTaken = await User.findOne({ displayName });
+        const lowerDisplayName = displayName.toString().toLowerCase();
+
+        const displayNameTaken = await User.findOne({
+            displayName: lowerDisplayName,
+        });
         if (displayNameTaken) {
             return res
                 .status(400)
@@ -31,7 +37,10 @@ export const register = async (req, res) => {
         validateUsername(displayName, "display name");
 
         // Check if email is taken
-        const userEmail = await User.findOne({ email });
+
+        const lowerEmail = email.toString().toLowerCase();
+
+        const userEmail = await User.findOne({ email: lowerEmail });
         if (userEmail) {
             return res.status(400).json({ message: "Email already taken" });
         }
@@ -42,10 +51,16 @@ export const register = async (req, res) => {
         }
 
         // Check password length
-        if (password.length < 8) {
+        if (password.trim().length < 8) {
             return res
                 .status(400)
                 .json({ message: "Password must be at least 8 characters" });
+        }
+
+        if (password.includes(" ")) {
+            return res
+                .status(400)
+                .json({ message: "Password cannot contain spaces" });
         }
 
         // Check if passwords match
@@ -57,9 +72,9 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
         const newUser = new User({
-            username,
-            displayName,
-            email,
+            username: lowerUsername,
+            displayName: lowerDisplayName,
+            email: lowerEmail,
             password: passwordHash,
         });
 
@@ -87,13 +102,16 @@ export const login = async (req, res) => {
         // deconstruct the req.body
         const { email, password } = req.body;
 
+        const lowerEmail = email.toString().toLowerCase();
+
         // Check for empty fields
         if (!email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         // Check if username is taken
-        const user = await User.findOne({ email });
+
+        const user = await User.findOne({ email: lowerEmail });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }

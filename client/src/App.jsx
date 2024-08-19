@@ -6,6 +6,7 @@ import RightSideBar from "./components/rightSideBar";
 import PostDetails from "./components/postDetails";
 import Search from "./components/Search";
 import LoginPage from "./pages/loginPage";
+import ResetPassword from "./pages/resetPassword";
 import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
 import ProfileEdit from "./pages/profileEditPage";
@@ -76,6 +77,16 @@ function App() {
                         element={
                             <ProtectedRoute
                                 children={<RegisterPage />}
+                                to="/"
+                                shouldBeAuthenticated={false}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/reset-password"
+                        element={
+                            <ProtectedRoute
+                                children={<ResetPassword />}
                                 to="/"
                                 shouldBeAuthenticated={false}
                             />
