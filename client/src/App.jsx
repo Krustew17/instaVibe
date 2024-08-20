@@ -6,6 +6,7 @@ import RightSideBar from "./components/rightSideBar";
 import PostDetails from "./components/postDetails";
 import Search from "./components/Search";
 import LoginPage from "./pages/loginPage";
+import SendResetPasswordEmail from "./pages/sendResetPasswordEmail";
 import ResetPassword from "./pages/resetPassword";
 import RegisterPage from "./pages/registerPage";
 import ProfilePage from "./pages/profilePage";
@@ -83,10 +84,20 @@ function App() {
                         }
                     />
                     <Route
-                        path="/reset-password"
+                        path="/reset-password/:userId/:token"
                         element={
                             <ProtectedRoute
                                 children={<ResetPassword />}
+                                to="/"
+                                shouldBeAuthenticated={false}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/reset-password"
+                        element={
+                            <ProtectedRoute
+                                children={<SendResetPasswordEmail />}
                                 to="/"
                                 shouldBeAuthenticated={false}
                             />

@@ -1,14 +1,24 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { login } from "../redux/auth/authSlice";
+import { useNavigate, useParams } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useNavigate, Link } from "react-router-dom";
 
 const ResetPassword = () => {
     const [data, setData] = useState({});
     const navigate = useNavigate();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const { userId, token } = useParams();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const toggleShowPassword = (field) => {
+        if (field === "password") {
+            setShowPassword(!showPassword);
+        } else if (field === "confirmPassword") {
+            setShowConfirmPassword(!showConfirmPassword);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -19,14 +29,14 @@ const ResetPassword = () => {
         e.preventDefault();
         setLoading(true);
         const host = import.meta.env.VITE_SERVER_HOST;
-        const fetchUrl = `${host}/auth/login`;
+        const fetchUrl = `${host}/auth/password/reset/${userId}/${token}`;
         const headers = {
             "Content-Type": "application/json",
         };
 
         const body = JSON.stringify({
-            email: data.email,
             password: data.password,
+            confirmPassword: data.confirmPassword,
         });
 
         try {
@@ -43,9 +53,13 @@ const ResetPassword = () => {
                 setError(data.message);
                 return;
             }
-            dispatch(login({ token: data.token, user: data.user }));
-            navigate("/");
+
+            setLoading(false);
+            setSuccessMessage(data.message);
             setError("");
+            setTimeout(() => {
+                navigate("/login");
+            }, 3000);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -57,28 +71,72 @@ const ResetPassword = () => {
         <div className="flex items-center justify-center min-h-screen px-2">
             <div className="w-full max-w-md p-8 space-y-8 rounded-lg shadow-lg bg-transparent border-gray-200 dark:border-gray-800 border md:ml-[100px] lg:ml-[400px]">
                 <h2 className="text-3xl font-extrabold text-center">
-                    Send Password Reset Email
+                    Reset Your Password
                 </h2>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
-                            <label htmlFor="email" className="sr-only">
-                                Email
+                            <label htmlFor="password" className="sr-only">
+                                password
                             </label>
                             <div className="relative">
                                 <input
-                                    id="email"
-                                    name="email"
-                                    type="text"
-                                    autoComplete="email"
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="password"
                                     required
                                     onChange={handleInputChange}
-                                    className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                    className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                     placeholder="Password"
                                 />
+                                <span
+                                    onClick={(e) =>
+                                        toggleShowPassword("password")
+                                    }
+                                    className="absolute z-10 right-2 top-2.5 md:top-2 cursor-pointer text-sm text-blue-500 select-none"
+                                >
+                                    {showPassword ? "Hide" : "Show"}
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                htmlFor="confirmPassword"
+                                className="sr-only"
+                            >
+                                Confirm Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type={
+                                        showConfirmPassword
+                                            ? "text"
+                                            : "password"
+                                    }
+                                    autoComplete="confirmPassword"
+                                    required
+                                    onChange={handleInputChange}
+                                    className="relative block w-full px-3 py-2 border bg-transparent border-gray-300 dark:border-gray-800 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                    placeholder="Confirm Password"
+                                />
+                                <span
+                                    onClick={(e) =>
+                                        toggleShowPassword("confirmPassword")
+                                    }
+                                    className="absolute z-10 right-2 top-2.5 md:top-2 cursor-pointer text-sm text-blue-500 select-none"
+                                >
+                                    {showConfirmPassword ? "Hide" : "Show"}
+                                </span>
                             </div>
                         </div>
                     </div>
+                    {error && <p className="text-red-500">{error}</p>}
+                    {successMessage && (
+                        <p className="text-green-500">{successMessage}</p>
+                    )}
                     <div>
                         <button
                             type="submit"
