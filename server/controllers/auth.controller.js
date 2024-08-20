@@ -2,6 +2,19 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validateUsername from "../utils/validateUsername.js";
+import nodemailer from "nodemailer";
+import Mailgen from "mailgen";
+import getPRHTML from "../utils/htmlTemplates.js";
+
+const mailGenerator = new Mailgen({
+    theme: "salted",
+    product: {
+        name: "instaVibe",
+        link: "https://instavibe.onrender.com",
+        // Optional product logo
+        // logo: "https://yourcompany.com/logo.png",
+    },
+});
 
 // REGISTER USER
 export const register = async (req, res) => {
@@ -135,6 +148,79 @@ export const login = async (req, res) => {
     } catch (error) {
         // Handle any errors
         console.error("Error logging in user:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// SEND PASSWORD RESET EMAIL
+export const sendPasswordResetEmail = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        const lowerEmail = email.toString().toLowerCase();
+
+        const user = await User.findOne({ email: lowerEmail });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        const host = process.env.CLIENT_HOST;
+
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        const resetLink = `${host}/reset-password/${user._id}/${token}`;
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASSWORD,
+            },
+        });
+
+        const htmlTemplate = getPRHTML(user.username, resetLink);
+        await transporter.sendMail({
+            from: process.env.GMAIL_USER,
+            to: lowerEmail,
+            subject: "Password Reset",
+            html: htmlTemplate,
+        });
+
+        res.status(200).json({ message: "Password reset email sent" });
+    } catch (error) {
+        console.error("Error sending password reset email:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// RESET PASSWORD
+export const resetPassword = async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body;
+        const { userId, token } = req.params;
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords don't match" });
+        }
+
+        const salt = await bcrypt.genSalt();
+
+        const passwordHash = await bcrypt.hash(password, salt);
+
+        user.password = passwordHash;
+
+        await User.findOneAndUpdate(
+            { _id: userId },
+            { password: passwordHash }
+        );
+        res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+        console.error("Error resetting password:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
