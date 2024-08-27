@@ -3,18 +3,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validateUsername from "../utils/validateUsername.js";
 import nodemailer from "nodemailer";
-import Mailgen from "mailgen";
 import getPRHTML from "../utils/htmlTemplates.js";
-
-const mailGenerator = new Mailgen({
-    theme: "salted",
-    product: {
-        name: "instaVibe",
-        link: "https://instavibe.onrender.com",
-        // Optional product logo
-        // logo: "https://yourcompany.com/logo.png",
-    },
-});
+import sendEmailVerificationEmail from "../utils/sendEmails.js";
 
 // REGISTER USER
 export const register = async (req, res) => {
@@ -24,6 +14,11 @@ export const register = async (req, res) => {
             req.body;
 
         // Check if username is taken
+        if (!username) {
+            return res
+                .status(400)
+                .json({ message: "Username cannot be empty" });
+        }
         const lowerUsername = username.toString().toLowerCase();
 
         const user = await User.findOne({ username: lowerUsername });
@@ -32,6 +27,11 @@ export const register = async (req, res) => {
         }
 
         // check if display name is taken
+        if (!displayName) {
+            return res
+                .status(400)
+                .json({ message: "Display name cannot be empty" });
+        }
         const lowerDisplayName = displayName.toString().toLowerCase();
 
         const displayNameTaken = await User.findOne({
@@ -93,10 +93,16 @@ export const register = async (req, res) => {
 
         const savedUser = await newUser.save();
 
-        // Create a JWT token
-        const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, {
+        // Generate JWT token
+        const token = jwt.sign({ id: savedUser }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
+
+        const emailSent = await sendEmailVerificationEmail(savedUser, token);
+        if (!emailSent) {
+            await User.deleteOne({ _id: savedUser._id });
+            return res.status(500).json({ message: "Failed to send email" });
+        }
 
         // Send the response
         res.status(201).json({
@@ -171,6 +177,8 @@ export const sendPasswordResetEmail = async (req, res) => {
         });
         const resetLink = `${host}/reset-password/${user._id}/${token}`;
 
+        const htmlTemplate = getPRHTML(user.username, resetLink);
+
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -179,7 +187,6 @@ export const sendPasswordResetEmail = async (req, res) => {
             },
         });
 
-        const htmlTemplate = getPRHTML(user.username, resetLink);
         await transporter.sendMail({
             from: process.env.GMAIL_USER,
             to: lowerEmail,
@@ -196,6 +203,7 @@ export const sendPasswordResetEmail = async (req, res) => {
 
 // RESET PASSWORD
 export const resetPassword = async (req, res) => {
+    // TODO: ADD PASSWORD VALIDATIONS
     try {
         const { password, confirmPassword } = req.body;
         const { userId, token } = req.params;
@@ -221,6 +229,24 @@ export const resetPassword = async (req, res) => {
         res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
         console.error("Error resetting password:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const verifyEmail = async (req, res) => {
+    try {
+        const { userId, token } = req.params;
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        await User.findOneAndUpdate({ _id: userId }, { verified: true });
+
+        res.status(200).json({ message: "Email verified successfully" });
+    } catch (error) {
+        console.error("Error verifying email:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };

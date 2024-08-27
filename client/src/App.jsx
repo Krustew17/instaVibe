@@ -135,6 +135,10 @@ function App() {
                             />
                         }
                     />
+                    <Route
+                        path="/verify-email"
+                        element={<VerificationPage />}
+                    />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
