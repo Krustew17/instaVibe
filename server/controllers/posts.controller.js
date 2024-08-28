@@ -5,7 +5,7 @@ import Comment from "../models/Comment.js";
 import generatePublicId from "../utils/generatePublicId.js";
 import Reply from "../models/Reply.js";
 import mongoose from "mongoose";
-import MAX_FILE_SIZE from "../utils/constants.js";
+import { MAX_FILE_SIZE } from "../utils/constants.js";
 
 // GET ALL POSTS
 export const getAllPosts = async (req, res) => {
@@ -121,6 +121,12 @@ export const createPost = async (req, res) => {
 
         // check if the request has a file
         if (req.file) {
+            if (req.file.size > MAX_FILE_SIZE) {
+                return res
+                    .status(400)
+                    .json({ message: "File size is too large" });
+            }
+
             const filePath = req.file.path; // Path to the uploaded file
             const resourceType = req.file.mimetype.startsWith("video/")
                 ? "video"
@@ -163,13 +169,9 @@ export const createPost = async (req, res) => {
     } catch (error) {
         // Handle any errors
         if (error.message.includes("File size too large")) {
-            return res
-                .status(400)
-                .json({
-                    message: `Max file size is ${
-                        MAX_FILE_SIZE() / 1024 / 1024
-                    }MB`,
-                });
+            return res.status(400).json({
+                message: `Max file size is ${MAX_FILE_SIZE() / 1024 / 1024}MB`,
+            });
         }
         res.status(400).json({ message: error.message });
     }
@@ -211,17 +213,20 @@ export const deletePost = async (req, res) => {
 
         if (!post) return res.status(400).json({ message: "post not found" });
 
-        // // Retrieve the image cloudinary public id
-        // const cloudinaryPublicId = post.picturePath
-        //     .split("/")
-        //     .pop()
-        //     .split(".")
-        //     .shift();
+        // Retrieve the image cloudinary public id
+        const cloudinaryPublicId = post.picturePath
+            .split("/")
+            .pop()
+            .split(".")
+            .shift();
 
-        // // Delete image from cloudinary
-        // await cloudinary.uploader.destroy([cloudinaryPublicId], {
-        //     resource_type: "image",
-        // });
+        const resourceType = post.picturePath.includes("mp4")
+            ? "video"
+            : "image";
+        // Delete image from cloudinary
+        await cloudinary.uploader.destroy([cloudinaryPublicId], {
+            resource_type: resourceType,
+        });
 
         // Delete the post
         await Post.deleteOne({ _id: postId });

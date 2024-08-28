@@ -1,3 +1,1 @@
-export default function MAX_FILE_SIZE() {
-    return 1024 * 1024 * 10;
-}
+export const MAX_FILE_SIZE = 10 * 1024 * 1024;

@@ -1,5 +1,4 @@
 import multer from "multer";
-import MAX_FILE_SIZE from "../utils/constants.js";
 import path from "path";
 
 const storage = multer.diskStorage({
@@ -9,23 +8,27 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif|mp4/;
-    const extname = filetypes.test(
+    const allowedTypes = /jpeg|jpg|png|gif|mp4/;
+    const extname = allowedTypes.test(
         path.extname(file.originalname).toLowerCase()
     );
-    const mimetype = filetypes.test(file.mimetype);
+    const mimetype = allowedTypes.test(file.mimetype);
 
-    if (mimetype && extname) {
+    if (extname && mimetype) {
         return cb(null, true);
     } else {
-        cb(new Error("Only images and videos are allowed!"));
+        cb(
+            new Error(
+                "Invalid file type. Only JPEG, PNG, GIF, and MP4 are allowed."
+            )
+        );
     }
 };
 
 export const upload = multer({
     storage,
-    limits: {
-        fileSize: MAX_FILE_SIZE,
-    },
+    // limits: {
+    //     fileSize: 10 * 1024 * 1024,
+    // },
     fileFilter,
 });
