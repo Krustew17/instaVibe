@@ -106,7 +106,7 @@ export const register = async (req, res) => {
 
         // Send the response
         res.status(201).json({
-            message: "User created successfully",
+            message: "Verification email sent",
         });
     } catch (error) {
         // Handle any errors
@@ -133,6 +133,12 @@ export const login = async (req, res) => {
         const user = await User.findOne({ email: lowerEmail });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
+        }
+
+        if (!user.verified) {
+            return res
+                .status(400)
+                .json({ message: "Please verify your email" });
         }
 
         const { password: userPassword, ...userData } = user._doc;
@@ -247,6 +253,6 @@ export const verifyEmail = async (req, res) => {
         res.status(200).json({ message: "Email verified successfully" });
     } catch (error) {
         console.error("Error verifying email:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Something went wrong" });
     }
 };

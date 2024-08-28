@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 const RegisterPage = () => {
     const [data, setData] = useState({});
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -52,7 +53,7 @@ const RegisterPage = () => {
             }
 
             setError("");
-            window.location.replace("/login");
+            setSuccessMessage(data.message);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -70,6 +71,11 @@ const RegisterPage = () => {
                     {error && (
                         <div className="text-red-500 text-lg text-center font-bold">
                             {error}
+                        </div>
+                    )}
+                    {successMessage && (
+                        <div className="text-green-500 text-lg text-center font-bold">
+                            {successMessage}
                         </div>
                     )}
                     <div className="rounded-md shadow-sm -space-y-px">

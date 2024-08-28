@@ -18,6 +18,7 @@ import { io } from "socket.io-client";
 import Chat from "./components/chat";
 import ProtectedRoute from "./components/protectedRoute";
 import NotFound from "./components/notFound";
+import VerificationPage from "./pages/verificationPage";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -136,8 +137,14 @@ function App() {
                         }
                     />
                     <Route
-                        path="/verify-email"
-                        element={<VerificationPage />}
+                        path="/verify-email/:userId/:token"
+                        element={
+                            <ProtectedRoute
+                                children={<VerificationPage />}
+                                to="/"
+                                shouldBeAuthenticated={false}
+                            />
+                        }
                     />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -5,6 +5,7 @@ import Comment from "../models/Comment.js";
 import generatePublicId from "../utils/generatePublicId.js";
 import Reply from "../models/Reply.js";
 import mongoose from "mongoose";
+import MAX_FILE_SIZE from "../utils/constants.js";
 
 // GET ALL POSTS
 export const getAllPosts = async (req, res) => {
@@ -120,18 +121,17 @@ export const createPost = async (req, res) => {
 
         // check if the request has a file
         if (req.file) {
-            const result = await cloudinary.uploader.upload(
-                // Upload image to cloudinary
-                req.file.path,
-                { public_id },
-                (error, result) => {
-                    if (error) {
-                        // Check for errors
-                        return res.status(500).json({ message: error.message }); // Send error
-                    }
-                    imageUrl = result.secure_url; // Save image url
-                }
-            );
+            const filePath = req.file.path; // Path to the uploaded file
+            const resourceType = req.file.mimetype.startsWith("video/")
+                ? "video"
+                : "image";
+
+            const result = await cloudinary.uploader.upload(filePath, {
+                public_id,
+                resource_type: resourceType,
+            });
+
+            imageUrl = result.secure_url;
         }
         // check if the request has a gif
         if (gifUrl) {
@@ -140,7 +140,9 @@ export const createPost = async (req, res) => {
 
         // Validate the post
         if (!imageUrl)
-            return res.status(400).json({ message: "image/gif required!" });
+            return res
+                .status(400)
+                .json({ message: "Image/GIF/Video required!" });
 
         // Create the new post object
         const newPost = new Post({
@@ -160,6 +162,15 @@ export const createPost = async (req, res) => {
         res.status(201).json(newPost);
     } catch (error) {
         // Handle any errors
+        if (error.message.includes("File size too large")) {
+            return res
+                .status(400)
+                .json({
+                    message: `Max file size is ${
+                        MAX_FILE_SIZE() / 1024 / 1024
+                    }MB`,
+                });
+        }
         res.status(400).json({ message: error.message });
     }
 };

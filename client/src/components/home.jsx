@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { FaImage, FaSearch, FaTimes } from "react-icons/fa";
 import { MdGifBox } from "react-icons/md";
 import { Link, useSearchParams } from "react-router-dom";
 import Post from "./post";
 import makeRequest from "../utils/makeRequest";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
-import { useDispatch } from "react-redux";
 import { logout } from "../redux/auth/authSlice.js";
 
 export default function Main() {
@@ -20,8 +19,8 @@ export default function Main() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedGif, setSelectedGif] = useState(null);
-    const [uploadedImage, setUploadedImage] = useState(null);
-    const [image, setImage] = useState(null);
+    const [uploadedFile, setUploadedFile] = useState(null); // Updated state
+    const [file, setFile] = useState(null); // Holds the actual file
     const fileInputRef = useRef(null);
     const [description, setDescription] = useState("");
     const [isDarkMode, setIsDarkMode] = useState(true);
@@ -69,7 +68,6 @@ export default function Main() {
         }
 
         const apiKey = import.meta.env.VITE_TENOR_API;
-
         const url = `https://tenor.googleapis.com/v2/search?key=${apiKey}&q=${query}&limit=100&media_filter=gif`;
 
         try {
@@ -99,15 +97,12 @@ export default function Main() {
     };
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setImage(file);
-        setError("");
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setUploadedImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            const fileURL = URL.createObjectURL(selectedFile);
+            setUploadedFile(fileURL);
+            setError("");
         }
     };
 
@@ -126,9 +121,11 @@ export default function Main() {
         setSelectedGif(null);
     };
 
-    const removeUploadedImage = () => {
-        setUploadedImage(null);
+    const removeUploadedFile = () => {
+        setUploadedFile(null);
+        setFile(null);
     };
+
     useEffect(() => {
         fetchPosts();
     }, []);
@@ -152,8 +149,8 @@ export default function Main() {
             setLoading(true);
 
             const formData = new FormData();
-            if (uploadedImage) {
-                formData.append("image", image);
+            if (file) {
+                formData.append("image", file);
             }
             formData.append("description", description);
 
@@ -162,7 +159,7 @@ export default function Main() {
 
             const token = JSON.parse(localStorage.getItem("authState")).token;
 
-            if (uploadedImage) {
+            if (file) {
                 request = await fetch(`${host}/posts/upload`, {
                     method: "POST",
                     headers: {
@@ -183,14 +180,18 @@ export default function Main() {
                     }),
                 });
             }
+
             const data = await request.json();
 
             if (!request.ok) {
+                setTimeout(() => {
+                    setError("");
+                }, 3000);
                 throw new Error(data.message);
             }
 
-            setUploadedImage(null);
-            setImage(null);
+            setUploadedFile(null);
+            setFile(null);
             setSelectedGif(null);
             setError("");
             setDescription("");
@@ -227,7 +228,7 @@ export default function Main() {
                         Following
                     </Link>
                 </div>
-                {(isAuthenticated && (
+                {isAuthenticated ? (
                     <div className="flex md:hidden items-center">
                         <button
                             className="px-4 dark:bg-white dark:text-black bg-black text-white py-1 rounded-md"
@@ -236,7 +237,7 @@ export default function Main() {
                             logout
                         </button>
                     </div>
-                )) || (
+                ) : (
                     <div className="flex md:hidden items-center">
                         <Link
                             to="/login"
@@ -268,7 +269,6 @@ export default function Main() {
                     />
                     <div className="ml-5 flex-1 flex-col w-full max-h-full">
                         <textarea
-                            type="textarea"
                             placeholder="What's on your mind?"
                             name="description"
                             value={description}
@@ -291,17 +291,26 @@ export default function Main() {
                                 </button>
                             </div>
                         )}
-                        {uploadedImage && (
+                        {uploadedFile && (
                             <div className="relative mt-2">
-                                <img
-                                    src={uploadedImage}
-                                    alt="Uploaded"
-                                    className="w-full object-cover rounded-md"
-                                />
+                                {file?.type.startsWith("video/") ? (
+                                    <video
+                                        src={uploadedFile}
+                                        controls
+                                        width="100%"
+                                        className="rounded-md"
+                                    />
+                                ) : (
+                                    <img
+                                        src={uploadedFile}
+                                        alt="Uploaded"
+                                        className="w-full object-cover rounded-md"
+                                    />
+                                )}
                                 <button
-                                    onClick={removeUploadedImage}
+                                    onClick={removeUploadedFile}
                                     className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
-                                    aria-label="Remove Image"
+                                    aria-label="Remove File"
                                     type="button"
                                 >
                                     <FaTimes />
@@ -316,7 +325,7 @@ export default function Main() {
                                     onChange={handleFileChange}
                                     aria-label="upload a file"
                                     className="hidden"
-                                    accept="image/*"
+                                    accept="image/jpeg, image/png, image/gif, video/mp4"
                                 />
                                 <button
                                     onClick={handleIconClick}
@@ -357,11 +366,10 @@ export default function Main() {
             {showGifModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-w-3xl w-full h-[70vh] md:h-[80vh] overflow-auto">
-                        {" "}
                         <h2 className="text-lg font-semibold mb-4 text-center">
                             Select a GIF
                         </h2>
-                        <div className="flex items-center mb-4 border rounded-xl ">
+                        <div className="flex items-center mb-4 border rounded-xl">
                             <button
                                 onClick={handleSearchClick}
                                 className="dark:text-white p-2 rounded-xl mr-1"
@@ -405,18 +413,15 @@ export default function Main() {
                 </div>
             )}
             {posts &&
-                posts.map((post) => {
-                    return (
-                        // FIX LINK IN LINK HERE LATER
-                        <Link
-                            to={`${post.createdBy.username}/post/${post.id}`}
-                            key={post._id}
-                            onClick={handlePostClick}
-                        >
-                            <Post {...post} />
-                        </Link>
-                    );
-                })}
+                posts.map((post) => (
+                    <Link
+                        to={`${post.createdBy.username}/post/${post.id}`}
+                        key={post._id}
+                        onClick={handlePostClick}
+                    >
+                        <Post {...post} />
+                    </Link>
+                ))}
         </div>
     );
 }
