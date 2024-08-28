@@ -12,7 +12,7 @@ const mailGenerator = new Mailgen({
 export default async function sendEmailVerificationEmail(savedUser, token) {
     // Send email
     const host = process.env.CLIENT_HOST;
-    const verificationLink = `${host}/verify-email?userId=${savedUser._id}&token=${token}`;
+    const verificationLink = `${host}/verify-email/${savedUser._id}/${token}`;
     const emailData = {
         body: {
             name: savedUser.username,

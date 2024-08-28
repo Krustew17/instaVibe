@@ -173,7 +173,14 @@ const Post = ({
                             {newDescription}
                         </p>
                     )}
-                    {picturePath && (
+                    {(picturePath && picturePath.includes("mp4") && (
+                        <video
+                            controls
+                            src={picturePath}
+                            alt="Post media"
+                            className="mt-2 rounded-lg max-w-full"
+                        />
+                    )) || (
                         <img
                             src={picturePath}
                             alt="Post media"
