@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Outlet } from "react-router-dom";
 import Nav from "./components/nav";
 import Main from "./components/home";
 import RightSideBar from "./components/rightSideBar";
@@ -19,6 +19,8 @@ import Chat from "./components/chat";
 import ProtectedRoute from "./components/protectedRoute";
 import NotFound from "./components/notFound";
 import VerificationPage from "./pages/verificationPage";
+import ChangePassword from "./components/changePassword";
+import SettingsLayout from "./components/settingsLayout";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -146,6 +148,30 @@ function App() {
                             />
                         }
                     />
+                    <Route path="/settings" element={<SettingsLayout />}>
+                        <Route path="" element={<div></div>} />
+                        <Route
+                            path="profile/edit"
+                            element={
+                                <ProtectedRoute
+                                    children={<ProfileEdit />}
+                                    to="/login"
+                                    shouldBeAuthenticated={true}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/settings/change-password"
+                            element={
+                                <ProtectedRoute
+                                    children={<ChangePassword />}
+                                    to="/login"
+                                    shouldBeAuthenticated={true}
+                                />
+                            }
+                        />
+                        {/* Add more settings routes here */}
+                    </Route>
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>

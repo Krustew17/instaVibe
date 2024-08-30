@@ -75,7 +75,7 @@ const Chat = () => {
     const handleConversationClick = (conversation) => {
         navigate(`/chat/${conversation._id}`);
         dispatch(setCurrentConversation(conversation));
-        setIsMobileView(false); // Switch to chat view on mobile
+        setIsMobileView(false);
     };
 
     const handleSendMessage = async (e) => {
