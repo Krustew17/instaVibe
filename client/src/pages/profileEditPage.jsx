@@ -93,11 +93,8 @@ export default function ProfileEdit() {
     };
 
     return (
-        <div className="sm:ml-[70px] lg:ml-[250px]">
-            <form
-                className="px-10 lg:px-6 mt-5 md:ml-[50px] lg:ml-[150px] flex flex-col gap-6"
-                onSubmit={handleSubmit}
-            >
+        <div className="sm:min-w-[300px] md:min-w-[400px] xl:min-w-[500px] mt-4 pb-[50px] xl:m-6 md:pb-0 w-full md:w-0 px-6">
+            <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
                 <strong className="text-xl">Edit Profile</strong>
 
                 <div className="flex flex-wrap justify-between">
@@ -192,11 +189,12 @@ export default function ProfileEdit() {
                         Email
                     </label>
                     <input
-                        className="border-2 border-slate-200 dark:border-gray-800 bg-transparent w-full p-2 rounded-md"
+                        className="border-2 border-slate-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-950 cursor-not-allowed w-full p-2 rounded-md"
                         type="text"
                         placeholder="email"
                         name="email"
                         id="email"
+                        disabled
                         value={data?.email}
                         onChange={handleChange}
                         onFocus={() => setIsFocused("email")}
