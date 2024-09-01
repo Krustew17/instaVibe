@@ -1,5 +1,6 @@
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
+import mongoose from "mongoose";
 
 // Send a message
 export const sendMessage = async (req, res, io) => {
@@ -47,6 +48,9 @@ export const sendMessage = async (req, res, io) => {
 export const getMessages = async (req, res) => {
     try {
         const { conversationId } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+            return res.status(404).json({ message: "No conversation found" });
+        }
         const messages = await Message.find({ conversationId }).populate([
             { path: "sender", select: "username profilePicture" },
             { path: "receiver", select: "username profilePicture" },

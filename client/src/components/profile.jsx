@@ -201,11 +201,23 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                         key={post._id}
                                         className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
                                     >
-                                        <img
-                                            src={post.picturePath}
-                                            alt={post.description}
-                                            className="absolute inset-0 w-full h-full object-cover"
-                                        />
+                                        {(post.picturePath &&
+                                            post.picturePath.includes(
+                                                "mp4"
+                                            ) && (
+                                                <video
+                                                    controls
+                                                    src={post.picturePath}
+                                                    alt="Post media"
+                                                    className="mt-2 rounded-lg max-w-full"
+                                                />
+                                            )) || (
+                                            <img
+                                                src={post.picturePath}
+                                                alt="Post media"
+                                                className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                            />
+                                        )}
                                         <div className="absolute inset-0 flex sm:flex-row sm:gap-4 flex-col justify-center items-center bg-opacity-50 bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <span className="flex items-center gap-2 text-lg font-bold">
                                                 <IoHeartSharp />
@@ -364,11 +376,20 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                     key={post._id}
                                     className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
                                 >
-                                    <img
-                                        src={post.picturePath}
-                                        alt={post.description}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                    />
+                                    {(post.picturePath &&
+                                        post.picturePath.includes("mp4") && (
+                                            <video
+                                                src={post.picturePath}
+                                                alt="Post media"
+                                                className="mt-2 rounded-lg max-w-full"
+                                            />
+                                        )) || (
+                                        <img
+                                            src={post.picturePath}
+                                            alt="Post media"
+                                            className="border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                        />
+                                    )}
                                     <div className="absolute inset-0 flex sm:flex-row sm:gap-4 flex-col justify-center items-center bg-opacity-50 bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <span className="flex items-center gap-2 text-lg font-bold">
                                             <IoHeartSharp />
@@ -390,11 +411,20 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                     key={post._id}
                                     className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
                                 >
-                                    <img
-                                        src={post.picturePath}
-                                        alt={post.description}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                    />
+                                    {(post.picturePath &&
+                                        post.picturePath.includes("mp4") && (
+                                            <video
+                                                src={post.picturePath}
+                                                alt="Post media"
+                                                className="mt-2 rounded-lg max-w-full"
+                                            />
+                                        )) || (
+                                        <img
+                                            src={post.picturePath}
+                                            alt="Post media"
+                                            className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                        />
+                                    )}
                                     <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <span className="flex items-center gap-2 text-lg font-bold">
                                             <IoHeartSharp />

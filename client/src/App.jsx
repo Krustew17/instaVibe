@@ -21,6 +21,8 @@ import NotFound from "./components/notFound";
 import VerificationPage from "./pages/verificationPage";
 import ChangePassword from "./components/changePassword";
 import SettingsLayout from "./components/settingsLayout";
+import ChatLayout from "./components/chatLayout";
+import ChatMessages from "./components/chatMessages";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -107,16 +109,19 @@ function App() {
                         }
                     />
                     <Route path="/search" element={<Search />} />
-                    <Route
-                        path="/chat/:conversationId?"
-                        element={
-                            <ProtectedRoute
-                                children={<Chat />}
-                                to="/login"
-                                shouldBeAuthenticated={true}
-                            />
-                        }
-                    />
+                    <Route path="/chat" element={<ChatLayout />}>
+                        <Route path="" element={<div></div>} />
+                        <Route
+                            path=":conversationId"
+                            element={
+                                <ProtectedRoute
+                                    children={<ChatMessages />}
+                                    to="/login"
+                                    shouldBeAuthenticated={true}
+                                />
+                            }
+                        />
+                    </Route>
                     <Route
                         path="/notifications"
                         element={

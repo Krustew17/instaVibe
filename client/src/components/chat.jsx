@@ -117,44 +117,48 @@ const Chat = () => {
             >
                 <h2 className="text-xl font-bold mb-4">Conversations</h2>
                 <div className="overflow-y-auto h-[calc(100vh-100px)]">
-                    {conversations.map((conversation) => (
-                        <div
-                            key={conversation._id}
-                            onClick={() =>
-                                handleConversationClick(conversation)
-                            }
-                            className={`cursor-pointer p-2 flex items-center gap-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all rounded-lg ${
-                                currentConversation?._id === conversation._id
-                                    ? "bg-gray-200 dark:bg-gray-800"
-                                    : ""
-                            }`}
-                        >
-                            {conversation.participants.map(
-                                (participant) =>
-                                    participant._id !== loggedUser._id && (
-                                        <div
-                                            key={participant._id}
-                                            className="flex items-center"
-                                        >
-                                            <img
-                                                src={participant.profilePicture}
-                                                alt={participant.username}
-                                                className="w-12 h-12 rounded-full mr-2 object-cover aspect-square"
-                                            />
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">
-                                                    {participant.username}
-                                                </span>
-                                                <span className="text-gray-500 dark:text-gray-400 text-sm">
-                                                    {conversation.lastMessage ||
-                                                        "No messages yet"}
-                                                </span>
+                    {conversations &&
+                        conversations?.map((conversation) => (
+                            <div
+                                key={conversation._id}
+                                onClick={() =>
+                                    handleConversationClick(conversation)
+                                }
+                                className={`cursor-pointer p-2 flex items-center gap-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all rounded-lg ${
+                                    currentConversation?._id ===
+                                    conversation._id
+                                        ? "bg-gray-200 dark:bg-gray-800"
+                                        : ""
+                                }`}
+                            >
+                                {conversation.participants.map(
+                                    (participant) =>
+                                        participant._id !== loggedUser._id && (
+                                            <div
+                                                key={participant._id}
+                                                className="flex items-center"
+                                            >
+                                                <img
+                                                    src={
+                                                        participant.profilePicture
+                                                    }
+                                                    alt={participant.username}
+                                                    className="w-12 h-12 rounded-full mr-2 object-cover aspect-square"
+                                                />
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">
+                                                        {participant.username}
+                                                    </span>
+                                                    <span className="text-gray-500 dark:text-gray-400 text-sm">
+                                                        {conversation.lastMessage ||
+                                                            "No messages yet"}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )
-                            )}
-                        </div>
-                    ))}
+                                        )
+                                )}
+                            </div>
+                        ))}
                 </div>
             </div>
 
