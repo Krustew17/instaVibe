@@ -119,7 +119,7 @@ export default function PostDetails() {
                                 id="reply"
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
-                                className="w-full p-2 border border-slate-300 rounded-md dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent"
+                                className="w-full p-2 border border-slate-300 rounded-md dark:border-slate-700 focus:outline-none max-h-32 focus:ring-2 focus:ring-blue-500 bg-transparent"
                                 placeholder="Add a comment"
                             ></textarea>
                         </div>

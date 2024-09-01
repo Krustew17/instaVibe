@@ -62,3 +62,36 @@ body {
     align-items: center;
     height: 100vh;
 }
+
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 4px;
+}
+
+/* Light mode scrollbar */
+.scrollbar-light::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollbar-light::-webkit-scrollbar-thumb {
+    background-color: #d0d1d6; /* gray-400 */
+    border-radius: 4px;
+}
+
+.scrollbar-light::-webkit-scrollbar-track {
+    background-color: #ececec; /* gray-200 */
+}
+
+/* Dark mode scrollbar */
+.scrollbar-dark::-webkit-scrollbar {
+    width: 24px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+    background-color: #0b0bda; /* blue color */
+    border-radius: 8px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+    background-color: #4d8dfcbb; /* blue translucent color */
+}
