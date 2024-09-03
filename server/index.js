@@ -45,6 +45,12 @@ app.use(
                 "https://media.tenor.com",
                 "https://tenor.googleapis.com",
             ],
+            "media-src": [
+                "'self'",
+                "data:",
+                "https://tenor.com",
+                "https://res.cloudinary.com",
+            ],
             "connect-src": ["'self'", "https://tenor.googleapis.com"],
         },
     })

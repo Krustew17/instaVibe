@@ -35,7 +35,7 @@ const Conversations = () => {
                                 className="flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2"
                             >
                                 <img
-                                    src="../public/default_avatar.jpg"
+                                    src="/default_avatar.jpg"
                                     alt="avatar"
                                     className="w-12 h-12 rounded-full aspect-square"
                                 />
