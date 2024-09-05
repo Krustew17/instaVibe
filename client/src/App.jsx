@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation, Outlet } from "react-router-dom";
 import Nav from "./components/nav";
 import Main from "./components/home";
@@ -15,7 +15,6 @@ import Notifications from "./components/Notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUnreadCount } from "./redux/notifications/notifSlice";
 import { io } from "socket.io-client";
-import Chat from "./components/chat";
 import ProtectedRoute from "./components/protectedRoute";
 import NotFound from "./components/notFound";
 import VerificationPage from "./pages/verificationPage";
@@ -23,12 +22,17 @@ import ChangePassword from "./components/changePassword";
 import SettingsLayout from "./components/settingsLayout";
 import ChatLayout from "./components/chatLayout";
 import ChatMessages from "./components/chatMessages";
+import { jwtDecode } from "jwt-decode";
+import { logout } from "./redux/auth/authSlice";
+import SessionExpired from "./components/sessionExpired";
+import checkTokenExpirationNow from "./utils/checkExpiration";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
 function App() {
     const location = useLocation();
     const loggedUser = useSelector((state) => state.auth.user);
+    const [sessionExpiredVisible, setSessionExpiredVisible] = useState(false);
 
     const visibleRoutes = ["/", "/create", "/search", "/notifications"];
 
@@ -54,109 +58,120 @@ function App() {
         }
     }, [dispatch, location.pathname, loggedUser?._id]);
 
+    useEffect(() => {
+        const token = JSON.parse(localStorage.getItem("authState")).token;
+        if (token) {
+            const decodedToken = jwtDecode(token);
+
+            checkTokenExpirationNow(
+                token,
+                setSessionExpiredVisible,
+                dispatch,
+                logout
+            );
+
+            const checkTokenExpiration = setInterval(() => {
+                checkTokenExpirationNow(
+                    token,
+                    setSessionExpiredVisible,
+                    dispatch,
+                    logout
+                );
+            }, 60000);
+
+            return () => clearInterval(checkTokenExpiration);
+        }
+    }, [dispatch]);
+
+    const hideSessionExpired = () => {
+        setSessionExpiredVisible(false);
+    };
+
     return (
-        <div className="flex min-h-screen max-w-[1250px] mx-auto">
-            <Nav />
-            <main className="flex-1">
-                <Routes>
-                    <Route path="/" element={<Main />} />
-                    <Route
-                        path="/:username/post/:postId"
-                        element={<PostDetails />}
-                    />
-                    <Route
-                        path="/:username/post/:postId/comment/:commentId"
-                        element={<PostDetails />}
-                    />
-                    <Route
-                        path="/login"
-                        element={
-                            <ProtectedRoute
-                                children={<LoginPage />}
-                                to="/"
-                                shouldBeAuthenticated={false}
-                            />
-                        }
-                    />
-                    <Route
-                        path="/register"
-                        element={
-                            <ProtectedRoute
-                                children={<RegisterPage />}
-                                to="/"
-                                shouldBeAuthenticated={false}
-                            />
-                        }
-                    />
-                    <Route
-                        path="/reset-password/:userId/:token"
-                        element={
-                            <ProtectedRoute
-                                children={<ResetPassword />}
-                                to="/"
-                                shouldBeAuthenticated={false}
-                            />
-                        }
-                    />
-                    <Route
-                        path="/reset-password"
-                        element={
-                            <ProtectedRoute
-                                children={<SendResetPasswordEmail />}
-                                to="/"
-                                shouldBeAuthenticated={false}
-                            />
-                        }
-                    />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/chat" element={<ChatLayout />}>
-                        <Route path="" element={<div></div>} />
+        <div>
+            {sessionExpiredVisible && (
+                <SessionExpired onHide={hideSessionExpired} />
+            )}
+            <div className="flex min-h-screen max-w-[1250px] mx-auto">
+                <Nav />
+                <main className="flex-1">
+                    <Routes>
+                        <Route path="/" element={<Main />} />
                         <Route
-                            path=":conversationId"
+                            path="/:username/post/:postId"
+                            element={<PostDetails />}
+                        />
+                        <Route
+                            path="/:username/post/:postId/comment/:commentId"
+                            element={<PostDetails />}
+                        />
+                        <Route
+                            path="/login"
                             element={
                                 <ProtectedRoute
-                                    children={<ChatMessages />}
-                                    to="/login"
+                                    children={<LoginPage />}
+                                    to="/"
+                                    shouldBeAuthenticated={false}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/register"
+                            element={
+                                <ProtectedRoute
+                                    children={<RegisterPage />}
+                                    to="/"
+                                    shouldBeAuthenticated={false}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/reset-password/:userId/:token"
+                            element={
+                                <ProtectedRoute
+                                    children={<ResetPassword />}
+                                    to="/"
+                                    shouldBeAuthenticated={false}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/reset-password"
+                            element={
+                                <ProtectedRoute
+                                    children={<SendResetPasswordEmail />}
+                                    to="/"
+                                    shouldBeAuthenticated={false}
+                                />
+                            }
+                        />
+                        <Route path="/search" element={<Search />} />
+                        <Route path="/chat" element={<ChatLayout />}>
+                            <Route path="" element={<div></div>} />
+                            <Route
+                                path=":conversationId"
+                                element={
+                                    <ProtectedRoute
+                                        children={<ChatMessages />}
+                                        to="/login"
+                                        shouldBeAuthenticated={true}
+                                    />
+                                }
+                            />
+                        </Route>
+                        <Route
+                            path="/notifications"
+                            element={
+                                <ProtectedRoute
+                                    children={<Notifications />}
+                                    to="/"
                                     shouldBeAuthenticated={true}
                                 />
                             }
                         />
-                    </Route>
-                    <Route
-                        path="/notifications"
-                        element={
-                            <ProtectedRoute
-                                children={<Notifications />}
-                                to="/"
-                                shouldBeAuthenticated={true}
-                            />
-                        }
-                    />
-                    <Route path="/:username" element={<ProfilePage />} />
-                    <Route
-                        path="/profile/edit"
-                        element={
-                            <ProtectedRoute
-                                children={<ProfileEdit />}
-                                to="/login"
-                                shouldBeAuthenticated={true}
-                            />
-                        }
-                    />
-                    <Route
-                        path="/verify-email/:userId/:token"
-                        element={
-                            <ProtectedRoute
-                                children={<VerificationPage />}
-                                to="/"
-                                shouldBeAuthenticated={false}
-                            />
-                        }
-                    />
-                    <Route path="/settings" element={<SettingsLayout />}>
-                        <Route path="" element={<div></div>} />
+                        <Route path="/:username" element={<ProfilePage />} />
                         <Route
-                            path="profile/edit"
+                            path="/profile/edit"
                             element={
                                 <ProtectedRoute
                                     children={<ProfileEdit />}
@@ -166,21 +181,44 @@ function App() {
                             }
                         />
                         <Route
-                            path="/settings/change-password"
+                            path="/verify-email/:userId/:token"
                             element={
                                 <ProtectedRoute
-                                    children={<ChangePassword />}
-                                    to="/login"
-                                    shouldBeAuthenticated={true}
+                                    children={<VerificationPage />}
+                                    to="/"
+                                    shouldBeAuthenticated={false}
                                 />
                             }
                         />
-                        {/* Add more settings routes here */}
-                    </Route>
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </main>
-            {!hideRightSideBar && <RightSideBar />}
+                        <Route path="/settings" element={<SettingsLayout />}>
+                            <Route path="" element={<div></div>} />
+                            <Route
+                                path="profile/edit"
+                                element={
+                                    <ProtectedRoute
+                                        children={<ProfileEdit />}
+                                        to="/login"
+                                        shouldBeAuthenticated={true}
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/settings/change-password"
+                                element={
+                                    <ProtectedRoute
+                                        children={<ChangePassword />}
+                                        to="/login"
+                                        shouldBeAuthenticated={true}
+                                    />
+                                }
+                            />
+                            {/* Add more settings routes here */}
+                        </Route>
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </main>
+                {!hideRightSideBar && <RightSideBar />}
+            </div>
         </div>
     );
 }
