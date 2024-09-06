@@ -94,13 +94,7 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                     </div>
                     {(user?._id === loggedUser?._id && (
                         <div className="flex gap-2 flex-end items-center">
-                            <Link
-                                to={"/profile/edit"}
-                                className="border-black lg:text-xl bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-md"
-                            >
-                                Edit Profile
-                            </Link>
-                            <Link to={`/profile/edit`} className="lg:text-xl">
+                            <Link to={`/settings`} className="lg:text-xl">
                                 <BsGearWide />
                             </Link>
                         </div>
@@ -280,15 +274,9 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                 </h1>
                             </div>
                             {(loggedUser?.username === user?.username && (
-                                <div className="flex items-center text-sm md:text-md gap-2">
+                                <div className="ml-auto">
                                     <Link
-                                        to={"/profile/edit"}
-                                        className="border-black lg:text-xl bg-black text-white dark:border-white dark:bg-white dark:text-black border px-2 rounded-md"
-                                    >
-                                        Edit Profile
-                                    </Link>
-                                    <Link
-                                        to={`/profile/edit`}
+                                        to={`/settings/profile/edit`}
                                         className="lg:text-xl"
                                     >
                                         <BsGearWide />

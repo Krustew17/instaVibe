@@ -1,15 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { GoPerson, GoPersonFill } from "react-icons/go";
 import { HiOutlineLockClosed } from "react-icons/hi2";
 import { HiLockClosed } from "react-icons/hi";
 
-const Test = () => {
+const SettingsNav = () => {
     const [activeTab, setActiveTab] = useState("/");
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
+
+    useEffect(() => {
+        const path = window.location.pathname;
+        setActiveTab(path);
+    }, []);
 
     return (
         <div className="md:border-r border-gray-200 dark:border-slate-800 md:pr-10 h-screen pl-6 lg:pr-10 md:pl-0 min-w-full md:min-w-0">
@@ -20,7 +25,8 @@ const Test = () => {
                         className="flex items-center gap-2 text-xl "
                         onClick={(e) => handleTabClick("/profile/edit")}
                     >
-                        {activeTab === "/profile/edit" ? (
+                        {activeTab === "/profile/edit" ||
+                        activeTab === "/settings/profile/edit" ? (
                             <GoPersonFill />
                         ) : (
                             <GoPerson />
@@ -51,4 +57,4 @@ const Test = () => {
     );
 };
 
-export default Test;
+export default SettingsNav;

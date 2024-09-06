@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import makeRequest from "../utils/makeRequest";
 
 const ChangePassword = () => {
     const [isFocused, setIsFocused] = useState("");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [data, setData] = useState({
         oldPassword: "",
         password: "",
@@ -12,10 +15,54 @@ const ChangePassword = () => {
         setData({ ...data, [name]: value });
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const host = import.meta.env.VITE_SERVER_HOST;
+
+        const fetchUrl = `${host}/auth/password/change`;
+
+        const headers = {
+            "Content-Type": "application/json",
+        };
+
+        const body = JSON.stringify({
+            oldPassword: data.oldPassword,
+            newPassword: data.password,
+            confirmPassword: data.confirmPassword,
+        });
+
+        try {
+            const { status, data } = await makeRequest(
+                fetchUrl,
+                "POST",
+                headers,
+                body,
+                true
+            );
+            console.log(data);
+
+            if (status !== 200) {
+                setError(data.message);
+                setTimeout(() => {
+                    setError("");
+                }, 3000);
+                return;
+            }
+
+            setSuccess(data.message);
+            setTimeout(() => {
+                setSuccess("");
+            }, 3000);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <div className="lg:m-6 mt-10 sm:min-w-[300px] md:min-w-[100px] flex flex-col gap-4 w-full md:max-w-[400px] xl:max-w-[500px] px-10 sm:px-6">
             <h1 className="text-2xl font-semibold">Change Password</h1>
-            <form className="flex flex-col gap-5">
+            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                 <div className="flex flex-col">
                     <label
                         htmlFor="oldPassword"
@@ -85,6 +132,9 @@ const ChangePassword = () => {
                         onBlur={() => setIsFocused("")}
                     />
                 </div>
+                {error && <p className="text-red-500">{error}</p>}
+
+                {success && <p className="text-green-500">{success}</p>}
 
                 <button
                     type="submit"

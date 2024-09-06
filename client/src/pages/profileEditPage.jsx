@@ -80,6 +80,7 @@ export default function ProfileEdit() {
             },
         });
         const dataJson = await response.json();
+        console.log(dataJson);
         if (response.status !== 200) {
             setError(dataJson.message);
             setTimeout(() => {

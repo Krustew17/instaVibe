@@ -70,6 +70,7 @@ export const register = async (req, res) => {
                 .json({ message: "Password must be at least 8 characters" });
         }
 
+        // Check if password contains spaces
         if (password.includes(" ")) {
             return res
                 .status(400)
@@ -254,5 +255,65 @@ export const verifyEmail = async (req, res) => {
     } catch (error) {
         console.error("Error verifying email:", error);
         res.status(500).json({ message: "Something went wrong" });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword, confirmPassword } = req.body;
+        const user = req.user;
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords don't match" });
+        }
+
+        // Check password length
+        if (newPassword.trim().length < 8) {
+            return res
+                .status(400)
+                .json({ message: "Password must be at least 8 characters" });
+        }
+
+        // Check if password contains spaces
+        if (newPassword.includes(" ")) {
+            return res
+                .status(400)
+                .json({ message: "Password cannot contain spaces" });
+        }
+
+        // check if old password is equal to new password
+        if (oldPassword === newPassword) {
+            return res
+                .status(400)
+                .json({
+                    message: "Old password cannot be the same as new password",
+                });
+        }
+
+        const storedUserPassword = user.password;
+        const isPasswordCorrect = await bcrypt.compare(
+            oldPassword,
+            storedUserPassword
+        );
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: "Incorrect password" });
+        }
+
+        const salt = await bcrypt.genSalt();
+
+        const passwordHash = await bcrypt.hash(newPassword, salt);
+
+        user.password = passwordHash;
+
+        await User.findOneAndUpdate(
+            { _id: user._id },
+            { password: passwordHash }
+        );
+        res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.error("Error changing password:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
