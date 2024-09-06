@@ -45,13 +45,6 @@ export default function PostDetails() {
 
     const goBack = () => {
         window.history.back();
-        setTimeout(() => {
-            const scrollPosition = sessionStorage.getItem("scrollPosition");
-            if (scrollPosition) {
-                window.scrollTo(0, parseInt(scrollPosition, 0));
-                sessionStorage.removeItem("scrollPosition");
-            }
-        }, 0);
     };
 
     const handleCommentSubmit = async (e) => {

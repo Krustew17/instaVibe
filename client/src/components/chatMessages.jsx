@@ -40,17 +40,10 @@ const ChatMessages = () => {
             </div>
         );
     }
-    if (messages === null) {
-        return (
-            <div className="flex justify-center items-center min-w-full -translate-x-32">
-                Select a conversation to start chatting
-            </div>
-        );
-    }
     return (
-        <div className="w-full border-r-2 border-l-2 border-gray-100 dark:border-gray-800 min-h-screen pb-[50px] md:pb-0">
+        <div className="w-full border-r-2 border-l-2 border-gray-100 dark:border-gray-800 min-h-screen pb-[50px] md:pb-0 overflow-y-auto ">
             <div>
-                <div className="flex flex-col px-2">
+                <div className="flex flex-col p-4">
                     {messages &&
                         messages.map((message) => (
                             <div

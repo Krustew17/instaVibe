@@ -113,6 +113,14 @@ export const updateUserDetails = async (req, res) => {
             return res.status(400).json({ message: "Email already exists." });
         }
 
+        const checkDisplayName = await User.findOne({ displayName });
+
+        if (checkDisplayName && displayName !== req.user.displayName) {
+            return res
+                .status(400)
+                .json({ message: "Display name already exists." });
+        }
+
         if (bio && bio.length > MAX_BIO_LENGTH) {
             return res.status(400).json({
                 message: `bio length should be less than ${MAX_BIO_LENGTH} characters.`,

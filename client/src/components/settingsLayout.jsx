@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Test from "./test";
+import SettingsNav from "./profileSettingsNav";
 
 function SettingsLayout() {
     const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 768);
@@ -24,7 +24,7 @@ function SettingsLayout() {
 
     return (
         <div className="flex gap-2 w-full basis-full">
-            {(isWideScreen || isSettingsRoot) && <Test />}
+            {(isWideScreen || isSettingsRoot) && <SettingsNav />}
             <Outlet />
         </div>
     );
