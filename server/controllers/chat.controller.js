@@ -7,6 +7,31 @@ export const sendMessage = async (req, res, io) => {
     try {
         const { conversationId, sender, receiver, text } = req.body;
 
+        console.log(req);
+
+        if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+            return res.status(404).json({ message: "Conversation not found" });
+        }
+
+        if (
+            !mongoose.Types.ObjectId.isValid(sender) ||
+            !mongoose.Types.ObjectId.isValid(receiver)
+        ) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!text) {
+            return res.status(400).json({ message: "Text is required" });
+        }
+
+        if (sender === receiver) {
+            return res
+                .status(400)
+                .json({ message: "Sender and receiver cannot be the same" });
+        }
+
+        console.log(conversationId, sender, receiver, text);
+
         let conversation = await Conversation.findById(conversationId);
         if (!conversation) {
             conversation = new Conversation({

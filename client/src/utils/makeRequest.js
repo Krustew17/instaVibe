@@ -35,6 +35,8 @@ export default async function makeRequest(
     // make the request
     const response = await fetch(url, options);
 
+    console.log(response);
+
     // get the status
     status = response.status;
 

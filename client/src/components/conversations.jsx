@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../index.css";
+import makeRequest from "../utils/makeRequest";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Conversations = () => {
+    const [conversations, setConversations] = useState([]);
     const { conversationId } = useParams();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const loggedUser = useSelector((state) => state.auth.user);
 
     useEffect(() => {
         const handleResize = () => {
@@ -13,6 +18,16 @@ const Conversations = () => {
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        const fetchConversations = async () => {
+            const host = import.meta.env.VITE_SERVER_HOST;
+            const fetchUrl = `${host}/chat/conversations`;
+            const { data } = await makeRequest(fetchUrl, "GET");
+            setConversations(data);
+        };
+        fetchConversations();
     }, []);
 
     return (
@@ -27,26 +42,37 @@ const Conversations = () => {
                     </h1>
                 </div>
                 <div className="flex flex-col">
-                    {Array(24)
-                        .fill(0)
-                        .map((_, index) => (
-                            <div
-                                key={index}
-                                className="flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2"
-                            >
-                                <img
-                                    src="/default_avatar.jpg"
-                                    alt="avatar"
-                                    className="w-12 h-12 rounded-full aspect-square"
-                                />
-                                <div className="flex flex-col">
-                                    <p className="ml-4">krustew17</p>
-                                    <p className="ml-4 text-gray-500 text-sm">
-                                        test
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                    {conversations.map((conversation) => (
+                        <Link
+                            to={`/chat/${conversation._id}`}
+                            key={conversation._id}
+                            className="flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2"
+                        >
+                            {conversation.participants.map(
+                                (participant) =>
+                                    participant._id !== loggedUser._id && (
+                                        <div
+                                            key={participant._id}
+                                            className="flex"
+                                        >
+                                            <img
+                                                src={`${participant.profilePicture}`}
+                                                alt="avatar"
+                                                className="w-12 h-12 rounded-full aspect-square"
+                                            />
+                                            <div className="flex flex-col">
+                                                <p className="ml-4">
+                                                    {participant.username}
+                                                </p>
+                                                <p className="ml-4 text-gray-500 text-sm">
+                                                    test
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )
+                            )}
+                        </Link>
+                    ))}
                 </div>
             </div>
             {!conversationId && !isMobile && (
