@@ -23,7 +23,7 @@ function ChatLayout() {
     const isChatRoot = location.pathname === "/chat";
 
     return (
-        <div className="flex min-w-[1550px] max-w-">
+        <div className="flex flex-1">
             {(isWideScreen || isChatRoot) && <Conversations />}
             <Outlet />
         </div>

@@ -59,10 +59,8 @@ function App() {
     }, [dispatch, location.pathname, loggedUser?._id]);
 
     useEffect(() => {
-        const token = JSON.parse(localStorage.getItem("authState")).token;
+        const token = JSON.parse(localStorage.getItem("authState"))?.token;
         if (token) {
-            const decodedToken = jwtDecode(token);
-
             checkTokenExpirationNow(
                 token,
                 setSessionExpiredVisible,
