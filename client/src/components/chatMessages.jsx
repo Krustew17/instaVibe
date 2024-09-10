@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import makeRequest from "../utils/makeRequest";
 import Spinner from "./spinner.jsx";
@@ -13,9 +13,14 @@ const ChatMessages = () => {
     const loggedUser = useSelector((state) => state.auth.user);
     const userToken = JSON.parse(localStorage.getItem("authState")).token;
     const [message, setMessage] = useState("");
+    const messagesEndRef = useRef(null);
     const handleInput = (e) => {
         const { name, value } = e.target;
         setMessage(value);
+    };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     const getConversationMessages = async () => {
@@ -69,12 +74,16 @@ const ChatMessages = () => {
 
         const data = await response.json();
         handleNewMessage(data);
-        setMessage("");
     };
 
     const handleNewMessage = (message) => {
         setMessages([...messages, message]);
+        setMessage("");
     };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, getConversationMessages]);
 
     useEffect(() => {
         if (conversationId) {
@@ -111,6 +120,7 @@ const ChatMessages = () => {
                                 {message.text}
                             </div>
                         ))}
+                    <div ref={messagesEndRef} />{" "}
                 </div>
                 <form
                     className="fixed bottom-12 md:bottom-0 flex items-center bg-white dark:bg-black"
