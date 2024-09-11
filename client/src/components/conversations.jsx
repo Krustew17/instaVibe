@@ -3,13 +3,16 @@ import { useParams } from "react-router-dom";
 import "../index.css";
 import makeRequest from "../utils/makeRequest";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import socket from "../utils/socket";
+import { setConversations, updateLastMessage } from "../redux/chat/chatSlice";
 
 const Conversations = () => {
-    const [conversations, setConversations] = useState([]);
     const { conversationId } = useParams();
+    const dispatch = useDispatch();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const loggedUser = useSelector((state) => state.auth.user);
+    const conversations = useSelector((state) => state.chat.conversations);
 
     useEffect(() => {
         const handleResize = () => {
@@ -25,10 +28,21 @@ const Conversations = () => {
             const host = import.meta.env.VITE_SERVER_HOST;
             const fetchUrl = `${host}/chat/conversations`;
             const { data } = await makeRequest(fetchUrl, "GET");
-            setConversations(data);
+            dispatch(setConversations(data));
         };
         fetchConversations();
     }, []);
+
+    useEffect(() => {
+        socket.on("new-message", (data) => {
+            dispatch(
+                updateLastMessage({
+                    conversationId: data.conversationId,
+                    message: data.text,
+                })
+            );
+        });
+    });
 
     return (
         <div className={`flex h-screen ${!conversationId ? "min-w-full" : ""}`}>
@@ -42,13 +56,13 @@ const Conversations = () => {
                     </h1>
                 </div>
                 <div className="flex flex-col">
-                    {conversations.map((conversation) => (
+                    {conversations?.map((conversation) => (
                         <Link
                             to={`/chat/${conversation._id}`}
                             key={conversation._id}
-                            className="flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2"
+                            className={`flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2 ${conversation.last}`}
                         >
-                            {conversation.participants.map(
+                            {conversation?.participants.map(
                                 (participant) =>
                                     participant._id !== loggedUser._id && (
                                         <div
@@ -65,7 +79,9 @@ const Conversations = () => {
                                                     {participant.username}
                                                 </p>
                                                 <p className="ml-4 text-gray-500 text-sm">
-                                                    test
+                                                    {conversation?.lastMessage
+                                                        ?.text ||
+                                                        "No messages yet"}
                                                 </p>
                                             </div>
                                         </div>

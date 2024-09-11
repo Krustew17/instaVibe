@@ -57,6 +57,18 @@ export default function Main() {
         setGifs([]);
     };
 
+    useEffect(() => {
+        const scroll = sessionStorage.getItem("scrollPosition");
+        if (scroll) {
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(scroll), {
+                    behavior: "smooth",
+                });
+            }, 100);
+        }
+        sessionStorage.removeItem("scrollPosition");
+    }, []);
+
     const fetchGifs = useCallback(async () => {
         setLoading(true);
         setError(null);
