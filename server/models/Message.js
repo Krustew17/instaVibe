@@ -24,6 +24,10 @@ export const MessageSchema = new mongoose.Schema({
         ref: "Conversation",
         required: true,
     },
+    seen: {
+        type: Boolean,
+        default: false,
+    },
 });
 const Message = mongoose.model("Message", MessageSchema);
 export default Message;

@@ -13,8 +13,8 @@ const conversationSchema = new mongoose.Schema({
         default: Date.now,
     },
     lastMessage: {
-        type: String,
-        default: "",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message",
     },
 });
 

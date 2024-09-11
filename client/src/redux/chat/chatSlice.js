@@ -23,6 +23,26 @@ const chatSlice = createSlice({
                 state.messages.push(newMessage);
             }
         },
+        updateLastMessage(state, action) {
+            const { conversationId, message } = action.payload;
+            if (state.conversations) {
+                state.conversations = state.conversations.map(
+                    (conversation) => {
+                        if (conversation._id === conversationId) {
+                            return {
+                                ...conversation,
+                                lastMessage: {
+                                    ...conversation.lastMessage,
+                                    text: message,
+                                },
+                            };
+                        } else {
+                            return conversation;
+                        }
+                    }
+                );
+            }
+        },
     },
 });
 
@@ -31,6 +51,7 @@ export const {
     setCurrentConversation,
     setMessages,
     addMessage,
+    updateLastMessage,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

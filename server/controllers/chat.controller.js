@@ -7,8 +7,6 @@ export const sendMessage = async (req, res, io) => {
     try {
         const { conversationId, sender, receiver, text } = req.body;
 
-        console.log(req);
-
         if (!mongoose.Types.ObjectId.isValid(conversationId)) {
             return res.status(404).json({ message: "Conversation not found" });
         }
@@ -44,12 +42,14 @@ export const sendMessage = async (req, res, io) => {
             sender,
             receiver,
             text,
+            date: new Date(),
         });
 
         const savedMessage = await newMessage.save();
 
         conversation.lastMessageDate = newMessage.date;
-        conversation.lastMessage = newMessage.text;
+        conversation.lastMessage = newMessage;
+
         await conversation.save();
 
         const populatedMessage = await savedMessage.populate([
@@ -57,10 +57,7 @@ export const sendMessage = async (req, res, io) => {
             { path: "receiver", select: "username profilePicture" },
         ]);
 
-        io.to(conversation._id.toString()).emit(
-            "new-message",
-            populatedMessage
-        );
+        io.emit("new-message", populatedMessage);
 
         res.status(200).json(savedMessage);
     } catch (error) {
@@ -76,10 +73,18 @@ export const getMessages = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(conversationId)) {
             return res.status(404).json({ message: "No conversation found" });
         }
-        const messages = await Message.find({ conversationId }).populate([
-            { path: "sender", select: "username profilePicture" },
-            { path: "receiver", select: "username profilePicture" },
-        ]);
+
+        await Message.updateMany({ conversationId }, { $set: { seen: true } });
+
+        const messages = await Message.find({ conversationId })
+            .populate([
+                { path: "sender", select: "username profilePicture" },
+                { path: "receiver", select: "username profilePicture" },
+            ])
+            .limit(30)
+            .sort({ date: -1 });
+
+        messages.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         res.status(200).json(messages);
     } catch (error) {
@@ -97,6 +102,7 @@ export const getConversations = async (req, res) => {
             participants: userId,
         }).populate([
             { path: "participants", select: "username profilePicture" },
+            { path: "lastMessage", select: "text seen date" },
         ]);
 
         res.status(200).json(conversations);

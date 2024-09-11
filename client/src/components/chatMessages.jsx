@@ -20,7 +20,7 @@ const ChatMessages = () => {
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView();
     };
 
     const getConversationMessages = async () => {
@@ -28,7 +28,7 @@ const ChatMessages = () => {
             import.meta.env.VITE_SERVER_HOST
         }/chat/messages/${conversationId}`;
         const { status, data } = await makeRequest(fetchUrl, "GET");
-
+        console.log(data);
         setReceiver(data[0].receiver);
 
         if (status === 404) {
