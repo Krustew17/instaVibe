@@ -130,15 +130,11 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                         <strong>{posts?.length}</strong> Posts
                                     </h2>
                                     <h2 className="flex flex-col customBreakPoint:flex-row customBreakPoint:gap-1 text-center">
-                                        <strong>
-                                            {user?.followers.length}
-                                        </strong>{" "}
+                                        <strong>{user?.followersCount}</strong>{" "}
                                         Followers
                                     </h2>
                                     <h2 className="flex flex-col customBreakPoint:flex-row customBreakPoint:gap-1 text-center">
-                                        <strong>
-                                            {user?.following.length}
-                                        </strong>{" "}
+                                        <strong>{user?.followingCount}</strong>{" "}
                                         Following
                                     </h2>
                                 </div>
@@ -322,7 +318,7 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                 WebkitBoxOrient: "vertical",
                                 WebkitLineClamp: 4,
                                 overflow: "hidden",
-                                textOverflow: "clip", // Changed from 'ellipsis' to 'clip'
+                                textOverflow: "clip",
                                 lineHeight: "1em",
                                 maxHeight: "4em",
                             }}
@@ -362,20 +358,20 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                 <Link
                                     to={`/${post.createdBy.username}/post/${post._id}`}
                                     key={post._id}
-                                    className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
+                                    className="relative w-full h-40 overflow-hidden border border-slate-400 dark:border-slate-700 rounded-sm shadow-md group flex justify-center align-center items-center bg-gray-200 dark:bg-slate-900"
                                 >
                                     {(post.picturePath &&
                                         post.picturePath.includes("mp4") && (
                                             <video
                                                 src={post.picturePath}
                                                 alt="Post media"
-                                                className="mt-2 rounded-lg max-w-full"
+                                                className="mt-2 rounded-lg"
                                             />
                                         )) || (
                                         <img
                                             src={post.picturePath}
                                             alt="Post media"
-                                            className="border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                            className="border shadow-sm shadow-black border-slate-200 dark:border-slate-800 object-cover max-h-full"
                                         />
                                     )}
                                     <div className="absolute inset-0 flex sm:flex-row sm:gap-4 flex-col justify-center items-center bg-opacity-50 bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">

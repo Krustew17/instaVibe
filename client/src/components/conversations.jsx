@@ -60,7 +60,12 @@ const Conversations = () => {
                         <Link
                             to={`/chat/${conversation._id}`}
                             key={conversation._id}
-                            className={`flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2 ${conversation.last}`}
+                            className={`flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2 ${
+                                conversation.lastMessage.seen ||
+                                conversationId === conversation._id
+                                    ? "text-black dark:text-white"
+                                    : "font-semibold"
+                            }`}
                         >
                             {conversation?.participants.map(
                                 (participant) =>
@@ -74,11 +79,20 @@ const Conversations = () => {
                                                 alt="avatar"
                                                 className="w-12 h-12 rounded-full aspect-square"
                                             />
-                                            <div className="flex flex-col">
+                                            <div className="flex flex-col ">
                                                 <p className="ml-4">
                                                     {participant.username}
                                                 </p>
-                                                <p className="ml-4 text-gray-500 text-sm">
+                                                <p
+                                                    className={`ml-4  text-sm ${
+                                                        conversation.lastMessage
+                                                            .seen ||
+                                                        conversationId ===
+                                                            conversation._id
+                                                            ? "text-gray-400"
+                                                            : "font-semibold text-gray-800"
+                                                    }`}
+                                                >
                                                     {conversation?.lastMessage
                                                         ?.text ||
                                                         "No messages yet"}
