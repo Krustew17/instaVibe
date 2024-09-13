@@ -88,6 +88,10 @@ io.on("connection", (socket) => {
     socket.on("joinConversation", (conversationId) => {
         socket.join(conversationId);
     });
+    socket.on("join-room", (userId) => {
+        socket.join(userId);
+        console.log(`User joined room: ${userId}`);
+    });
 });
 
 /* MONGOOSE SETUP */

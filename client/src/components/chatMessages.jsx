@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import makeRequest from "../utils/makeRequest";
 import Spinner from "./spinner.jsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import socket from "../utils/socket";
+import { setConversations } from "../redux/chat/chatSlice.js";
 
 const ChatMessages = () => {
     const { conversationId } = useParams();
@@ -14,8 +15,9 @@ const ChatMessages = () => {
     const userToken = JSON.parse(localStorage.getItem("authState")).token;
     const [message, setMessage] = useState("");
     const messagesEndRef = useRef(null);
+    const dispatch = useDispatch();
     const handleInput = (e) => {
-        const { name, value } = e.target;
+        const { _, value } = e.target;
         setMessage(value);
     };
 
@@ -28,8 +30,6 @@ const ChatMessages = () => {
             import.meta.env.VITE_SERVER_HOST
         }/chat/messages/${conversationId}`;
         const { status, data } = await makeRequest(fetchUrl, "GET");
-        console.log(data);
-        setReceiver(data[0].receiver);
 
         if (status === 404) {
             setMessages(null);
@@ -48,7 +48,6 @@ const ChatMessages = () => {
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-
         const messageData = {
             conversationId,
             sender: loggedUser._id,
@@ -76,10 +75,38 @@ const ChatMessages = () => {
         handleNewMessage(data);
     };
 
+    const fetchConversations = async () => {
+        const fetchUrl = `${
+            import.meta.env.VITE_SERVER_HOST
+        }/chat/conversations`;
+
+        const { data } = await makeRequest(fetchUrl, "GET");
+        dispatch(setConversations(data));
+    };
+
     const handleNewMessage = (message) => {
         setMessages([...messages, message]);
+        fetchConversations();
         setMessage("");
     };
+
+    const fetchReceiver = async () => {
+        const fetchUrl = `${
+            import.meta.env.VITE_SERVER_HOST
+        }/chat/conversation/${conversationId}`;
+
+        if (!conversationId) return;
+
+        const { status, data } = await makeRequest(fetchUrl, "GET");
+        if (status === 404) {
+            return;
+        }
+        setReceiver(data);
+    };
+
+    useEffect(() => {
+        fetchReceiver();
+    }, [conversationId]);
 
     useEffect(() => {
         scrollToBottom();
@@ -95,6 +122,12 @@ const ChatMessages = () => {
             };
         }
     });
+
+    useEffect(() => {
+        if (loggedUser && loggedUser._id) {
+            socket.emit("join-room", loggedUser._id);
+        }
+    }, [loggedUser]);
 
     if (loading) {
         return (
@@ -130,6 +163,7 @@ const ChatMessages = () => {
                         type="text"
                         name="message"
                         required
+                        autoComplete="off"
                         value={message}
                         onChange={handleInput}
                         className="border dark:border-gray-800 bg-white dark:bg-black text-black dark:text-white rounded-l-lg p-2 focus:outline-none"

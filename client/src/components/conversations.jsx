@@ -61,7 +61,7 @@ const Conversations = () => {
                             to={`/chat/${conversation._id}`}
                             key={conversation._id}
                             className={`flex hover:bg-gray-200 dark:hover:bg-gray-900 pl-4 pr-6 rounded-md py-2 ${
-                                conversation.lastMessage.seen ||
+                                conversation?.lastMessage?.seen ||
                                 conversationId === conversation._id
                                     ? "text-black dark:text-white"
                                     : "font-semibold"
@@ -85,8 +85,9 @@ const Conversations = () => {
                                                 </p>
                                                 <p
                                                     className={`ml-4  text-sm ${
-                                                        conversation.lastMessage
-                                                            .seen ||
+                                                        conversation
+                                                            ?.lastMessage
+                                                            ?.seen ||
                                                         conversationId ===
                                                             conversation._id
                                                             ? "text-gray-400"
