@@ -5,7 +5,7 @@ import {
     getMessages,
     getConversations,
     createOrFetchConversation,
-    getConversationObject,
+    fetchReceiver,
 } from "../controllers/chat.controller.js";
 import { io } from "../index.js";
 
@@ -24,7 +24,7 @@ router.post("/conversation", authMiddleware, (req, res) => {
     createOrFetchConversation(req, res, io);
 });
 router.get("/conversation/:conversationId", authMiddleware, (req, res) => {
-    getConversationObject(req, res, io);
+    fetchReceiver(req, res, io);
 });
 
 export default router;

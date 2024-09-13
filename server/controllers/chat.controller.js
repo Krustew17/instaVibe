@@ -28,8 +28,6 @@ export const sendMessage = async (req, res, io) => {
                 .json({ message: "Sender and receiver cannot be the same" });
         }
 
-        console.log(conversationId, sender, receiver, text);
-
         let conversation = await Conversation.findById(conversationId);
         if (!conversation) {
             conversation = new Conversation({
@@ -57,7 +55,7 @@ export const sendMessage = async (req, res, io) => {
             { path: "receiver", select: "username profilePicture" },
         ]);
 
-        io.emit("new-message", populatedMessage);
+        io.to(sender).to(receiver).emit("new-message", populatedMessage);
 
         res.status(200).json(savedMessage);
     } catch (error) {
@@ -71,7 +69,10 @@ export const getMessages = async (req, res) => {
     try {
         const { conversationId } = req.params;
         if (!mongoose.Types.ObjectId.isValid(conversationId)) {
-            return res.status(404).json({ message: "No conversation found" });
+            const conversation = new Conversation({
+                participants: [sender, receiver],
+            });
+            await conversation.save();
         }
 
         await Message.updateMany({ conversationId }, { $set: { seen: true } });
@@ -100,26 +101,30 @@ export const getConversations = async (req, res) => {
 
         const conversations = await Conversation.find({
             participants: userId,
-        }).populate([
-            { path: "participants", select: "username profilePicture" },
-            { path: "lastMessage", select: "text seen date" },
-        ]);
-
+        })
+            .populate([
+                { path: "participants", select: "username profilePicture" },
+                { path: "lastMessage", select: "text seen date" },
+            ])
+            .sort({ lastMessageDate: -1 });
         res.status(200).json(conversations);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-export const getConversationObject = async (req, res) => {
+export const fetchReceiver = async (req, res) => {
     try {
         const { conversationId } = req.params;
-        const conversation = await Conversation.findById(
-            conversationId
-        ).populate([
-            { path: "participants", select: "username profilePicture" },
-        ]);
-        res.status(200).json(conversation);
+        const user = req.user;
+        const conversation = await Conversation.findById(conversationId);
+
+        return conversation.participants.map((participant) => {
+            if (participant._id.toString() !== user._id.toString()) {
+                console.log(participant);
+                return res.status(200).json(participant);
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -136,7 +141,6 @@ export const createOrFetchConversation = async (req, res) => {
             participants: { $all: [senderId, receiverId] },
         });
 
-        // If no conversation exists, create a new one
         if (!conversation) {
             conversation = new Conversation({
                 participants: [senderId, receiverId],
