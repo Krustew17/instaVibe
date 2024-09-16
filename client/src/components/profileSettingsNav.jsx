@@ -46,7 +46,7 @@ const SettingsNav = () => {
                         <span>Change Password</span>
                     </NavLink>
                     <NavLink
-                        to="settings"
+                        to="privacy"
                         className="flex items-center gap-2 text-xl "
                     >
                         Privacy

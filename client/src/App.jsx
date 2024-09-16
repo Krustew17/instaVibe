@@ -22,10 +22,10 @@ import ChangePassword from "./components/changePassword";
 import SettingsLayout from "./components/settingsLayout";
 import ChatLayout from "./components/chatLayout";
 import ChatMessages from "./components/chatMessages";
-import { jwtDecode } from "jwt-decode";
 import { logout } from "./redux/auth/authSlice";
 import SessionExpired from "./components/sessionExpired";
 import checkTokenExpirationNow from "./utils/checkExpiration";
+import Privacy from "./components/privacy";
 
 const socket = io(import.meta.env.VITE_SERVER_HOST);
 
@@ -205,6 +205,16 @@ function App() {
                                 element={
                                     <ProtectedRoute
                                         children={<ChangePassword />}
+                                        to="/login"
+                                        shouldBeAuthenticated={true}
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/settings/privacy"
+                                element={
+                                    <ProtectedRoute
+                                        children={<Privacy />}
                                         to="/login"
                                         shouldBeAuthenticated={true}
                                     />

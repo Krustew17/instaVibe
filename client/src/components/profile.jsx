@@ -222,30 +222,54 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                 ))}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
-                                {likedPosts?.map((post) => (
-                                    <Link
-                                        to={`/${post.createdBy.username}/post/${post._id}`}
-                                        key={post._id}
-                                        className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
-                                    >
-                                        <img
-                                            src={post.picturePath}
-                                            alt={post.description}
-                                            className="absolute inset-0 w-full h-full object-cover"
-                                        />
-                                        <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <span className="flex items-center gap-2 text-lg font-bold">
-                                                <IoHeartSharp />
-                                                {post?.likesCount || 0}
-                                            </span>
-                                            <span className="flex items-center gap-2 text-lg font-bold">
-                                                <FaComment />
-                                                {post?.comments?.length || 0}
-                                            </span>
-                                        </div>
-                                    </Link>
-                                ))}
+                            <div>
+                                {(user.showPosts && (
+                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+                                        {likedPosts?.map((post) => (
+                                            <Link
+                                                to={`/${post.createdBy.username}/post/${post._id}`}
+                                                key={post._id}
+                                                className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
+                                            >
+                                                {(post.picturePath &&
+                                                    post.picturePath.includes(
+                                                        "mp4"
+                                                    ) && (
+                                                        <video
+                                                            src={
+                                                                post.picturePath
+                                                            }
+                                                            alt="Post media"
+                                                            className="mt-2 rounded-lg max-w-full"
+                                                        />
+                                                    )) || (
+                                                    <img
+                                                        src={post.picturePath}
+                                                        alt="Post media"
+                                                        className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                                    />
+                                                )}
+                                                <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <span className="flex items-center gap-2 text-lg font-bold">
+                                                        <IoHeartSharp />
+                                                        {post?.likesCount || 0}
+                                                    </span>
+                                                    <span className="flex items-center gap-2 text-lg font-bold">
+                                                        <FaComment />
+                                                        {post?.comments
+                                                            ?.length || 0}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )) || (
+                                    <div className="flex justify-center items-center">
+                                        <p className="text-slate-600 dark:text-slate-400 md:text-2xl">
+                                            User has hidden their liked posts.
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -388,39 +412,52 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
-                            {likedPosts?.map((post) => (
-                                <Link
-                                    to={`/${post.createdBy.username}/post/${post._id}`}
-                                    key={post._id}
-                                    className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
-                                >
-                                    {(post.picturePath &&
-                                        post.picturePath.includes("mp4") && (
-                                            <video
-                                                src={post.picturePath}
-                                                alt="Post media"
-                                                className="mt-2 rounded-lg max-w-full"
-                                            />
-                                        )) || (
-                                        <img
-                                            src={post.picturePath}
-                                            alt="Post media"
-                                            className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
-                                        />
-                                    )}
-                                    <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <span className="flex items-center gap-2 text-lg font-bold">
-                                            <IoHeartSharp />
-                                            {post?.likesCount || 0}
-                                        </span>
-                                        <span className="flex items-center gap-2 text-lg font-bold">
-                                            <FaComment />
-                                            {post?.comments?.length || 0}
-                                        </span>
-                                    </div>
-                                </Link>
-                            ))}
+                        <div>
+                            {(user.showPosts && (
+                                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+                                    {likedPosts?.map((post) => (
+                                        <Link
+                                            to={`/${post.createdBy.username}/post/${post._id}`}
+                                            key={post._id}
+                                            className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
+                                        >
+                                            {(post.picturePath &&
+                                                post.picturePath.includes(
+                                                    "mp4"
+                                                ) && (
+                                                    <video
+                                                        src={post.picturePath}
+                                                        alt="Post media"
+                                                        className="mt-2 rounded-lg max-w-full"
+                                                    />
+                                                )) || (
+                                                <img
+                                                    src={post.picturePath}
+                                                    alt="Post media"
+                                                    className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                                />
+                                            )}
+                                            <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <span className="flex items-center gap-2 text-lg font-bold">
+                                                    <IoHeartSharp />
+                                                    {post?.likesCount || 0}
+                                                </span>
+                                                <span className="flex items-center gap-2 text-lg font-bold">
+                                                    <FaComment />
+                                                    {post?.comments?.length ||
+                                                        0}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )) || (
+                                <div className="flex justify-center items-center">
+                                    <p className="text-slate-600 dark:text-slate-400 md:text-2xl">
+                                        User has hidden their liked posts.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
