@@ -44,6 +44,7 @@ const authSlice = createSlice({
             saveStateToLocalStorage(state);
         },
         updateUser: (state, action) => {
+            console.log(action);
             state.isAuthenticated = true;
             state.token = state.token;
             state.user = action.payload.updatedUser;

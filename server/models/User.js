@@ -51,6 +51,10 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        showPosts: {
+            type: Boolean,
+            default: true,
+        },
     },
     { timestamps: true }
 );

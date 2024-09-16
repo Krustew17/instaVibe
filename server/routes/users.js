@@ -6,6 +6,7 @@ import {
     deleteUser,
     followUser,
     searchUsers,
+    changePrivacy,
 } from "../controllers/users.controller.js";
 import { upload } from "../configs/multer.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
@@ -27,4 +28,7 @@ router.delete("/delete", authMiddleware, deleteUser);
 
 router.post("/:id/follow", authMiddleware, followUser);
 
+router.put("/change-privacy", authMiddleware, (req, res) => {
+    changePrivacy(req, res);
+});
 export default router;

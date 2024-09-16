@@ -300,3 +300,30 @@ export const followUser = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+// Change Privacy
+export const changePrivacy = async (req, res) => {
+    try {
+        // deconstruct the req.body
+        const { showPosts } = req.body;
+        const user = req.user;
+        // Check if user exists
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        // Update the user
+        const updatedUser = await User.findByIdAndUpdate(
+            user._id,
+            { showPosts },
+            { new: true }
+        );
+
+        // Send the response
+        res.status(200).json({
+            message: "User privacy updated successfully",
+            updatedUser,
+        });
+    } catch (error) {
+        // Handle any errors
+        res.status(400).json({ message: error.message });
+    }
+};
