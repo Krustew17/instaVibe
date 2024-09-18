@@ -21,7 +21,7 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
 
     const handleFollow = async () => {
         if (!loggedUser) {
-            window.location.replace("/login");
+            navigate("/login");
             return;
         }
         const host = import.meta.env.VITE_SERVER_HOST;
@@ -49,6 +49,10 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
     };
 
     const handleMessage = async () => {
+        if (!loggedUser) {
+            navigate("/login");
+            return;
+        }
         const host = import.meta.env.VITE_SERVER_HOST;
 
         const fetchUrl = `${host}/chat/conversation`;

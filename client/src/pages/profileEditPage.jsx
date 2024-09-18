@@ -45,7 +45,6 @@ export default function ProfileEdit() {
         const file = e.target.files[0];
         setImage(file);
         if (file) {
-            // Simulate upload and update the profile picture URL
             const reader = new FileReader();
             reader.onloadend = () => {
                 setProfilePicture(reader.result);
@@ -56,13 +55,17 @@ export default function ProfileEdit() {
 
     const handleRemovePicture = () => {
         setProfilePicture("/default_avatar.jpg");
-        setImage("/default_avatar.jpg");
+        setImage(null);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append("image", image);
+        if (image) {
+            formData.append("image", image);
+        } else {
+            formData.append("resetProfilePicture", true);
+        }
         formData.append("displayName", data.displayName);
         formData.append("username", data.username);
         formData.append("email", data.email);
@@ -79,13 +82,13 @@ export default function ProfileEdit() {
                 Authorization: `Bearer ${token}`,
             },
         });
+
         const dataJson = await response.json();
-        console.log(dataJson);
         if (response.status !== 200) {
             setError(dataJson.message);
             setTimeout(() => {
                 setError("");
-            }, 2000);
+            }, 1000);
             return;
         }
 

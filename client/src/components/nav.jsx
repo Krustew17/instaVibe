@@ -11,9 +11,18 @@ import React, { useState, useEffect } from "react";
 
 export default function Nav() {
     const [activeTab, setActiveTab] = useState(".");
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(null);
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
+
+    useEffect(() => {
+        const theme = localStorage.getItem("theme");
+        if (theme) {
+            setIsDarkMode(theme === "dark");
+        }
+
+        document.documentElement.classList.toggle("dark", theme === "dark");
+    }, []);
 
     const handleNavClick = (path) => {
         setActiveTab(path);
@@ -22,6 +31,7 @@ export default function Nav() {
     const toggleDarkMode = () => {
         document.documentElement.classList.toggle("dark");
         setIsDarkMode(!isDarkMode);
+        localStorage.setItem("theme", !isDarkMode ? "dark" : "light");
     };
 
     useEffect(() => {
@@ -121,8 +131,8 @@ export default function Nav() {
                         checked={isDarkMode}
                         onChange={toggleDarkMode}
                         size={30}
-                        moonColor="#000000"
-                        sunColor="#f5f5f5"
+                        moonColor="#f5f5f5"
+                        sunColor="#000000"
                         className="select-none"
                     />
                 </div>

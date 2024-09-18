@@ -19,8 +19,8 @@ export default function Main() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedGif, setSelectedGif] = useState(null);
-    const [uploadedFile, setUploadedFile] = useState(null); // Updated state
-    const [file, setFile] = useState(null); // Holds the actual file
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
     const [description, setDescription] = useState("");
     const [isDarkMode, setIsDarkMode] = useState(true);
@@ -34,9 +34,19 @@ export default function Main() {
         dispatch(logout());
     };
 
+    useEffect(() => {
+        const theme = localStorage.getItem("theme");
+        if (theme) {
+            setIsDarkMode(theme === "dark");
+        }
+
+        document.documentElement.classList.toggle("dark", theme === "dark");
+    }, []);
+
     const toggleDarkMode = () => {
         document.documentElement.classList.toggle("dark");
         setIsDarkMode(!isDarkMode);
+        localStorage.setItem("theme", !isDarkMode ? "dark" : "light");
     };
 
     const handlePostClick = () => {
@@ -264,8 +274,8 @@ export default function Main() {
                         checked={isDarkMode}
                         onChange={toggleDarkMode}
                         size={25}
-                        moonColor="#000000"
-                        sunColor="#f5f5f5"
+                        moonColor="#f5f5f5"
+                        sunColor="#000000"
                         className="select-none"
                     />
                 </div>
