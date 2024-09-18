@@ -23,7 +23,9 @@ const SearchComponent = () => {
             const { status, data } = await makeRequest(
                 `${host}/${type}/search?query=${query}`,
                 "POST",
-                headers
+                headers,
+                null,
+                null
             );
             if (status !== 200) {
                 setError(data.message);

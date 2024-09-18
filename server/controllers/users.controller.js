@@ -85,7 +85,14 @@ export const updateUserDetails = async (req, res) => {
     try {
         const MAX_BIO_LENGTH = 150;
         // deconstruct the req.body
-        const { username, email, displayName, bio, profilePicture } = req.body;
+        const {
+            username,
+            email,
+            displayName,
+            bio,
+            profilePicture,
+            resetProfilePicture,
+        } = req.body;
         const user = req.user;
 
         // Check if user exists
@@ -166,6 +173,10 @@ export const updateUserDetails = async (req, res) => {
         }
         if (profilePicture) {
             imageUrl = profilePicture;
+        }
+
+        if (resetProfilePicture) {
+            imageUrl = "/default_avatar.jpg";
         }
 
         // Update the user
