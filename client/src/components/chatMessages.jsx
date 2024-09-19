@@ -131,7 +131,7 @@ const ChatMessages = () => {
 
     if (loading) {
         return (
-            <div className="xl:ml-[400px]">
+            <div className="xl:ml-[400px] mx-auto">
                 <Spinner />
             </div>
         );

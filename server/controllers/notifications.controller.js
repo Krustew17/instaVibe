@@ -16,7 +16,20 @@ export const fetchNotifications = async (req, res) => {
         if (!notifications) {
             return res.status(404).json({ message: "Notifications not found" });
         }
-        return res.status(200).json({ notifications });
+        const oldNotifications = notifications.filter(
+            (notification) => notification.read
+        );
+        const newNotifications = notifications.filter(
+            (notification) => !notification.read
+        );
+        if (newNotifications.length > 0) {
+            await Notification.updateMany(
+                { receiver: user._id },
+                { $set: { read: true } }
+            );
+        }
+
+        return res.status(200).json({ oldNotifications, newNotifications });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
