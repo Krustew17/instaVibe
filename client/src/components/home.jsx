@@ -23,7 +23,7 @@ export default function Main() {
     const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
     const [description, setDescription] = useState("");
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -48,7 +48,6 @@ export default function Main() {
         setIsDarkMode(!isDarkMode);
         localStorage.setItem("theme", !isDarkMode ? "dark" : "light");
     };
-
     const handlePostClick = () => {
         sessionStorage.setItem("scrollPosition", window.scrollY);
     };
@@ -273,7 +272,7 @@ export default function Main() {
                     <DarkModeSwitch
                         checked={isDarkMode}
                         onChange={toggleDarkMode}
-                        size={25}
+                        size={30}
                         moonColor="#f5f5f5"
                         sunColor="#000000"
                         className="select-none"

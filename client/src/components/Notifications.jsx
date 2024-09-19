@@ -27,9 +27,10 @@ export default function Notifications() {
         const host = import.meta.env.VITE_SERVER_HOST;
         const fetchUrl = `${host}/notifications/all`;
         const { status, data } = await makeRequest(fetchUrl, "GET");
+        console.log(data);
 
         if (status === 200) {
-            dispatch(setNotifications(data.notifications));
+            dispatch(setNotifications(data.oldNotifications));
         } else {
             dispatch(clearNotifications());
         }

@@ -28,6 +28,7 @@ const Conversations = () => {
             const host = import.meta.env.VITE_SERVER_HOST;
             const fetchUrl = `${host}/chat/conversations`;
             const { data } = await makeRequest(fetchUrl, "GET");
+            console.log(data);
             dispatch(setConversations(data));
         };
         fetchConversations();

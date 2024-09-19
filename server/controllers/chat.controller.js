@@ -107,6 +107,12 @@ export const getConversations = async (req, res) => {
                 { path: "lastMessage", select: "text seen date" },
             ])
             .sort({ lastMessageDate: -1 });
+
+        const unreadConversationsCount = await Conversation.countDocuments({
+            participants: userId,
+            "lastMessage.seen": false,
+        });
+
         res.status(200).json(conversations);
     } catch (error) {
         res.status(500).json({ message: error.message });
