@@ -16,11 +16,10 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
     const [user, setUser] = useState(initialUser);
     const [disabledFollow, setDisabledFollow] = useState(false);
 
-    console.log(user?.username === loggedUser?.username);
-
     const [isFollowing, setIsFollowing] = useState(
         !!user?.followers?.includes(loggedUser?._id)
     );
+    console.log(user?.showLikedPosts);
 
     const handleFollow = async () => {
         setDisabledFollow(true);
@@ -200,23 +199,22 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                                     <Link
                                         to={`/${post.createdBy.username}/post/${post._id}`}
                                         key={post._id}
-                                        className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
+                                        className="relative w-full h-40 overflow-hidden border border-slate-400 dark:border-slate-700 rounded-sm shadow-md group flex justify-center align-center items-center bg-gray-200 dark:bg-slate-900"
                                     >
                                         {(post.picturePath &&
                                             post.picturePath.includes(
                                                 "mp4"
                                             ) && (
                                                 <video
-                                                    controls
                                                     src={post.picturePath}
                                                     alt="Post media"
-                                                    className="mt-2 rounded-lg max-w-full"
+                                                    className="mt-2 rounded-lg"
                                                 />
                                             )) || (
                                             <img
                                                 src={post.picturePath}
                                                 alt="Post media"
-                                                className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                                className="border shadow-sm shadow-black border-slate-200 dark:border-slate-800 object-cover max-h-full"
                                             />
                                         )}
                                         <div className="absolute inset-0 flex sm:flex-row sm:gap-4 flex-col justify-center items-center bg-opacity-50 bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -234,58 +232,54 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                             </div>
                         ) : (
                             <div>
-                                {user.showPosts ||
-                                    (user._id === loggedUser._id && (
-                                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
-                                            {likedPosts?.map((post) => (
-                                                <Link
-                                                    to={`/${post.createdBy.username}/post/${post._id}`}
-                                                    key={post._id}
-                                                    className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
-                                                >
-                                                    {(post.picturePath &&
-                                                        post.picturePath.includes(
-                                                            "mp4"
-                                                        ) && (
-                                                            <video
-                                                                src={
-                                                                    post.picturePath
-                                                                }
-                                                                alt="Post media"
-                                                                className="mt-2 rounded-lg max-w-full"
-                                                            />
-                                                        )) || (
-                                                        <img
+                                {user.showLikedPosts === true ||
+                                user._id === loggedUser._id ? (
+                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+                                        {likedPosts?.map((post) => (
+                                            <Link
+                                                to={`/${post.createdBy.username}/post/${post._id}`}
+                                                key={post._id}
+                                                className="relative w-full h-40 overflow-hidden border border-slate-400 dark:border-slate-700 rounded-sm shadow-md group flex justify-center align-center items-center bg-gray-200 dark:bg-slate-900"
+                                            >
+                                                {(post.picturePath &&
+                                                    post.picturePath.includes(
+                                                        "mp4"
+                                                    ) && (
+                                                        <video
                                                             src={
                                                                 post.picturePath
                                                             }
                                                             alt="Post media"
-                                                            className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                                            className="mt-2 rounded-lg"
                                                         />
-                                                    )}
-                                                    <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                        <span className="flex items-center gap-2 text-lg font-bold">
-                                                            <IoHeartSharp />
-                                                            {post?.likesCount ||
-                                                                0}
-                                                        </span>
-                                                        <span className="flex items-center gap-2 text-lg font-bold">
-                                                            <FaComment />
-                                                            {post?.comments
-                                                                ?.length || 0}
-                                                        </span>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    )) || (
-                                        <div className="flex justify-center items-center">
-                                            <p className="text-slate-600 dark:text-slate-400 md:text-2xl">
-                                                User has hidden their liked
-                                                posts.
-                                            </p>
-                                        </div>
-                                    )}
+                                                    )) || (
+                                                    <img
+                                                        src={post.picturePath}
+                                                        alt="Post media"
+                                                        className="border shadow-sm shadow-black border-slate-200 dark:border-slate-800 object-cover max-h-full"
+                                                    />
+                                                )}
+                                                <div className="absolute inset-0 flex sm:flex-row sm:gap-4 flex-col justify-center items-center bg-opacity-50 bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <span className="flex items-center gap-2 text-lg font-bold">
+                                                        <IoHeartSharp />
+                                                        {post?.likesCount || 0}
+                                                    </span>
+                                                    <span className="flex items-center gap-2 text-lg font-bold">
+                                                        <FaComment />
+                                                        {post?.comments
+                                                            ?.length || 0}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex justify-center items-center">
+                                        <p className="text-slate-600 dark:text-slate-400 md:text-2xl">
+                                            User has hidden their liked posts.
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -430,54 +424,52 @@ export default function Profile({ user: initialUser, posts, likedPosts }) {
                         </div>
                     ) : (
                         <div>
-                            {user.showPosts ||
-                                (loggedUser.username === user.username && (
-                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
-                                        {likedPosts?.map((post) => (
-                                            <Link
-                                                to={`/${post.createdBy.username}/post/${post._id}`}
-                                                key={post._id}
-                                                className="relative w-full h-40 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-sm shadow-md group"
-                                            >
-                                                {(post.picturePath &&
-                                                    post.picturePath.includes(
-                                                        "mp4"
-                                                    ) && (
-                                                        <video
-                                                            src={
-                                                                post.picturePath
-                                                            }
-                                                            alt="Post media"
-                                                            className="mt-2 rounded-lg max-w-full"
-                                                        />
-                                                    )) || (
-                                                    <img
+                            {user.showLikedPosts === true ||
+                            user._id === loggedUser._id ? (
+                                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+                                    {likedPosts?.map((post) => (
+                                        <Link
+                                            to={`/${post.createdBy.username}/post/${post._id}`}
+                                            key={post._id}
+                                            className="relative w-full h-40 overflow-hidden border border-slate-400 dark:border-slate-700 rounded-sm shadow-md group flex justify-center align-center items-center bg-gray-200 dark:bg-slate-900"
+                                        >
+                                            {(post.picturePath &&
+                                                post.picturePath.includes(
+                                                    "mp4"
+                                                ) && (
+                                                    <video
                                                         src={post.picturePath}
                                                         alt="Post media"
-                                                        className="mt-2 rounded-lg max-w-full border shadow-sm shadow-black border-slate-200 dark:border-slate-800"
+                                                        className="mt-2 rounded-lg"
                                                     />
-                                                )}
-                                                <div className="absolute inset-0 flex sm:flex-row sm:gap-4  flex-col justify-center items-center bg-opacity-50 bg-black text-white   opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                    <span className="flex items-center gap-2 text-lg font-bold">
-                                                        <IoHeartSharp />
-                                                        {post?.likesCount || 0}
-                                                    </span>
-                                                    <span className="flex items-center gap-2 text-lg font-bold">
-                                                        <FaComment />
-                                                        {post?.comments
-                                                            ?.length || 0}
-                                                    </span>
-                                                </div>
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )) || (
-                                    <div className="flex justify-center items-center">
-                                        <p className="text-slate-600 dark:text-slate-400 md:text-2xl">
-                                            User has hidden their liked posts.
-                                        </p>
-                                    </div>
-                                )}
+                                                )) || (
+                                                <img
+                                                    src={post.picturePath}
+                                                    alt="Post media"
+                                                    className="border shadow-sm shadow-black border-slate-200 dark:border-slate-800 object-cover max-h-full"
+                                                />
+                                            )}
+                                            <div className="absolute inset-0 flex sm:flex-row sm:gap-4 flex-col justify-center items-center bg-opacity-50 bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <span className="flex items-center gap-2 text-lg font-bold">
+                                                    <IoHeartSharp />
+                                                    {post?.likesCount || 0}
+                                                </span>
+                                                <span className="flex items-center gap-2 text-lg font-bold">
+                                                    <FaComment />
+                                                    {post?.comments?.length ||
+                                                        0}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex justify-center items-center">
+                                    <p className="text-slate-600 dark:text-slate-400 md:text-2xl">
+                                        User has hidden their liked posts.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
