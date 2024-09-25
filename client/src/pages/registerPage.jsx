@@ -68,16 +68,6 @@ const RegisterPage = () => {
                     Create your account
                 </h2>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    {error && (
-                        <div className="text-red-500 text-lg text-center font-bold">
-                            {error}
-                        </div>
-                    )}
-                    {successMessage && (
-                        <div className="text-green-500 text-lg text-center font-bold">
-                            {successMessage}
-                        </div>
-                    )}
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
                             <label htmlFor="username" className="sr-only">
@@ -185,12 +175,23 @@ const RegisterPage = () => {
                             </div>
                         </div>
                     </div>
+                    {error && (
+                        <div className="text-red-500 text-lg text-center font-bold">
+                            {error}
+                        </div>
+                    )}
+                    {successMessage && (
+                        <div className="text-green-500 text-lg text-center font-bold">
+                            {successMessage}
+                        </div>
+                    )}
                     <div className="flex justify-between">
                         <span>Already have an account?</span>
                         <Link to="/login" className="hover:underline">
                             Sign in
                         </Link>
                     </div>
+
                     <div>
                         <button
                             type="submit"
@@ -213,6 +214,7 @@ const RegisterPage = () => {
                                     />
                                 </svg>
                             </span>
+
                             {loading ? (
                                 <ClipLoader size={15} color={"#ffffff"} />
                             ) : (

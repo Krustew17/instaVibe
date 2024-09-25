@@ -316,7 +316,7 @@ export const followUser = async (req, res) => {
 export const changePrivacy = async (req, res) => {
     try {
         // deconstruct the req.body
-        const { showPosts } = req.body;
+        const { showLikedPosts } = req.body;
         const user = req.user;
         // Check if user exists
         if (!user) return res.status(404).json({ message: "User not found." });
@@ -324,7 +324,7 @@ export const changePrivacy = async (req, res) => {
         // Update the user
         const updatedUser = await User.findByIdAndUpdate(
             user._id,
-            { showPosts },
+            { showLikedPosts },
             { new: true }
         );
 

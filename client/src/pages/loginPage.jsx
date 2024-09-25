@@ -118,7 +118,7 @@ const LoginPage = () => {
                         </div>
                     )}
                     <div className="flex justify-between">
-                        <span>Already have an account?</span>
+                        <span>Don't have an account?</span>
                         <Link to="/register" className="hover:underline">
                             Sign up
                         </Link>

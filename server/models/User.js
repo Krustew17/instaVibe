@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        showPosts: {
+        showLikedPosts: {
             type: Boolean,
             default: true,
         },

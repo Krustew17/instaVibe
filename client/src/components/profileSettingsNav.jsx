@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { GoPerson, GoPersonFill } from "react-icons/go";
 import { HiOutlineLockClosed } from "react-icons/hi2";
 import { HiLockClosed } from "react-icons/hi";
+import { IoKeyOutline, IoKeySharp } from "react-icons/io5";
 
 const SettingsNav = () => {
     const [activeTab, setActiveTab] = useState("/");
@@ -39,17 +40,23 @@ const SettingsNav = () => {
                         onClick={(e) => handleTabClick("/change-password")}
                     >
                         {activeTab === "/change-password" ? (
-                            <HiLockClosed />
+                            <IoKeySharp />
                         ) : (
-                            <HiOutlineLockClosed />
+                            <IoKeyOutline />
                         )}
                         <span>Change Password</span>
                     </NavLink>
                     <NavLink
                         to="privacy"
-                        className="flex items-center gap-2 text-xl "
+                        className="flex items-center gap-2 text-xl"
+                        onClick={(e) => handleTabClick("/privacy")}
                     >
-                        Privacy
+                        {activeTab === "/privacy" ? (
+                            <HiLockClosed />
+                        ) : (
+                            <HiOutlineLockClosed />
+                        )}
+                        <span>Privacy</span>
                     </NavLink>
                 </div>
             </div>
