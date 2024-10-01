@@ -49,6 +49,7 @@ app.use(
             "media-src": [
                 "'self'",
                 "data:",
+                "blob:",
                 "https://tenor.com",
                 "https://res.cloudinary.com",
             ],
