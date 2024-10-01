@@ -226,9 +226,9 @@ export default function Main() {
     };
 
     return (
-        <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen mt-2 sm:mt-4 md:pr-32 lg:px-2 pb-[50px] md:pb-0">
-            <div className="flex justify-between items-center border-b-2 border-slate-200 dark:border-slate-900 pb-2">
-                <div className="flex gap-4">
+        <div className="md:ml-[70px] lg:ml-[250px] flex flex-col min-h-screen  md:pr-32 lg:px-2 pb-[50px] md:pb-0">
+            <div className="flex justify-between md:justify-end border-b-2 border-slate-200 px-4 py-2 dark:border-slate-900">
+                {/* <div className="flex gap-4">
                     <Link
                         to="?tab=for_you"
                         className={`${
@@ -248,26 +248,7 @@ export default function Main() {
                     >
                         Following
                     </Link>
-                </div>
-                {isAuthenticated ? (
-                    <div className="flex md:hidden items-center">
-                        <button
-                            className="px-4 dark:bg-white dark:text-black bg-black text-white py-1 rounded-md"
-                            onClick={handleLogout}
-                        >
-                            logout
-                        </button>
-                    </div>
-                ) : (
-                    <div className="flex md:hidden items-center">
-                        <Link
-                            to="/login"
-                            className="dark:bg-white dark:text-black bg-black text-white  px-4 py-1 rounded-md"
-                        >
-                            Sign in
-                        </Link>
-                    </div>
-                )}
+                </div> */}
                 <div className="flex items-center md:hidden px-2">
                     <DarkModeSwitch
                         checked={isDarkMode}
@@ -278,6 +259,25 @@ export default function Main() {
                         className="select-none"
                     />
                 </div>
+                {isAuthenticated ? (
+                    <div className="flex lg:hidden items-center">
+                        <button
+                            className="px-4 dark:bg-white dark:text-black bg-black text-white py-1 rounded-md"
+                            onClick={handleLogout}
+                        >
+                            logout
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex lg:hidden items-center">
+                        <Link
+                            to="/login"
+                            className="dark:bg-white dark:text-black bg-black text-white  px-4 py-1 rounded-md"
+                        >
+                            Sign in
+                        </Link>
+                    </div>
+                )}
             </div>
             {isAuthenticated && (
                 <form
