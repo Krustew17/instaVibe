@@ -40,6 +40,7 @@ app.use(
             "img-src": [
                 "'self'",
                 "data:",
+                "blob:",
                 "https://cloudinary.com",
                 "https://res.cloudinary.com",
                 "https://media.tenor.com",
